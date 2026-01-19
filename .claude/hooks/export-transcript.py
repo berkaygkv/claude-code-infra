@@ -56,7 +56,8 @@ def get_session_number_if_wrapped() -> int | None:
 
     if TRANSCRIPTS_DIR.exists():
         for f in TRANSCRIPTS_DIR.iterdir():
-            if f.is_file():
+            # Only count non-empty files (Obsidian may create empty files when clicking wikilinks)
+            if f.is_file() and f.stat().st_size > 0:
                 match = pattern.match(f.name)
                 if match:
                     transcripts.add(int(match.group(1)))
