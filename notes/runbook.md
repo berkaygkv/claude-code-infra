@@ -11,10 +11,13 @@ blockers: none
 
 Initial infrastructure setup complete. Vault structure established with Sessions, Research, and Templates folders.
 
+**Symlink setup verified:** Notes now live in `kh/` repo and are git-tracked.
+
 ## Current
 
 - [x] Create vault folder structure [phase:: infrastructure] ✅2026-01-19
 - [x] Create project-level documents [phase:: infrastructure] ✅2026-01-19
+- [x] Set up symlink for git versioning [phase:: infrastructure] ✅2026-01-19
 - [ ] **→ Define session handoff schemas** [phase:: infrastructure] [priority:: 1]
 - [ ] Create session templates [phase:: infrastructure] [priority:: 2]
 
