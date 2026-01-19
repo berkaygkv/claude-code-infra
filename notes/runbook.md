@@ -1,8 +1,8 @@
 ---
 type: runbook
 project: kh
-updated: '2026-01-19'
-phase: infrastructure
+updated: '2026-01-20'
+phase: validation
 blockers: none
 ---
 # Runbook
@@ -18,15 +18,15 @@ Initial infrastructure setup complete. Vault structure established with Sessions
 - [x] Create vault folder structure [phase:: infrastructure] ✅2026-01-19
 - [x] Create project-level documents [phase:: infrastructure] ✅2026-01-19
 - [x] Set up symlink for git versioning [phase:: infrastructure] ✅2026-01-19
-- [ ] **→ Define session handoff schemas** [phase:: infrastructure] [priority:: 1]
-- [ ] Create session templates [phase:: infrastructure] [priority:: 2]
+- [x] Define session handoff schemas [phase:: infrastructure] ✅2026-01-20
+- [x] Create session templates [phase:: infrastructure] ✅2026-01-20
 
 ## Upcoming
 
+- [ ] **→ Test full session lifecycle** [phase:: validation] [priority:: 1]
 - [ ] Define research workflow [phase:: research] [priority:: 1]
 - [ ] Create research templates [phase:: research] [priority:: 2]
 - [ ] Establish linking conventions [phase:: conventions] [priority:: 2]
-- [ ] First real session test [phase:: validation] [priority:: 1]
 
 ## Knowledge Gaps
 

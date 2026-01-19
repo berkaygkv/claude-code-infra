@@ -18,4 +18,5 @@ tags:
   - transcript
 ---
 
-[RAW TRANSCRIPT CONTENT]
+<!-- Raw transcript exported from Claude Code session -->
+<!-- This file is auto-populated by the transcript export hook -->

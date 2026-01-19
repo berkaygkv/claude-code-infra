@@ -13,7 +13,7 @@ session: <% sessionNum %>
 date: <% now %>
 project: kh
 topics: []
-outcome:
+outcome: successful  # successful | blocked | partial
 continues_from: <% continuesFrom %>
 transcript: "[[Sessions/transcripts/<% sessionName %>]]"
 tags:
@@ -23,14 +23,13 @@ tags:
 ## Handoff
 
 ### Context
-[What we were working on this session]
+<!-- 2-4 sentences: What this session focused on and what was accomplished -->
 
 ### Decisions
-- LOCKED: [decision] — [rationale]
-- OPEN: [question still unresolved]
+<!-- Format: "- LOCKED: {decision} — {rationale}" or "- OPEN: {issue} — {current thinking}" -->
 
 ### Memory
-[Important things to remember across sessions]
+<!-- Technical facts, paths, quirks, workarounds to remember across sessions -->
 
 ### Next Steps
-[Where to pick up, what's pending]
+<!-- Prioritized list; first item becomes default suggestion for /begin -->

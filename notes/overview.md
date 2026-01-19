@@ -1,9 +1,9 @@
 ---
 type: project-overview
 project: kh
-updated: '2026-01-19'
-current_phase: infrastructure
-next_action: Define session handoff schemas
+updated: '2026-01-20'
+current_phase: validation
+next_action: Test full session lifecycle
 ---
 # KH Project
 
@@ -12,7 +12,7 @@ next_action: Define session handoff schemas
 
 | Phase | Next Action | Blockers |
 |-------|-------------|----------|
-| Infrastructure | Define session schemas | None |
+| Validation | Test full session lifecycle | None |
 
 ## Key Documents
 <!-- Table: Document link, Purpose -->
