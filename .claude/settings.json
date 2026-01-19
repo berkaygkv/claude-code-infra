@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run /home/berkaygkv/Dev/headquarter/kh/.claude/hooks/export-transcript.py"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run /home/berkaygkv/Dev/headquarter/kh/.claude/hooks/capture-research.py"
+          }
+        ]
+      }
+    ]
+  }
+}
