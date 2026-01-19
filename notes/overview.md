@@ -3,7 +3,7 @@ type: project-overview
 project: kh
 updated: '2026-01-20'
 current_phase: validation
-next_action: Test full session lifecycle
+next_action: Decide on frontmatter query solution
 ---
 # KH Project
 
@@ -12,7 +12,7 @@ next_action: Test full session lifecycle
 
 | Phase | Next Action | Blockers |
 |-------|-------------|----------|
-| Validation | Test full session lifecycle | None |
+| Validation | Decide on frontmatter query solution | None |
 
 ## Key Documents
 <!-- Table: Document link, Purpose -->
@@ -28,7 +28,10 @@ next_action: Test full session lifecycle
 
 | Session | Date | Outcome | Topic |
 |---------|------|---------|-------|
-| *No sessions yet* | | | |
+| [[Sessions/session-4\|Session 4]] | 2026-01-20 | successful | validation-testing |
+| [[Sessions/session-3\|Session 3]] | 2026-01-20 | successful | session-handoff-schema |
+| [[Sessions/session-2\|Session 2]] | 2026-01-19 | successful | symlink-setup |
+| [[Sessions/session-1\|Session 1]] | 2026-01-19 | successful | sessions-architecture |
 
 ## Active Research
 <!-- Table: Target link, Topic -->

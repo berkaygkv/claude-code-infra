@@ -1,6 +1,6 @@
 # Session Wrap-up Command
 
-This command performs end-of-session tasks: create session note with Handoff, and optionally commit changes.
+This command performs end-of-session tasks: update project documents, create session note with Handoff, and optionally commit changes.
 
 ## Instructions
 
@@ -17,14 +17,54 @@ Scan the Sessions folder to find the next session number:
 ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/*.md /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/transcripts/*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
 ```
 
-### Step 2: Read Current Session Context
+### Step 2: Synthesize Session Work
 
-Find the current session transcript to understand what happened:
-- Location: `~/.claude/projects/-home-berkaygkv-Dev-headquarter-kh/`
-- Find the most recently modified `.jsonl` file
-- Read it to extract key information for the Handoff
+Before updating any documents, synthesize what happened this session:
+- What tasks were completed?
+- What decisions were made (LOCKED vs OPEN)?
+- What new tasks or blockers emerged?
+- What is the current phase and next action?
+- What should the next session start with?
 
-### Step 3: Generate Session Note (Handoff Document)
+This synthesis informs all document updates below.
+
+### Step 3: Update Runbook
+
+Read and update `notes/runbook.md` using Obsidian MCP:
+
+1. **Mark completed tasks:** Change `- [ ]` to `- [x]` and add completion date `✅YYYY-MM-DD`
+2. **Add new tasks:** If new work was identified, add to Upcoming section with `[phase:: x] [priority:: n]`
+3. **Update frontmatter:**
+   - `updated`: Today's date
+   - `phase`: Current phase (infrastructure, validation, research, etc.)
+   - `blockers`: Any blockers discovered, or "none"
+4. **Update Progress section:** Add brief note about what was accomplished
+5. **Update Knowledge Gaps:** Add any gaps discovered during the session
+
+Use `mcp__obsidian__patch_note` for surgical updates or `mcp__obsidian__write_note` for full replacement.
+
+### Step 4: Update Overview
+
+Read and update `notes/overview.md` using Obsidian MCP:
+
+1. **Update frontmatter:**
+   - `updated`: Today's date
+   - `current_phase`: Current phase
+   - `next_action`: First item from Next Steps
+2. **Update Current State table:** Phase, Next Action, Blockers
+3. **Update Recent Sessions table:** Add this session (keep last 5 sessions)
+   - Format: `| [[Sessions/session-{N}\|Session {N}]] | {date} | {outcome} | {primary topic} |`
+4. **Update Active Research:** If research tasks are in progress
+
+### Step 5: Update Locked Decisions (if applicable)
+
+If any decisions were LOCKED this session, update `notes/locked.md`:
+- Add to Decisions table with Area, Decision, Rationale
+- Add any new schemas if defined
+
+Skip this step if no new LOCKED decisions were made.
+
+### Step 6: Generate Session Note (Handoff Document)
 
 Create a session note following this schema:
 
@@ -71,43 +111,67 @@ tags:
 - **Memory**: Important facts discovered that should persist (e.g., "User prefers X over Y", "The API has limitation Z")
 - **Next Steps**: Concrete, actionable items. What should the next session start with?
 
-### Step 4: Write Session Note to Obsidian
+### Step 7: Write Session Note to Obsidian
 
 Use the Obsidian MCP to write the session note:
-- Path: `/notes/Sessions/session-{N}.md`
+- Path: `notes/Sessions/session-{N}.md`
 - Use `mcp__obsidian__write_note`
 
-### Step 5: Git Status & Commit (Optional)
+### Step 8: Git Status & Commit (Optional)
 
 1. Show `git status` to display uncommitted changes
 2. Show `git diff --stat` for a summary of changes
 3. Ask the user if they want to commit
 4. If yes, generate an appropriate commit message and create the commit
 
-### Step 6: Confirm Completion
+### Step 9: Confirm Completion
 
-Report what was done:
-- Session note location: `Sessions/session-{N}.md`
-- Topics extracted
-- Next steps summary
-- Git commit status (if applicable)
+Report what was done in a summary table:
 
-Remind the user:
-- Transcript will be exported automatically when session ends (SessionEnd hook)
-- Transcript will be saved to `Sessions/transcripts/session-{N}.md`
-- Use `/begin` in next session to load this Handoff
+```
+## Session {N} Wrap-up Complete
+
+| Document | Action |
+|----------|--------|
+| runbook.md | Updated: {tasks completed}, phase: {phase} |
+| overview.md | Updated: added session to recent, next action: {action} |
+| locked.md | {Updated with N decisions / No changes} |
+| session-{N}.md | Created with handoff |
+
+**Topics:** {topics}
+**Outcome:** {outcome}
+
+**Next Steps:**
+1. {first next step}
+2. {second next step}
+
+**Git:** {committed / no changes / user declined}
+
+Transcript will export automatically when session ends.
+Use `/begin` in next session to resume.
+```
 
 ## Example Output
 
 ```
-Session note created: Sessions/session-15.md
+## Session 15 Wrap-up Complete
 
-Topics: [sessions-architecture, vault-cleanup, templates]
-Outcome: successful
+| Document | Action |
+|----------|--------|
+| runbook.md | Updated: 2 tasks completed, phase: validation |
+| overview.md | Updated: added session to recent, next action: Test transcript export |
+| locked.md | No changes |
+| session-15.md | Created with handoff |
 
-Next Steps:
-- Create /begin command
-- Test full session lifecycle
+**Topics:** [wrap-command-refinement, document-updates]
+**Outcome:** successful
 
-Transcript will be exported on session end.
+**Next Steps:**
+1. Test transcript export hook
+2. Begin research phase tasks
+
+**Git:** Committed (abc123)
+
+Transcript will export automatically when session ends.
+Use `/begin` in next session to resume.
 ```
