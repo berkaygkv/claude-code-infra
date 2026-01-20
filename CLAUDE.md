@@ -66,26 +66,6 @@ Use Obsidian MCP to persist context across sessions.
 
 **Vault path:** `/home/berkaygkv/Dev/Docs/.obs-vault`
 **Notes path:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes/` (native in vault)
-**Git tracking:** Bare repo at `kh/.git-notes` with worktree pointing to vault
-
-### Git for Notes
-
-Notes are tracked via a bare repository pattern (like dotfiles):
-
-```bash
-# Alias (add to shell config)
-alias kh-notes='git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes'
-
-# Usage
-kh-notes status
-kh-notes add .
-kh-notes commit -m "Update notes"
-```
-
-This architecture enables:
-- **Native Obsidian indexing** (files physically in vault)
-- **MCP search works** (no symlinks to break indexing)
-- **Git versioning** (via bare repo alias)
 
 ### Vault Structure
 
@@ -192,9 +172,11 @@ For multi-source investigations requiring synthesis:
 
 **Commits require explicit user approval.** Do not commit changes autonomously.
 
-- **Default:** Invoking `/wrap` = approval to commit both repos (kh and kh-notes)
+- **Default:** Invoking `/wrap` = approval to commit kh repo
 - **Exception:** User explicitly requests a mid-session commit
 - **Never:** Commit in-between changes without asking
+
+**Note:** Notes in Obsidian vault are NOT git-tracked. Use `/rollback` for mid-session restore.
 
 ## Anti-Pattern Guards
 
@@ -217,9 +199,9 @@ When in doubt, ask which mode is appropriate.
 
 Key committed decisions (full list and schemas in @locked.md):
 
-- **File Location:** Notes live natively in `.obs-vault/notes/`, tracked via bare repo `kh/.git-notes`
+- **File Location:** Notes live natively in `.obs-vault/notes/` (no git tracking for notes)
 - **Task Format:** Dataview inline fields `[phase:: x] [priority:: n]` for queryable tasks
-- **Git for Notes:** Use `kh-notes` alias for all git operations on notes
+- **Restore Strategy:** `/rollback` for mid-session restore (conversation-as-changelog)
 - **Research Pipeline:** Two-phase (Scoping → Execution) with TARGET and OUTPUT artifacts
 - **TARGET Lifecycle:** Mark complete (don't delete) when OUTPUT exists
 

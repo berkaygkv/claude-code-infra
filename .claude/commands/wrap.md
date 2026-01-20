@@ -119,9 +119,8 @@ Use the Obsidian MCP to write the session note:
 
 ### Step 8: Git Commit (Automatic)
 
-Invoking `/wrap` signals approval to commit. Commit changes to both repos:
+Invoking `/wrap` signals approval to commit. Commit changes to the kh repo:
 
-**8a. Main repo (kh):**
 ```bash
 cd /home/berkaygkv/Dev/headquarter/kh
 git status
@@ -129,14 +128,9 @@ git add -A
 git commit -m "Session {N}: {brief summary}"
 ```
 
-**8b. Notes repo (kh-notes):**
-```bash
-git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes status
-git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes add -A
-git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes commit -m "Session {N}: {brief summary}"
-```
+Skip commit if no changes. Report commit hash in Step 9.
 
-Skip commit if no changes in that repo. Report both commit hashes in Step 9.
+**Note:** Notes in Obsidian vault are not git-tracked. Use `/rollback` for mid-session restore if needed.
 
 ### Step 9: Confirm Completion
 
@@ -159,8 +153,7 @@ Report what was done in a summary table:
 1. {first next step}
 2. {second next step}
 
-**Git (kh):** {committed (hash) / no changes}
-**Git (kh-notes):** {committed (hash) / no changes}
+**Git:** {committed (hash) / no changes}
 
 Transcript will export automatically when session ends.
 Use `/begin` in next session to resume.
@@ -185,8 +178,7 @@ Use `/begin` in next session to resume.
 1. Test transcript export hook
 2. Begin research phase tasks
 
-**Git (kh):** Committed (abc1234)
-**Git (kh-notes):** Committed (def5678)
+**Git:** Committed (abc1234)
 
 Transcript will export automatically when session ends.
 Use `/begin` in next session to resume.

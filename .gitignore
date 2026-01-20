@@ -1,8 +1,3 @@
 __pycache__/
 *.pyc
 *.pyo
-
-# Obsidian workspace config (not versioned)
-notes/.obsidian/
-
-.git-notes
