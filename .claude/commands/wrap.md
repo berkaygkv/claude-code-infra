@@ -1,60 +1,68 @@
 # Session Wrap-up Command
 
-This command performs end-of-session tasks: update project documents, create session note with Handoff, and optionally commit changes.
+This command performs end-of-session tasks: process the session scratch file, update vault documents, create session handoff note, and commit changes.
 
 ## Instructions
 
 When the user invokes `/wrap`, perform these steps in order:
 
-### Step 1: Determine Session Number
+### Step 1: Read Session Scratch
 
-Scan the Sessions folder to find the next session number:
-- Check both `Sessions/` and `Sessions/transcripts/` for `session-N.md` files
-- Find the highest N and use N+1 (or N if transcript already exists for this session)
-- Session naming: `session-1`, `session-2`, etc.
+Read the session scratch file to understand what was staged during the session:
+
+```bash
+cat /home/berkaygkv/Dev/headquarter/kh/scratch.md
+```
+
+Extract:
+- **Session number** from Meta section
+- **Decisions** (LOCKED and OPEN items)
+- **Memory** items to persist
+- **Tasks** (new, completed, blockers)
+- **Notes** (additional context)
+
+If scratch.md is empty or only has the template, synthesize from conversation context instead.
+
+### Step 2: Determine Session Number
+
+If session number is in scratch.md Meta section, use that.
+
+Otherwise, scan the Sessions folder to find the next session number:
 
 ```bash
 ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/*.md /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/transcripts/*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
 ```
 
-### Step 1.5: Read Session Context
+Use N+1 as the session number.
 
-Check for session context from `/begin`:
+### Step 3: Synthesize Session Work
 
-```bash
-cat /tmp/kh-session.json 2>/dev/null || echo "{}"
-```
-
-If present, use `topic` for the session note frontmatter.
-If not present (session started without `/begin`), the `topic` field will be omitted (backward compatible).
-
-### Step 2: Synthesize Session Work
-
-Before updating any documents, synthesize what happened this session:
+Combine scratch.md content with conversation context to synthesize:
 - What tasks were completed?
 - What decisions were made (LOCKED vs OPEN)?
 - What new tasks or blockers emerged?
 - What is the current phase and next action?
 - What should the next session start with?
+- What are the key topics/themes of this session?
 
 This synthesis informs all document updates below.
 
-### Step 3: Update Runbook
+### Step 4: Update Runbook
 
 Read and update `notes/runbook.md` using Obsidian MCP:
 
 1. **Mark completed tasks:** Change `- [ ]` to `- [x]` and add completion date `✅YYYY-MM-DD`
-2. **Add new tasks:** If new work was identified, add to Upcoming section with `[phase:: x] [priority:: n]`
+2. **Add new tasks:** From scratch.md Tasks section, add to Upcoming with `[phase:: x] [priority:: n]`
 3. **Update frontmatter:**
    - `updated`: Today's date
    - `phase`: Current phase (infrastructure, validation, research, etc.)
-   - `blockers`: Any blockers discovered, or "none"
+   - `blockers`: Any blockers from scratch.md, or "none"
 4. **Update Progress section:** Add brief note about what was accomplished
 5. **Update Knowledge Gaps:** Add any gaps discovered during the session
 
 Use `mcp__obsidian__patch_note` for surgical updates or `mcp__obsidian__write_note` for full replacement.
 
-### Step 4: Update Overview
+### Step 5: Update Overview
 
 Read and update `notes/overview.md` using Obsidian MCP:
 
@@ -67,22 +75,21 @@ Read and update `notes/overview.md` using Obsidian MCP:
    - Format: `| [[Sessions/session-{N}\|Session {N}]] | {date} | {outcome} | {primary topic} |`
 4. **Update Active Research:** If research tasks are in progress
 
-### Step 5: Update Locked Decisions (if applicable)
+### Step 6: Update Locked Decisions (if applicable)
 
-If any decisions were LOCKED this session, update `notes/locked.md`:
+If any LOCKED decisions are in scratch.md or were made this session, update `notes/locked.md`:
 - Add to Decisions table with Area, Decision, Rationale
 - Add any new schemas if defined
 
 Skip this step if no new LOCKED decisions were made.
 
-### Step 6: Generate Session Note (Handoff Document)
+### Step 7: Generate Session Note (Handoff Document)
 
-Create a session note following this schema:
+Create a session note using scratch.md content and conversation synthesis:
 
 ```yaml
 ---
 session: {N}
-topic: "{topic}"  # From /tmp/kh-session.json if available
 date: {YYYY-MM-DD}
 project: kh
 topics: [topic1, topic2]
@@ -99,10 +106,12 @@ tags:
 [What we were working on this session - 2-3 sentences summarizing the main focus]
 
 ### Decisions
+[From scratch.md Decisions section + any decisions from conversation]
 - LOCKED: [decision] — [rationale]
 - OPEN: [question still unresolved]
 
 ### Memory
+[From scratch.md Memory section]
 [Important things to remember across sessions - facts, preferences, constraints discovered]
 
 ### Next Steps
@@ -111,25 +120,49 @@ tags:
 
 **Guidelines for Handoff generation:**
 
-- **topics**: Extract 2-5 key topics/themes from the session (free-form tags)
+- **topics**: Extract 2-5 key topics/themes from the session (derive from scratch.md and conversation)
 - **outcome**:
   - `successful` = goals achieved, clear progress made
   - `partial` = some progress but incomplete
   - `blocked` = stuck on something, needs resolution
 - **Context**: Brief summary of what the session focused on. This is what `/begin` will show to restore context.
-- **Decisions**:
-  - LOCKED = decisions that are final, with rationale
-  - OPEN = questions still unresolved, need future attention
-- **Memory**: Important facts discovered that should persist (e.g., "User prefers X over Y", "The API has limitation Z")
+- **Decisions**: Merge scratch.md Decisions with any decisions made in conversation
+- **Memory**: Merge scratch.md Memory with important facts from conversation
 - **Next Steps**: Concrete, actionable items. What should the next session start with?
 
-### Step 7: Write Session Note to Obsidian
+### Step 8: Write Session Note to Obsidian
 
 Use the Obsidian MCP to write the session note:
 - Path: `notes/Sessions/session-{N}.md`
 - Use `mcp__obsidian__write_note`
 
-### Step 8: Git Commit (Automatic)
+### Step 9: Reset Session Scratch
+
+Reset scratch.md to its template form (do not include session number—that's set by `/begin`):
+
+```bash
+cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
+# Session Scratch
+
+## Meta
+- session:
+
+## Decisions
+<!-- LOCKED: decision — rationale -->
+<!-- OPEN: question still unresolved -->
+
+## Memory
+<!-- Facts, preferences, constraints to persist -->
+
+## Tasks
+<!-- New tasks, completed tasks, blockers -->
+
+## Notes
+<!-- Anything else to capture -->
+EOF
+```
+
+### Step 10: Git Commit (Automatic)
 
 Invoking `/wrap` signals approval to commit. Commit changes to the kh repo:
 
@@ -140,17 +173,11 @@ git add -A
 git commit -m "Session {N}: {brief summary}"
 ```
 
-Skip commit if no changes. Report commit hash in Step 9.
+Skip commit if no changes. Report commit hash in Step 11.
 
-After commit (or if skipped), clean up session context:
+**Note:** Notes in Obsidian vault are not git-tracked. scratch.md is reset, not committed with content.
 
-```bash
-rm -f /tmp/kh-session.json
-```
-
-**Note:** Notes in Obsidian vault are not git-tracked.
-
-### Step 9: Confirm Completion
+### Step 11: Confirm Completion
 
 Report what was done in a summary table:
 
@@ -163,6 +190,7 @@ Report what was done in a summary table:
 | overview.md | Updated: added session to recent, next action: {action} |
 | locked.md | {Updated with N decisions / No changes} |
 | session-{N}.md | Created with handoff |
+| scratch.md | Reset to template |
 
 **Topics:** {topics}
 **Outcome:** {outcome}
@@ -186,18 +214,33 @@ Use `/begin` in next session to resume.
 |----------|--------|
 | runbook.md | Updated: 2 tasks completed, phase: validation |
 | overview.md | Updated: added session to recent, next action: Test transcript export |
-| locked.md | No changes |
+| locked.md | Updated with 1 decision |
 | session-15.md | Created with handoff |
+| scratch.md | Reset to template |
 
-**Topics:** [wrap-command-refinement, document-updates]
+**Topics:** [scratch-file-implementation, vault-staging]
 **Outcome:** successful
 
 **Next Steps:**
-1. Test transcript export hook
-2. Begin research phase tasks
+1. Test full session lifecycle with new scratch.md flow
+2. Use framework for real project work
 
 **Git:** Committed (abc1234)
 
 Transcript will export automatically when session ends.
 Use `/begin` in next session to resume.
 ```
+
+## Scratch File Reference
+
+The scratch file (`kh/scratch.md`) is a staging area for vault writes:
+
+| Section | Purpose | Maps to |
+|---------|---------|---------|
+| Meta | Session number | Session note frontmatter |
+| Decisions | LOCKED/OPEN items | locked.md + session handoff |
+| Memory | Facts to persist | Session handoff Memory section |
+| Tasks | Work items | runbook.md |
+| Notes | Misc context | Session handoff Context/Notes |
+
+If scratch.md is sparse, supplement with conversation context. The goal is to capture everything important before it's lost.

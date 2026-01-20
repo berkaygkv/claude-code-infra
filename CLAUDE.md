@@ -85,22 +85,66 @@ notes/
 
 ### Session Lifecycle
 
-**Start:** Run `/begin` to load previous session handoff context
+**Start:** Run `/begin` to load previous session handoff and prepare scratch.md
 
 **During:**
-- Update `runbook.md` as tasks complete
-- Document LOCKED decisions in session handoff
+- Stage content in `scratch.md` (decisions, memory, tasks, notes)
+- Do NOT write directly to vault—use scratch.md as staging area
 - Use deep-research agent for investigations (auto-captured to vault)
 
-**End:** Run `/wrap` to create session handoff note; transcript exports automatically on session close
+**End:** Run `/wrap` to process scratch.md, update vault, create session handoff; transcript exports automatically on session close
+
+### Session Scratch (`kh/scratch.md`)
+
+The scratch file is a **staging area** for vault writes. It enforces Vault Write Discipline by design.
+
+**Purpose:**
+- Accumulate content during session (decisions, memory, tasks) without touching the vault
+- Allow user to review, edit, reorder, delete before committing
+- At `/wrap`, content is processed and written to appropriate vault locations
+
+**Structure:**
+```markdown
+## Meta
+- session: {N}
+
+## Decisions
+<!-- LOCKED: decision — rationale -->
+<!-- OPEN: question still unresolved -->
+
+## Memory
+<!-- Facts, preferences, constraints to persist -->
+
+## Tasks
+<!-- New tasks, completed tasks, blockers -->
+
+## Notes
+<!-- Anything else to capture -->
+```
+
+**Mapping at /wrap:**
+| Section | Maps to |
+|---------|---------|
+| Decisions | locked.md + session handoff |
+| Memory | Session handoff Memory section |
+| Tasks | runbook.md |
+| Notes | Session handoff Context |
+
+**Lifecycle:**
+1. `/begin` resets scratch.md and sets session number
+2. During session, stage content here (not in vault)
+3. `/wrap` reads scratch.md, updates vault, resets to template
+
+**Git behavior:** Template is committed; content is never committed (reset before commit)
 
 ### Key Documents
 
 | Document | Purpose | When to Update |
 |----------|---------|----------------|
-| `overview.md` | Quick project state | When phase changes |
-| `runbook.md` | Task tracking | As tasks complete |
-| `locked.md` | Committed decisions | When decisions are LOCKED |
+| `overview.md` | Quick project state | At /wrap (via scratch.md) |
+| `runbook.md` | Task tracking | At /wrap (via scratch.md) |
+| `locked.md` | Committed decisions | At /wrap (via scratch.md) |
+| `kh/scratch.md` | Session staging area | During session (not in vault) |
 
 ## Delegation Framework
 
@@ -201,7 +245,8 @@ Key committed decisions (full list and schemas in @locked.md):
 
 - **File Location:** Notes live natively in `.obs-vault/notes/` (no git tracking for notes)
 - **Task Format:** Dataview inline fields `[phase:: x] [priority:: n]` for queryable tasks
-- **Vault Write Discipline:** Vault writes are commits, not drafts—only persist content that's ready
+- **Vault Write Discipline:** Vault writes are commits, not drafts—stage in scratch.md, commit at /wrap
+- **Session Scratch:** `kh/scratch.md` is the staging area; template committed, content never committed
 - **Research Pipeline:** Two-phase (Scoping → Execution) with TARGET and OUTPUT artifacts
 - **TARGET Lifecycle:** Mark complete (don't delete) when OUTPUT exists
 

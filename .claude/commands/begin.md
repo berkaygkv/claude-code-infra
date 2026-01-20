@@ -1,6 +1,6 @@
 # Session Begin Command
 
-This command loads context from the previous session to enable seamless handoff.
+This command loads context from the previous session and prepares the session scratch file.
 
 ## Instructions
 
@@ -65,9 +65,35 @@ Provide a brief summary:
 {incomplete tasks from runbook}
 ```
 
-### Step 6: Set Session Context
+### Step 6: Prepare Session Scratch
 
-Prompt for session focus:
+Reset and prepare `scratch.md` for the new session:
+
+```bash
+cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
+# Session Scratch
+
+## Meta
+- session: {N+1}
+
+## Decisions
+<!-- LOCKED: decision — rationale -->
+<!-- OPEN: question still unresolved -->
+
+## Memory
+<!-- Facts, preferences, constraints to persist -->
+
+## Tasks
+<!-- New tasks, completed tasks, blockers -->
+
+## Notes
+<!-- Anything else to capture -->
+EOF
+```
+
+Where `{N+1}` is the next session number (previous session number + 1).
+
+### Step 7: Prompt for Session Focus
 
 ```
 Ready to continue. What's the focus of this session?
@@ -77,24 +103,13 @@ Suggested (from previous session):
 - {second next step}
 ```
 
-After the user provides a topic, write session context to temp file:
-
-```bash
-cat > /tmp/kh-session.json << 'EOF'
-{"session_number": {N+1}, "topic": "{user-provided-topic}", "date": "{YYYY-MM-DD}"}
-EOF
-```
-
-Where:
-- `{N+1}` is the next session number (previous session number + 1)
-- `{user-provided-topic}` is a kebab-case slug from the user's response (e.g., "meta-journal-system")
-- `{YYYY-MM-DD}` is today's date
-
-Confirm with:
+After the user provides direction, confirm:
 
 ```
-Session 8: {topic} initialized.
+Session {N+1} initialized. Scratch file ready.
 ```
+
+**Note:** Topic is not set upfront—it emerges during the session and gets captured at `/wrap` time.
 
 ## Example Output
 
@@ -143,19 +158,11 @@ Suggested (from previous session):
 
 **User:** Working on session templates
 
-**Claude:**
-```bash
-cat > /tmp/kh-session.json << 'EOF'
-{"session_number": 3, "topic": "session-templates", "date": "2026-01-19"}
-EOF
-```
-
-```
-Session 3: session-templates initialized.
-```
+**Claude:** Session 3 initialized. Scratch file ready.
 
 ## Notes
 
-- If no previous session exists, inform the user and offer to start fresh
+- If no previous session exists, inform the user and offer to start fresh (session 1)
 - If the previous session outcome was `blocked`, highlight the blocker prominently
 - The handoff context should be enough to resume work without reading the full transcript
+- scratch.md is the staging area for vault writes during the session
