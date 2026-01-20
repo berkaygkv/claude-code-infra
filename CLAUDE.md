@@ -176,7 +176,7 @@ For multi-source investigations requiring synthesis:
 - **Exception:** User explicitly requests a mid-session commit
 - **Never:** Commit in-between changes without asking
 
-**Note:** Notes in Obsidian vault are NOT git-tracked. Use `/rollback` for mid-session restore.
+**Note:** Notes in Obsidian vault are NOT git-tracked. Vault writes should be commits (ready to persist), not drafts.
 
 ## Anti-Pattern Guards
 
@@ -201,7 +201,7 @@ Key committed decisions (full list and schemas in @locked.md):
 
 - **File Location:** Notes live natively in `.obs-vault/notes/` (no git tracking for notes)
 - **Task Format:** Dataview inline fields `[phase:: x] [priority:: n]` for queryable tasks
-- **Restore Strategy:** `/rollback` for mid-session restore (conversation-as-changelog)
+- **Vault Write Discipline:** Vault writes are commits, not drafts—only persist content that's ready
 - **Research Pipeline:** Two-phase (Scoping → Execution) with TARGET and OUTPUT artifacts
 - **TARGET Lifecycle:** Mark complete (don't delete) when OUTPUT exists
 

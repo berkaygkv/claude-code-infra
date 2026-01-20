@@ -65,16 +65,35 @@ Provide a brief summary:
 {incomplete tasks from runbook}
 ```
 
-### Step 6: Confirm Ready
+### Step 6: Set Session Context
 
-End with:
+Prompt for session focus:
 
 ```
-Ready to continue. What would you like to work on?
+Ready to continue. What's the focus of this session?
 
 Suggested (from previous session):
 - {first next step}
 - {second next step}
+```
+
+After the user provides a topic, write session context to temp file:
+
+```bash
+cat > /tmp/kh-session.json << 'EOF'
+{"session_number": {N+1}, "topic": "{user-provided-topic}", "date": "{YYYY-MM-DD}"}
+EOF
+```
+
+Where:
+- `{N+1}` is the next session number (previous session number + 1)
+- `{user-provided-topic}` is a kebab-case slug from the user's response (e.g., "meta-journal-system")
+- `{YYYY-MM-DD}` is today's date
+
+Confirm with:
+
+```
+Session 8: {topic} initialized.
 ```
 
 ## Example Output
@@ -115,11 +134,24 @@ the symlink structure for git versioning.
 
 ---
 
-Ready to continue. What would you like to work on?
+Ready to continue. What's the focus of this session?
 
 Suggested (from previous session):
 - Define session handoff schemas
 - Create session templates
+```
+
+**User:** Working on session templates
+
+**Claude:**
+```bash
+cat > /tmp/kh-session.json << 'EOF'
+{"session_number": 3, "topic": "session-templates", "date": "2026-01-19"}
+EOF
+```
+
+```
+Session 3: session-templates initialized.
 ```
 
 ## Notes

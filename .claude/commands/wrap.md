@@ -17,6 +17,17 @@ Scan the Sessions folder to find the next session number:
 ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/*.md /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/transcripts/*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
 ```
 
+### Step 1.5: Read Session Context
+
+Check for session context from `/begin`:
+
+```bash
+cat /tmp/kh-session.json 2>/dev/null || echo "{}"
+```
+
+If present, use `topic` for the session note frontmatter.
+If not present (session started without `/begin`), the `topic` field will be omitted (backward compatible).
+
 ### Step 2: Synthesize Session Work
 
 Before updating any documents, synthesize what happened this session:
@@ -71,6 +82,7 @@ Create a session note following this schema:
 ```yaml
 ---
 session: {N}
+topic: "{topic}"  # From /tmp/kh-session.json if available
 date: {YYYY-MM-DD}
 project: kh
 topics: [topic1, topic2]
@@ -130,7 +142,13 @@ git commit -m "Session {N}: {brief summary}"
 
 Skip commit if no changes. Report commit hash in Step 9.
 
-**Note:** Notes in Obsidian vault are not git-tracked. Use `/rollback` for mid-session restore if needed.
+After commit (or if skipped), clean up session context:
+
+```bash
+rm -f /tmp/kh-session.json
+```
+
+**Note:** Notes in Obsidian vault are not git-tracked.
 
 ### Step 9: Confirm Completion
 
