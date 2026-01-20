@@ -117,12 +117,26 @@ Use the Obsidian MCP to write the session note:
 - Path: `notes/Sessions/session-{N}.md`
 - Use `mcp__obsidian__write_note`
 
-### Step 8: Git Status & Commit (Optional)
+### Step 8: Git Commit (Automatic)
 
-1. Show `git status` to display uncommitted changes
-2. Show `git diff --stat` for a summary of changes
-3. Ask the user if they want to commit
-4. If yes, generate an appropriate commit message and create the commit
+Invoking `/wrap` signals approval to commit. Commit changes to both repos:
+
+**8a. Main repo (kh):**
+```bash
+cd /home/berkaygkv/Dev/headquarter/kh
+git status
+git add -A
+git commit -m "Session {N}: {brief summary}"
+```
+
+**8b. Notes repo (kh-notes):**
+```bash
+git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes status
+git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes add -A
+git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes commit -m "Session {N}: {brief summary}"
+```
+
+Skip commit if no changes in that repo. Report both commit hashes in Step 9.
 
 ### Step 9: Confirm Completion
 
@@ -145,7 +159,8 @@ Report what was done in a summary table:
 1. {first next step}
 2. {second next step}
 
-**Git:** {committed / no changes / user declined}
+**Git (kh):** {committed (hash) / no changes}
+**Git (kh-notes):** {committed (hash) / no changes}
 
 Transcript will export automatically when session ends.
 Use `/begin` in next session to resume.
@@ -170,7 +185,8 @@ Use `/begin` in next session to resume.
 1. Test transcript export hook
 2. Begin research phase tasks
 
-**Git:** Committed (abc123)
+**Git (kh):** Committed (abc1234)
+**Git (kh-notes):** Committed (def5678)
 
 Transcript will export automatically when session ends.
 Use `/begin` in next session to resume.

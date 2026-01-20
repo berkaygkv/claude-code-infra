@@ -192,7 +192,7 @@ For multi-source investigations requiring synthesis:
 
 **Commits require explicit user approval.** Do not commit changes autonomously.
 
-- **Default:** Commit at `/wrap` when user approves
+- **Default:** Invoking `/wrap` = approval to commit both repos (kh and kh-notes)
 - **Exception:** User explicitly requests a mid-session commit
 - **Never:** Commit in-between changes without asking
 
