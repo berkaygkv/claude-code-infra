@@ -65,7 +65,27 @@ You are a collaborative partner in the Symbiotic Collaboration Framework. Your c
 Use Obsidian MCP to persist context across sessions.
 
 **Vault path:** `/home/berkaygkv/Dev/Docs/.obs-vault`
-**Notes path:** `kh/notes/` (symlinked into vault, git-tracked)
+**Notes path:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes/` (native in vault)
+**Git tracking:** Bare repo at `kh/.git-notes` with worktree pointing to vault
+
+### Git for Notes
+
+Notes are tracked via a bare repository pattern (like dotfiles):
+
+```bash
+# Alias (add to shell config)
+alias kh-notes='git --git-dir=/home/berkaygkv/Dev/headquarter/kh/.git-notes --work-tree=/home/berkaygkv/Dev/Docs/.obs-vault/notes'
+
+# Usage
+kh-notes status
+kh-notes add .
+kh-notes commit -m "Update notes"
+```
+
+This architecture enables:
+- **Native Obsidian indexing** (files physically in vault)
+- **MCP search works** (no symlinks to break indexing)
+- **Git versioning** (via bare repo alias)
 
 ### Vault Structure
 
@@ -121,33 +141,46 @@ notes/
 
 ### Research Workflow
 
-Choose the right approach based on need:
+Research is a two-phase process: **Scoping** (identify gaps, agree on questions) → **Execution** (run agents, capture findings).
 
-**Quick Research (inline):**
-- Use WebSearch/WebFetch directly for simple lookups, syntax checks, or single-source answers
-- No vault persistence—results stay in conversation only
-- Appropriate for: "What's the syntax for X?", "How do I do Y in library Z?"
+#### Quick Research (inline)
 
-**Deep Research (via Task tool):**
-- Use `deep-research` agent for multi-source investigations requiring synthesis
-- **Automatically persisted** to vault via SubagentStop hook → `research/outputs/OUTPUT-{timestamp}-{slug}/`
-- Appropriate for: comparing technologies, understanding best practices, investigating unfamiliar domains
+For simple lookups that don't need persistence:
+- Use WebSearch/WebFetch directly
+- Results stay in conversation only
+- Appropriate for: syntax checks, single-source answers, "How do I do X?"
 
-**When spawning deep-research, always specify in the prompt:**
-1. **Scope:** What specific questions need answering
-2. **Depth:** How many sources are sufficient (e.g., "3-5 authoritative sources" vs "comprehensive survey")
-3. **Focus:** What to prioritize (e.g., "focus on production gotchas" or "focus on API differences")
+#### Deep Research (via TARGET → OUTPUT)
 
-**Task decomposition:** For broad research topics, split into focused sub-tasks. Multiple deep-research agents can run in parallel—each gets its own OUTPUT folder.
+For multi-source investigations requiring synthesis:
 
-**Example prompt structure:**
-```
-Research [specific topic]. Focus on [priority area].
-Consult 3-5 sources covering [source types].
-Key questions: 1) ... 2) ... 3) ...
-```
+**Phase 1: Scoping**
+1. Knowledge gap surfaces during brainstorming or execution
+2. Discuss: "What do we need to know? What questions? What sources?"
+3. Create TARGET file(s) capturing the agreed scope:
+   ```bash
+   cat <<'EOF' | python .claude/hooks/create-target.py
+   {"question": "...", "why": "...", "needs": ["...", "..."]}
+   EOF
+   ```
+4. TARGET status is `open`, ready for research
 
-For schemas and detailed formats, see @locked.md.
+**Phase 2: Execution**
+1. Spawn `deep-research` agent with TARGET context:
+   ```
+   Research the question in TARGET-{id}. Focus on {priority}.
+   Key questions: 1) ... 2) ... 3) ...
+   ```
+2. Agent runs, SubagentStop hook captures OUTPUT
+3. Hook automatically:
+   - Creates `research/outputs/OUTPUT-{timestamp}-{slug}/`
+   - Links OUTPUT → TARGET in frontmatter
+   - Updates TARGET: `status: complete`, `output: [[link]]`
+4. Resume work with new knowledge
+
+**Batching:** Identify multiple gaps → create multiple TARGETs → run agents in parallel.
+
+**Schemas:** See @locked.md for TARGET and OUTPUT schemas.
 
 ## Hooks & Automation
 
@@ -184,13 +217,15 @@ When in doubt, ask which mode is appropriate.
 
 Key committed decisions (full list and schemas in @locked.md):
 
-- **File Location:** Notes live in `kh/notes/`, symlinked into Obsidian vault
+- **File Location:** Notes live natively in `.obs-vault/notes/`, tracked via bare repo `kh/.git-notes`
 - **Task Format:** Dataview inline fields `[phase:: x] [priority:: n]` for queryable tasks
-- **Git Exclusions:** `.obsidian/` excluded via `.gitignore`
+- **Git for Notes:** Use `kh-notes` alias for all git operations on notes
+- **Research Pipeline:** Two-phase (Scoping → Execution) with TARGET and OUTPUT artifacts
+- **TARGET Lifecycle:** Mark complete (don't delete) when OUTPUT exists
 
 Do not deviate without explicit approval.
 
 ## MCP Tool Notes
 
-- `mcp__obsidian__search_notes` doesn't work through symlinks—use Grep instead
+- `mcp__obsidian__search_notes` works (files are native, not symlinked)
 - `mcp__obsidian__list_directory("/")` returns empty at vault root—use `list_directory("notes")`

@@ -5,3 +5,4 @@ __pycache__/
 # Obsidian workspace config (not versioned)
 notes/.obsidian/
 
+.git-notes

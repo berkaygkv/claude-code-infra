@@ -62,7 +62,6 @@ def create_target(data: dict) -> str:
     needs = data.get("needs", [])
     if not needs:
         needs = ["Key findings", "Best practices", "Recommendations"]
-    assignee = data.get("assignee", "claude")
 
     # Generate IDs and paths
     target_id = f"TARGET-{timestamp}"
@@ -76,9 +75,11 @@ def create_target(data: dict) -> str:
     content = f"""---
 type: research-target
 id: {target_id}
-status: active
+status: open
 created: {date_str}
-assignee: {assignee}
+output: null
+tags:
+  - research
 ---
 
 # Research Target: {topic}

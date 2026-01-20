@@ -16,7 +16,8 @@ Features:
 - Creates OUTPUT folder with findings.md and sources.md
 - Parses agent's own source ranking (High/Medium/Low) if present
 - Falls back to domain-based ranking when agent doesn't provide structured sources
-- Links to active TARGET if one exists
+- Links to open TARGET if one exists (bidirectional linking)
+- Marks TARGET as complete after OUTPUT is created
 """
 
 import json
@@ -52,10 +53,10 @@ MEDIUM_AUTHORITY_DOMAINS = {
 }
 
 
-def get_active_target() -> tuple[str, str]:
+def get_active_target() -> tuple[str, str, Path | None]:
     """Get the currently active research target ID and link, if any.
 
-    Returns (target_id, wikilink) or ("", "") if none.
+    Returns (target_id, wikilink, file_path) or ("", "", None) if none.
     """
     if ACTIVE_TARGET_FILE.exists():
         try:
@@ -63,40 +64,79 @@ def get_active_target() -> tuple[str, str]:
             if target_id:
                 # Find the target file
                 for target_file in RESEARCH_TARGETS_DIR.glob(f"{target_id}*.md"):
-                    return target_id, f"[[research/targets/{target_file.stem}]]"
+                    return target_id, f"[[research/targets/{target_file.stem}]]", target_file
         except IOError:
             pass
-    return "", ""
+    return "", "", None
 
 
-def find_active_target() -> tuple[str, str]:
-    """Find the most recent active TARGET file.
+def find_active_target() -> tuple[str, str, Path | None]:
+    """Find the most recent open TARGET file.
 
-    Returns (target_id, wikilink) or ("", "") if none found.
+    Returns (target_id, wikilink, file_path) or ("", "", None) if none found.
     """
     if not RESEARCH_TARGETS_DIR.exists():
-        return "", ""
+        return "", "", None
 
-    active_targets = []
+    open_targets = []
     for target_file in RESEARCH_TARGETS_DIR.glob("TARGET-*.md"):
         try:
             content = target_file.read_text()
-            # Check frontmatter for status: active
-            if re.search(r'^status:\s*active', content, re.MULTILINE):
+            # Check frontmatter for status: open
+            if re.search(r'^status:\s*open', content, re.MULTILINE):
                 mtime = target_file.stat().st_mtime
-                active_targets.append((mtime, target_file))
+                open_targets.append((mtime, target_file))
         except IOError:
             continue
 
-    if active_targets:
-        # Return most recently modified active target
-        _, target_file = max(active_targets, key=lambda x: x[0])
+    if open_targets:
+        # Return most recently modified open target
+        _, target_file = max(open_targets, key=lambda x: x[0])
         # Extract target_id from filename (e.g., TARGET-20260118-143052-topic)
         match = re.match(r'(TARGET-\d{8}-\d{6})', target_file.stem)
         if match:
-            return match.group(1), f"[[research/targets/{target_file.stem}]]"
+            return match.group(1), f"[[research/targets/{target_file.stem}]]", target_file
 
-    return "", ""
+    return "", "", None
+
+
+def mark_target_complete(target_file: Path, output_folder: str) -> bool:
+    """Update TARGET file: set status=complete and add output link.
+
+    Returns True if successful, False otherwise.
+    """
+    if not target_file or not target_file.exists():
+        return False
+
+    try:
+        content = target_file.read_text()
+
+        # Update status: open -> complete
+        content = re.sub(
+            r'^status:\s*open',
+            'status: complete',
+            content,
+            flags=re.MULTILINE
+        )
+
+        # Update output: null -> wikilink
+        output_link = f"'[[research/outputs/{output_folder}/findings]]'"
+        content = re.sub(
+            r'^output:\s*null',
+            f'output: {output_link}',
+            content,
+            flags=re.MULTILINE
+        )
+
+        # Add completion note to Status Notes section if present
+        today = datetime.now().strftime('%Y-%m-%d')
+        if '## Status Notes' in content:
+            content = content.rstrip() + f"\n**{today}**: Research complete, see [[research/outputs/{output_folder}/findings]]\n"
+
+        target_file.write_text(content)
+        return True
+    except IOError:
+        return False
 
 
 def load_processed_agents() -> set[str]:
@@ -330,14 +370,16 @@ def format_findings_markdown(
         f"id: {output_folder}",
     ]
 
-    if target_id:
-        frontmatter_lines.append(f"target-id: {target_id}")
+    if target_link:
+        frontmatter_lines.append(f"target: '{target_link}'")
+    else:
+        frontmatter_lines.append("target: null")
 
     frontmatter_lines.extend([
-        "status: draft",
         f"created: {now.strftime('%Y-%m-%d')}",
         "researcher: claude-deep-research",
-        "confidence: medium",
+        "tags:",
+        "  - research",
         "---"
     ])
 
@@ -371,16 +413,6 @@ def format_findings_markdown(
 
     # Link to sources file (same folder)
     content_parts.append(f"**Full sources:** [[research/outputs/{output_folder}/sources]]\n")
-    content_parts.append("---\n")
-
-    # Outcome section (to be filled)
-    content_parts.append("## Outcome\n")
-    content_parts.append("**Decision:** *[To be determined]*\n")
-    content_parts.append("**Confidence:** Medium\n")
-    content_parts.append("**Rationale:** *[To be filled]*\n")
-    content_parts.append("**Next Steps:**")
-    content_parts.append("- Review findings")
-    content_parts.append("- *[Add next steps]*\n")
 
     return "\n".join(content_parts)
 
@@ -444,9 +476,9 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
         return None, None
 
     # Try to find active target
-    target_id, target_link = get_active_target()
+    target_id, target_link, target_file = get_active_target()
     if not target_id:
-        target_id, target_link = find_active_target()
+        target_id, target_link, target_file = find_active_target()
 
     # Get sources - try agent's ranking first, fallback to domain-based
     agent_ranked = extract_ranked_sources_from_summary(parsed['final_summary'])
@@ -488,6 +520,10 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
     sources_path = folder_path / "sources.md"
     with open(sources_path, "w", encoding="utf-8") as f:
         f.write(sources_markdown)
+
+    # Update TARGET to complete if we found one
+    if target_file:
+        mark_target_complete(target_file, output_folder)
 
     return str(findings_path), str(sources_path)
 
