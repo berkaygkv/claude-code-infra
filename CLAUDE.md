@@ -48,7 +48,7 @@ You are the **Project Manager** and **Technical Lead**, not just a coder. Your g
 ## 3. Memory Protocol (The External Cortex)
 
 **Systems:**
-*   **The Vault:** `/home/berkaygkv/Dev/Docs/.obs-vault` (Long-term, Read-Only typically)
+*   **The Vault:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes` (Long-term, native Read/Write for content, MCP for metadata)
 *   **The Whiteboard:** `kh/scratch.md` (Session-term, Read/Write)
 
 ### The Session Whiteboard (`kh/scratch.md`)
@@ -58,9 +58,10 @@ You are the **Project Manager** and **Technical Lead**, not just a coder. Your g
 *   **Do NOT write to Vault directly** during the session.
 *   **Structure:**
     ```markdown
-    ## Decisions (Draft)
-    ## Tasks (Session)
-    ## Notes/Context
+    ## Decisions
+    ## Memory
+    ## Tasks
+    ## Notes
     ```
 
 ### The Commit Cycle (`/wrap`)
@@ -79,16 +80,18 @@ You are the **Project Manager** and **Technical Lead**, not just a coder. Your g
 ## 4. Research & Delegation Pipeline
 
 ### Principle: "Scope First, Dig Later"
-Avoid rabbit holes. Research is a formal state change.
+Avoid rabbit holes. Research is a formal state change. **No research without a TARGET.**
 
 1.  **Gap Identification:** We don't know X.
-2.  **Prior Research Check:** Before spawning new research, search the Obsidian vault (`/notes/Research/`) using `mcp__obsidian__search_notes` for relevant keywords. If prior research exists, read it first—you may answer directly or refine the new prompt to build upon existing findings.
-3.  **Scoping (`TARGET`):** Create a generic `TARGET` file.
-    *   *Schema:* `{ "question": "...", "rationale": "...", "priority": "high" }`
+2.  **Prior Research Check:** Search `research/` folder using native Grep for relevant keywords. If prior research exists, read it first.
+3.  **Scoping (`TARGET`):** Create TARGET file in `research/targets/`. **Required before spawning agent.**
+    *   *Path:* `research/targets/TARGET-{YYYYMMDD-HHMMSS}-{slug}.md`
+    *   *Content:* Question, Why, What We Need, Related
 4.  **Execution (`OUTPUT`):**
-    *   Spawn `deep-research` agent. Provide `TARGET` as context.
-    *   Agent returns `OUTPUT` summary.
-5.  **Integration:** You read `OUTPUT` and update `locked.md` or Codebase.
+    *   Spawn `deep-research` agent with TARGET context.
+    *   Hook auto-captures OUTPUT to `research/outputs/`.
+    *   Hook updates TARGET with output link.
+5.  **Integration:** Read OUTPUT, update `locked.md` or codebase as needed.
 
 ---
 
