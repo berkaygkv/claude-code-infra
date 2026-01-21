@@ -2,6 +2,17 @@
 
 This command loads context from the previous session and prepares the session scratch file.
 
+## Design Rationale
+
+**What we read and why:**
+- **Session handoff** — Continuity from last session (context, decisions, memory, next steps)
+- **runbook.md** — Operational state (active tasks, knowledge gaps, blockers)
+- **locked.md** — Fundamental constraints and committed decisions
+
+**What we don't read at /begin:**
+- **overview.md** — Obsidian dashboard for human navigation; redundant for Claude
+- **schemas.md** — Reference documentation; structures are inline in skills where needed
+
 ## Instructions
 
 When the user invokes `/begin`, perform these steps in order:
@@ -16,9 +27,8 @@ ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-*.md 2>/dev/nul
 
 ### Step 2: Read Previous Session Handoff
 
-Use Obsidian MCP to read the session note:
-- Path: `notes/Sessions/session-{N}.md`
-- Use `mcp__obsidian__read_note`
+Use native Read for the session note (consistent with Vault I/O Strategy):
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-{N}.md`
 
 ### Step 3: Display Handoff Context
 
@@ -44,13 +54,11 @@ Present the handoff information clearly:
 {next steps from handoff}
 ```
 
-### Step 4: Read Key Project Documents
+### Step 4: Read Operational State
 
-Load current state from project documents:
-- Read `notes/runbook.md` for current tasks/phase
-- Read `notes/overview.md` for project state
-- Read `notes/locked.md` for committed decisions
-- Read `notes/schemas.md` for reference documentation
+Load current state from project documents (use native Read):
+- `/home/berkaygkv/Dev/Docs/.obs-vault/notes/runbook.md` — tasks, knowledge gaps, blockers
+- `/home/berkaygkv/Dev/Docs/.obs-vault/notes/locked.md` — committed decisions/constraints
 
 ### Step 5: Summarize Current State
 
@@ -60,18 +68,25 @@ Provide a brief summary:
 ## Current State
 
 **Phase:** {from runbook frontmatter}
-**Blockers:** {from runbook frontmatter}
+**Blockers:** {from runbook frontmatter, or "none"}
 
 **Active Tasks:**
-{incomplete tasks from runbook}
+{incomplete tasks from runbook Active section}
+
+**Knowledge Gaps:**
+{from runbook Knowledge Gaps table, or "None"}
 ```
+
+Note: locked.md is read for Claude's context (constraints/guardrails) but not displayed — the user already knows the locked decisions.
 
 ### Step 6: Prepare Session Scratch
 
-First read then reset and prepare `scratch.md` for the new session:
+Reset and prepare `scratch.md` for the new session using native Write:
+- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
 
-```bash
-cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
+**Template content** (with session number filled in):
+
+```markdown
 # Session Scratch
 
 ## Meta
@@ -89,7 +104,6 @@ cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
 
 ## Notes
 <!-- Anything else to capture -->
-EOF
 ```
 
 Where `{N+1}` is the next session number (previous session number + 1).
@@ -148,6 +162,8 @@ the symlink structure for git versioning.
 - [ ] Define session handoff schemas [priority:: 1]
 - [ ] Create session templates [priority:: 2]
 
+**Knowledge Gaps:** None
+
 ---
 
 Ready to continue. What's the focus of this session?
@@ -167,3 +183,4 @@ Suggested (from previous session):
 - If the previous session outcome was `blocked`, highlight the blocker prominently
 - The handoff context should be enough to resume work without reading the full transcript
 - scratch.md is the staging area for vault writes during the session
+- schemas.md is reference documentation; skills have structures inline where needed

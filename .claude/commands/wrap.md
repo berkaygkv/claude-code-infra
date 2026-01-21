@@ -2,17 +2,28 @@
 
 This command performs end-of-session tasks: process the session scratch file, update vault documents, create session handoff note, and commit changes.
 
+## Design Rationale
+
+**I/O Strategy (per locked decision):**
+- **Native Read/Write** for all content operations (scratch.md, runbook.md, overview.md, locked.md, session notes)
+- **MCP** only for metadata operations if needed (frontmatter-only updates, search, tags)
+
+**Documents updated:**
+- `runbook.md` — Task state, phase, blockers
+- `overview.md` — Dashboard state, recent sessions
+- `locked.md` — New LOCKED decisions (if any)
+- `session-{N}.md` — Session handoff note (created)
+- `scratch.md` — Reset to template
+- `CLAUDE.md` — Evolved patterns (if any)
+
 ## Instructions
 
 When the user invokes `/wrap`, perform these steps in order:
 
 ### Step 1: Read Session Scratch
 
-Read the session scratch file to understand what was staged during the session:
-
-```bash
-cat /home/berkaygkv/Dev/headquarter/kh/scratch.md
-```
+Read the session scratch file using native Read (consistent with Vault I/O Strategy):
+- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
 
 Extract:
 - **Session number** from Meta section
@@ -49,22 +60,24 @@ This synthesis informs all document updates below.
 
 ### Step 4: Update Runbook
 
-Read and update `notes/runbook.md` using Obsidian MCP:
+Read and update runbook using native Read/Write (consistent with Vault I/O Strategy):
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/runbook.md`
 
 1. **Mark completed tasks:** Change `- [ ]` to `- [x]` and add completion date `✅YYYY-MM-DD`
-2. **Add new tasks:** From scratch.md Tasks section, add to Upcoming with `[phase:: x] [priority:: n]`
+2. **Add new tasks:** From scratch.md Tasks section, add to Active with `[phase:: x] [priority:: n]`
 3. **Update frontmatter:**
    - `updated`: Today's date
    - `phase`: Current phase (infrastructure, validation, research, etc.)
    - `blockers`: Any blockers from scratch.md, or "none"
-4. **Update Progress section:** Add brief note about what was accomplished
+4. **Update Progress section:** Link to this session
 5. **Update Knowledge Gaps:** Add any gaps discovered during the session
 
-Use `mcp__obsidian__patch_note` for surgical updates or `mcp__obsidian__write_note` for full replacement.
+Use native Read to get current content, Edit for surgical updates, or Write for full replacement.
 
 ### Step 5: Update Overview
 
-Read and update `notes/overview.md` using Obsidian MCP:
+Read and update overview using native Read/Write:
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/overview.md`
 
 1. **Update frontmatter:**
    - `updated`: Today's date
@@ -77,9 +90,9 @@ Read and update `notes/overview.md` using Obsidian MCP:
 
 ### Step 6: Update Locked Decisions (if applicable)
 
-If any LOCKED decisions are in scratch.md or were made this session, update `notes/locked.md`:
+If any LOCKED decisions are in scratch.md or were made this session, update locked.md using native Read/Write:
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/locked.md`
 - Add to Decisions table with Area, Decision, Rationale
-- Add any new schemas if defined
 
 Skip this step if no new LOCKED decisions were made.
 
@@ -130,18 +143,19 @@ tags:
 - **Memory**: Merge scratch.md Memory with important facts from conversation
 - **Next Steps**: Concrete, actionable items. What should the next session start with?
 
-### Step 8: Write Session Note to Obsidian
+### Step 8: Write Session Note
 
-Use the Obsidian MCP to write the session note:
-- Path: `notes/Sessions/session-{N}.md`
-- Use `mcp__obsidian__write_note`
+Write the session note using native Write:
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-{N}.md`
 
 ### Step 9: Reset Session Scratch
 
-Reset scratch.md to its template form (do not include session number—that's set by `/begin`):
+Reset scratch.md to its template form using native Write (do not include session number—that's set by `/begin`):
+- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
 
-```bash
-cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
+**Template content:**
+
+```markdown
 # Session Scratch
 
 ## Meta
@@ -159,10 +173,43 @@ cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'
 
 ## Notes
 <!-- Anything else to capture -->
-EOF
 ```
 
-### Step 10: Git Commit (Automatic)
+### Step 10: Living CLAUDE.md Review
+
+Review the session for patterns that should persist in CLAUDE.md:
+
+**Look for:**
+- Repeated corrections ("I said X, not Y" multiple times)
+- Expressed preferences ("always do X", "never do Y")
+- Workflow adjustments that improved the session
+- Anti-patterns that caused friction
+
+**If patterns found:**
+
+Present them to the user:
+
+```
+## CLAUDE.md Candidates
+
+I noticed these patterns this session that might be worth adding to CLAUDE.md:
+
+1. **{pattern}** — {why it matters}
+2. **{pattern}** — {why it matters}
+
+Would you like me to add any of these to CLAUDE.md?
+```
+
+**If approved:**
+- Read current CLAUDE.md
+- Add to appropriate section (or create new section if needed)
+- Keep additions concise — these are operational instructions, not documentation
+
+**If no patterns or user declines:** Skip silently.
+
+**Note:** This step is about evolving the system prompt based on observed friction. Not every session will have candidates.
+
+### Step 11: Git Commit (Automatic)
 
 Invoking `/wrap` signals approval to commit. Commit changes to the kh repo:
 
@@ -173,11 +220,11 @@ git add -A
 git commit -m "Session {N}: {brief summary}"
 ```
 
-Skip commit if no changes. Report commit hash in Step 11.
+Skip commit if no changes. Report commit hash in Step 12.
 
 **Note:** Notes in Obsidian vault are not git-tracked. scratch.md is reset, not committed with content.
 
-### Step 11: Confirm Completion
+### Step 12: Confirm Completion
 
 Report what was done in a summary table:
 
@@ -191,6 +238,7 @@ Report what was done in a summary table:
 | locked.md | {Updated with N decisions / No changes} |
 | session-{N}.md | Created with handoff |
 | scratch.md | Reset to template |
+| CLAUDE.md | {Updated with N patterns / No changes} |
 
 **Topics:** {topics}
 **Outcome:** {outcome}
@@ -217,6 +265,7 @@ Use `/begin` in next session to resume.
 | locked.md | Updated with 1 decision |
 | session-15.md | Created with handoff |
 | scratch.md | Reset to template |
+| CLAUDE.md | No changes |
 
 **Topics:** [scratch-file-implementation, vault-staging]
 **Outcome:** successful
