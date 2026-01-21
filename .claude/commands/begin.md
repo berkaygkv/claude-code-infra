@@ -49,7 +49,8 @@ Present the handoff information clearly:
 Load current state from project documents:
 - Read `notes/runbook.md` for current tasks/phase
 - Read `notes/overview.md` for project state
-- Optionally read `notes/locked.md` if decisions are referenced
+- Read `notes/locked.md` for committed decisions
+- Read `notes/schemas.md` for reference documentation
 
 ### Step 5: Summarize Current State
 
@@ -67,7 +68,7 @@ Provide a brief summary:
 
 ### Step 6: Prepare Session Scratch
 
-Reset and prepare `scratch.md` for the new session:
+First read then reset and prepare `scratch.md` for the new session:
 
 ```bash
 cat > /home/berkaygkv/Dev/headquarter/kh/scratch.md << 'EOF'

@@ -62,6 +62,7 @@ Use these tools effectively:
 - **WebFetch**: Read specific pages in detail. Don't skip sources because they require fetching.
 - **Read/Glob/Grep**: When researching something within a codebase, examine the actual code.
 - **Context7 MCP** (if available): For up-to-date library documentation.
+- **Deepwiki MCP**: AI-Powered codebase intelligence. You can use it to analyze a github codebase.
 
 ## Quality Standards
 
