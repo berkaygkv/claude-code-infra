@@ -1,0 +1,47 @@
+---
+type: locked-decisions
+project: {{PROJECT_NAME}}
+updated: '{{DATE}}'
+---
+# Locked Decisions
+
+> Committed decisions for the {{PROJECT_NAME}} project. High bar to change — requires proof or strong reason to unlock.
+
+## Target
+
+Define your project target here.
+
+## LOCK/UNLOCK Protocol
+
+### When to LOCK
+
+A decision qualifies for LOCK when **3+ criteria** apply:
+
+- [ ] **Consequential** — Affects multiple components or future decisions
+- [ ] **Debated** — We considered alternatives and chose this one
+- [ ] **Costly to reverse** — Changing later would require significant rework
+- [ ] **Understood** — Both parties can articulate why this is the right choice
+
+If only 1-2 apply → keep as OPEN, not LOCKED.
+
+### When to UNLOCK
+
+UNLOCK requires one of:
+
+- [ ] **New evidence** — Information we didn't have when we locked
+- [ ] **Contradiction** — The decision conflicts with something else we locked
+- [ ] **Failure** — We tried it and it demonstrably doesn't work
+
+**Procedure:**
+1. State which criterion applies and why
+2. Discuss alternative
+3. If agreed, update decision + append `(unlocked from [[session-N]], re-locked [[session-M]])` to source
+
+## Decisions
+
+| Area | Decision | Rationale | Source |
+|------|----------|-----------|--------|
+
+## Related
+
+- [[schemas]] — Reference documentation for project structures

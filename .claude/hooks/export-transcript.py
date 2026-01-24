@@ -24,10 +24,43 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+
+# ============================================================================
 # Configuration
-OBSIDIAN_VAULT = Path("/home/berkaygkv/Dev/Docs/.obs-vault")
-SESSIONS_DIR = OBSIDIAN_VAULT / "notes" / "Sessions"
-TRANSCRIPTS_DIR = SESSIONS_DIR / "transcripts"
+# ============================================================================
+
+def load_kh_config() -> dict[str, Any]:
+    """Load KH config from repo root.
+
+    Raises FileNotFoundError if config doesn't exist.
+    """
+    config_path = Path(__file__).parent.parent.parent / ".kh-config.json"
+    if not config_path.exists():
+        raise FileNotFoundError(f"KH config not found: {config_path}")
+    return json.loads(config_path.read_text())
+
+
+def get_session_paths() -> tuple[Path, Path, Path]:
+    """Get session paths from config.
+
+    Returns (vault_root, sessions_dir, transcripts_dir).
+    """
+    config = load_kh_config()
+    vault_root = Path(config["vault_root"])
+    sessions_dir = vault_root / "notes" / "Sessions"
+    transcripts_dir = sessions_dir / "transcripts"
+    return vault_root, sessions_dir, transcripts_dir
+
+
+# Load paths from config
+try:
+    OBSIDIAN_VAULT, SESSIONS_DIR, TRANSCRIPTS_DIR = get_session_paths()
+except FileNotFoundError as e:
+    print(f"Warning: {e}", file=sys.stderr)
+    # Fallback for development - will fail gracefully if needed
+    OBSIDIAN_VAULT = Path("/tmp/kh-vault")
+    SESSIONS_DIR = OBSIDIAN_VAULT / "notes" / "Sessions"
+    TRANSCRIPTS_DIR = SESSIONS_DIR / "transcripts"
 
 
 def get_session_number_if_wrapped() -> int | None:

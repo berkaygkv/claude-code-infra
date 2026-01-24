@@ -1,0 +1,33 @@
+---
+type: project-overview
+project: {{PROJECT_NAME}}
+updated: '{{DATE}}'
+current_phase: infrastructure
+next_action: Define project goals and scope
+---
+# {{PROJECT_NAME}} Project
+
+## Current State
+
+| Phase | Next Action | Blockers |
+|-------|-------------|----------|
+| Infrastructure | Define project goals | None |
+
+## Key Documents
+
+| Document | Purpose |
+|----------|---------|
+| [[locked]] | Committed decisions |
+| [[schemas]] | Reference documentation for structures |
+| [[runbook]] | Task tracking and progress |
+
+## Recent Sessions
+
+| Session | Date | Outcome | Topic |
+|---------|------|---------|-------|
+
+## Active Research
+
+| Target | Topic |
+|--------|-------|
+| *None* | |

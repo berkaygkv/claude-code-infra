@@ -16,10 +16,44 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
+
+# ============================================================================
 # Configuration
-OBSIDIAN_VAULT = Path("/home/berkaygkv/Dev/Docs/.obs-vault")
-RESEARCH_TARGETS_DIR = OBSIDIAN_VAULT / "notes" / "research" / "targets"
+# ============================================================================
+
+def load_kh_config() -> dict[str, Any]:
+    """Load KH config from repo root.
+
+    Raises FileNotFoundError if config doesn't exist.
+    """
+    config_path = Path(__file__).parent.parent.parent / ".kh-config.json"
+    if not config_path.exists():
+        raise FileNotFoundError(f"KH config not found: {config_path}")
+    return json.loads(config_path.read_text())
+
+
+def get_research_paths() -> tuple[Path, Path]:
+    """Get research paths from config.
+
+    Returns (vault_root, targets_dir).
+    """
+    config = load_kh_config()
+    vault_root = Path(config["vault_root"])
+    targets_dir = vault_root / "notes" / "research" / "targets"
+    return vault_root, targets_dir
+
+
+# Load paths from config
+try:
+    OBSIDIAN_VAULT, RESEARCH_TARGETS_DIR = get_research_paths()
+except FileNotFoundError as e:
+    print(f"Warning: {e}", file=sys.stderr)
+    # Fallback for development - will fail gracefully if needed
+    OBSIDIAN_VAULT = Path("/tmp/kh-vault")
+    RESEARCH_TARGETS_DIR = OBSIDIAN_VAULT / "notes" / "research" / "targets"
+
 ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 
 

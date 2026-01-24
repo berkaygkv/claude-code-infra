@@ -1,0 +1,54 @@
+---
+type: runbook
+project: {{PROJECT_NAME}}
+updated: {{DATE}}
+phase: infrastructure
+blockers: none
+---
+
+# Runbook
+
+## Progress
+
+See [[Sessions/session-1|Session 1]] for latest. Full history in `Sessions/` folder.
+
+## Active
+
+- [ ] Define project goals and scope [phase:: planning] [priority:: 1]
+
+## Completed
+
+## Dropped
+
+## Knowledge Gaps
+
+| Gap | Severity | Notes |
+|-----|----------|-------|
+| *None currently* | | |
+
+## Blockers
+
+None
+
+---
+
+## Task Queries
+
+### High Priority Tasks
+
+```dataview
+TASK
+FROM "runbook"
+WHERE !completed AND priority <= 2
+SORT priority ASC
+```
+
+### All Incomplete Tasks
+
+```dataview
+TASK
+FROM "runbook"
+WHERE !completed
+GROUP BY phase
+SORT priority ASC
+```
