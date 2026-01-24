@@ -1,38 +1,42 @@
 # Session Begin Command
 
-This command loads context from the previous session and prepares the session scratch file.
+This command loads context from the previous session and activates the specified mode.
 
-## Design Rationale
+## Usage
 
-**What we read and why:**
-- **Session handoff** — Continuity from last session (context, decisions, memory, next steps)
-- **runbook.md** — Operational state (active tasks, knowledge gaps, blockers)
-- **locked.md** — Fundamental constraints and committed decisions
+```
+/begin              → Quick fix mode (minimal protocols)
+/begin brainstorm   → Plan mode (alignment before action)
+/begin build        → Execution mode (ship artifacts)
+```
 
-**What we don't read at /begin:**
-- **overview.md** — Obsidian dashboard for human navigation; redundant for Claude
-- **schemas.md** — Reference documentation; structures are inline in skills where needed
+## Mode Protocol
+
+!`/home/berkaygkv/Dev/headquarter/kh/scripts/load-protocol.sh $ARGUMENTS`
+
+---
+
+## Session Context
+
+Last session: !`/home/berkaygkv/Dev/headquarter/kh/scripts/last-session.sh`
 
 ## Instructions
 
-When the user invokes `/begin`, perform these steps in order:
+When the user invokes `/begin [mode]`, perform these steps:
 
-### Step 1: Find Most Recent Session
+### Step 1: Acknowledge Mode
 
-Scan the Sessions folder to find the latest session note:
-
-```bash
-ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
-```
+State which mode is active:
+- No argument → "Quick fix mode — minimal overhead, direct execution"
+- `brainstorm` → "Brainstorm mode — alignment before action"
+- `build` → "Build mode — executing approved plan"
 
 ### Step 2: Read Previous Session Handoff
 
-Use native Read for the session note (consistent with Vault I/O Strategy):
+Use native Read for the session note:
 - Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-{N}.md`
 
 ### Step 3: Display Handoff Context
-
-Present the handoff information clearly:
 
 ```
 ## Resuming from Session {N}
@@ -56,13 +60,11 @@ Present the handoff information clearly:
 
 ### Step 4: Read Operational State
 
-Load current state from project documents (use native Read):
+Load current state (use native Read):
 - `/home/berkaygkv/Dev/Docs/.obs-vault/notes/runbook.md` — tasks, knowledge gaps, blockers
 - `/home/berkaygkv/Dev/Docs/.obs-vault/notes/locked.md` — committed decisions/constraints
 
 ### Step 5: Summarize Current State
-
-Provide a brief summary:
 
 ```
 ## Current State
@@ -77,110 +79,48 @@ Provide a brief summary:
 {from runbook Knowledge Gaps table, or "None"}
 ```
 
-Note: locked.md is read for Claude's context (constraints/guardrails) but not displayed — the user already knows the locked decisions.
+Note: locked.md is read for Claude's context but not displayed.
 
-### Step 6: Prepare Session Scratch
+### Step 6: Mode-Specific Prompt
 
-Reset and prepare `scratch.md` for the new session using native Write:
-- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
-
-**Template content** (with session number filled in):
-
-```markdown
-# Session Scratch
-
-## Meta
-- session: {N+1}
-
-## Decisions
-<!-- LOCKED: decision — rationale -->
-<!-- OPEN: question still unresolved -->
-
-## Memory
-<!-- Facts, preferences, constraints to persist -->
-
-## Tasks
-<!-- New tasks, completed tasks, blockers -->
-
-## Notes
-<!-- Anything else to capture -->
+**Quick fix mode (no argument):**
+```
+Ready. What needs fixing?
 ```
 
-Where `{N+1}` is the next session number (previous session number + 1).
-
-### Step 7: Prompt for Session Focus
-
+**Brainstorm mode:**
 ```
-Ready to continue. What's the focus of this session?
+Ready to brainstorm. What are we thinking through?
 
 Suggested (from previous session):
 - {first next step}
 - {second next step}
 ```
 
-After the user provides direction, confirm:
+**Build mode:**
+Additionally, read the active plan file if one exists:
+- Check runbook for active plan reference, or
+- List `/home/berkaygkv/Dev/Docs/.obs-vault/notes/plans/` for in-progress plans
 
 ```
-Session {N+1} initialized. Scratch file ready.
+Ready to build.
+
+**Active Plan:** {plan name or "none"}
+**Current Phase:** {phase number and name}
+
+Continuing from where we left off. Confirm to proceed.
 ```
 
-**Note:** Topic is not set upfront—it emerges during the session and gets captured at `/wrap` time.
+### Step 7: Confirm Session Start
 
-## Example Output
-
+After user responds:
 ```
-## Resuming from Session 2
-
-**Date:** 2026-01-19
-**Topics:** project-documents, symlink-setup, dataview-tasks
-**Outcome:** successful
-
-### Context
-This session focused on creating core project documents and establishing
-the symlink structure for git versioning.
-
-### Decisions
-- LOCKED: Files live in kh/notes/, symlinked into Obsidian vault
-- OPEN: Obsidian doesn't auto-refresh when files created externally
-
-### Memory
-- Vault path: /home/berkaygkv/Dev/Docs/.obs-vault
-- MCP search doesn't work through symlinks (use Grep instead)
-
-### Next Steps
-- Define session handoff schemas
-- Create session templates
-
----
-
-## Current State
-
-**Phase:** infrastructure
-**Blockers:** none
-
-**Active Tasks:**
-- [ ] Define session handoff schemas [priority:: 1]
-- [ ] Create session templates [priority:: 2]
-
-**Knowledge Gaps:** None
-
----
-
-Ready to continue. What's the focus of this session?
-
-Suggested (from previous session):
-- Define session handoff schemas
-- Create session templates
+Session {N+1} started. [{mode} mode]
 ```
-
-**User:** Working on session templates
-
-**Claude:** Session 3 initialized. Scratch file ready.
 
 ## Notes
 
-- If no previous session exists, inform the user and offer to start fresh (session 1)
-- If the previous session outcome was `blocked`, highlight the blocker prominently
-- The handoff context should be enough to resume work without reading the full transcript
-- scratch.md is the staging area for vault writes during the session
-- schemas.md is reference documentation; skills have structures inline where needed
+- If no previous session exists, offer to start fresh (session 1)
+- If previous session outcome was `blocked`, highlight the blocker prominently
+- scratch.md is prepared by `/wrap` at the end of each session
+- Mode protocols are loaded from `kh/protocols/` — edit those files to change cognitive behavior

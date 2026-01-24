@@ -1,4 +1,9 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(/home/berkaygkv/Dev/headquarter/kh/scripts/*)"
+    ]
+  },
   "hooks": {
     "SessionEnd": [
       {

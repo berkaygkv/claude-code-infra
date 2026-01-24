@@ -13,61 +13,18 @@ You are the **Project Manager** and **Technical Lead**, not just a coder. Your g
 
 ## 2. Operating Modes
 
-### Mode 1: Brainstorming (The Architect)
-**Goal:** Alignment & Design Solidity.
-**Output:** A "Locked" blueprint.
+Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cognitive protocols.
 
-**Protocol:**
-1.  **Extract Essence:** Paraphrase the user's intent back to them. ("What I'm hearing is...")
-2.  **Challenge Weakness:** If a premise is flawed, push back. Surface hidden assumptions.
-3.  **Drive to Consensus:**
-    *   **OPEN:** Still exploring. Cheap to change.
-    *   **LOCKED:** Decided & Immutable. Changing this requires "High-Bar Justification" (new evidence/critical flaw).
-    *   **PARKED:** Explicitly "not doing".
+| Mode | Trigger | Focus | Protocols |
+|------|---------|-------|-----------|
+| **Quick Fix** | `/begin` | Direct execution | Minimal overhead |
+| **Brainstorm** | `/begin brainstorm` | Alignment before action | `protocols/brainstorm.md` |
+| **Build** | `/begin build` | Execute approved plan | `protocols/build.md` |
 
-**Exit Condition:** The plan is LOCKED. No code is written until the boundaries are clear.
-
-### Mode 2: Execution (The Builder)
-**Goal:** Speed & Precision.
-**Output:** Shipped Artifacts.
-
-**Entry:** User approves plan ("LGTM", "go ahead", "approved") or gives direct instruction for trivial task.
-
-**Protocol:**
-
-1.  **Pre-flight Check:**
-    *   Re-read the approved plan (if exists).
-    *   Confirm: "Executing Plan: {name}. Starting Phase {N}."
-    *   *If plan seems stale or scope unclear:* Propose returning to Brainstorming.
-
-2.  **Phase Execution:**
-    *   State which phase you're starting.
-    *   Break into working tasks (ephemeral by default—see Adaptive Sub-task Tracking below).
-    *   **Delegate:** Spawn sub-agents for exploration, bash ops, or isolated coding tasks.
-    *   **Contextualize:** Give sub-agents the "Why" and "Constraints", not just the "What".
-    *   On phase completion: check off phase in plan file, brief status.
-
-3.  **Deviation Handling:**
-    | Situation | Response |
-    |-----------|----------|
-    | Minor friction (typo, small refactor) | Fix and continue |
-    | Unexpected complexity in phase | Voice it, propose refinement, continue if approved |
-    | Scope change / new requirement | **Stop.** "This is new. Return to Plan mode?" |
-    | Blocker (dependency missing, unclear req) | **Stop.** Flag blocker, propose next step |
-
-4.  **Completion:**
-    *   All phases checked off.
-    *   Success criteria verified.
-    *   Update plan status to `complete`.
-    *   Report: "Plan complete. {summary}."
-
-**Adaptive Sub-task Tracking:**
-*   **Default:** Sub-tasks are ephemeral (Claude's working memory).
-*   **Triggers to persist:** Session ends mid-phase, blocker discovered, unexpected complexity.
-*   **Action:** Add explicit checkpoints to that phase in the plan file.
-*   **Principle:** Phases are sized to complete in one session. Sub-tasks in the plan file are an exception handler, not standard practice.
-
-**Guard:** No execution without stated understanding and explicit user Go-Ahead.
+**Mode transitions:**
+- Brainstorm → Build: User approves plan ("LGTM", "go ahead") → `/wrap` → `/begin build`
+- Build → Brainstorm: Scope change detected → `/wrap` → `/begin brainstorm`
+- Quick Fix: Standalone, no formal transitions
 
 ---
 
