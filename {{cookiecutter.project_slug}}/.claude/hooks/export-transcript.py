@@ -11,7 +11,7 @@ Behavior:
 - /wrap NOT run → skip export (session discarded)
 
 Naming: session-N.md (sequential numbering, matches session note)
-Location: /notes/Sessions/transcripts/session-N.md
+Location: vault/Sessions/transcripts/session-N.md
 
 Usage: Configured in .claude/settings.json under hooks.SessionEnd
 """
@@ -26,41 +26,28 @@ from typing import Any
 
 
 # ============================================================================
-# Configuration
+# Configuration - Relative paths from project root
 # ============================================================================
 
-def load_kh_config() -> dict[str, Any]:
-    """Load KH config from repo root.
-
-    Raises FileNotFoundError if config doesn't exist.
-    """
-    config_path = Path(__file__).parent.parent.parent / ".kh-config.json"
-    if not config_path.exists():
-        raise FileNotFoundError(f"KH config not found: {config_path}")
-    return json.loads(config_path.read_text())
+def get_project_root() -> Path:
+    """Get project root (parent of .claude/hooks/)."""
+    return Path(__file__).parent.parent.parent
 
 
 def get_session_paths() -> tuple[Path, Path, Path]:
-    """Get session paths from config.
+    """Get session paths relative to project root.
 
     Returns (vault_root, sessions_dir, transcripts_dir).
     """
-    config = load_kh_config()
-    vault_root = Path(config["vault_root"])
-    sessions_dir = vault_root / "notes" / "Sessions"
+    project_root = get_project_root()
+    vault_root = project_root / "vault"
+    sessions_dir = vault_root / "Sessions"
     transcripts_dir = sessions_dir / "transcripts"
     return vault_root, sessions_dir, transcripts_dir
 
 
-# Load paths from config
-try:
-    OBSIDIAN_VAULT, SESSIONS_DIR, TRANSCRIPTS_DIR = get_session_paths()
-except FileNotFoundError as e:
-    print(f"Warning: {e}", file=sys.stderr)
-    # Fallback for development - will fail gracefully if needed
-    OBSIDIAN_VAULT = Path("/tmp/kh-vault")
-    SESSIONS_DIR = OBSIDIAN_VAULT / "notes" / "Sessions"
-    TRANSCRIPTS_DIR = SESSIONS_DIR / "transcripts"
+# Load paths
+OBSIDIAN_VAULT, SESSIONS_DIR, TRANSCRIPTS_DIR = get_session_paths()
 
 
 def get_session_number_if_wrapped() -> int | None:
@@ -167,7 +154,6 @@ session: {session_num}
 date: {date}
 time_start: "{time_start}"
 time_end: "{time_end}"
-project: kh
 session_note: "[[Sessions/{session_name}]]"
 tags:
   - session
