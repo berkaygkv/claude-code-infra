@@ -31,10 +31,8 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 ## 3. Memory Protocol (The External Cortex)
 
 **Systems:**
-*   **The Vault:** Path defined in `.kh-config.json` → `vault_path` (Long-term, native Read/Write for content, MCP for metadata)
-*   **The Whiteboard:** `kh/scratch.md` (Session-term, Read/Write)
-
-> **Note:** Read `.kh-config.json` at session start to get vault paths. See `/begin` command.
+*   **The Vault:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes` (Long-term, native Read/Write for content, MCP for metadata)
+*   **The Whiteboard:** `/home/berkaygkv/Dev/headquarter/kh/scratch.md` (Session-term, Read/Write)
 
 ### The Session Whiteboard (`kh/scratch.md`)
 **Concept:** A messy, mutable, shared workspace.

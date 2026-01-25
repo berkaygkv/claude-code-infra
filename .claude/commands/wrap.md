@@ -16,36 +16,25 @@ This command performs end-of-session tasks: process the session scratch file, up
 - `scratch.md` — Reset and prepared for next session (N+1)
 - `CLAUDE.md` — Evolved patterns (if any)
 
-## Configuration
+## Paths
 
-First, read the KH config to get paths:
-- Config file: `kh/.kh-config.json`
-
-Extract:
-- `vault_root` → Base path for vault operations
-- `vault_path` → Path to notes folder
-- `kh_path` → Path to kh repository
-
-All paths below use these config values:
-- Session notes: `{vault_path}/Sessions/session-{N}.md`
-- Transcripts: `{vault_path}/Sessions/transcripts/session-{N}.md`
-- Runbook: `{vault_path}/runbook.md`
-- Overview: `{vault_path}/overview.md`
-- Locked decisions: `{vault_path}/locked.md`
-- Scratch: `{kh_path}/scratch.md`
+- Vault: `/home/berkaygkv/Dev/Docs/.obs-vault/notes`
+- KH: `/home/berkaygkv/Dev/headquarter/kh`
+- Session notes: `{vault}/Sessions/session-{N}.md`
+- Transcripts: `{vault}/Sessions/transcripts/session-{N}.md`
+- Runbook: `{vault}/runbook.md`
+- Overview: `{vault}/overview.md`
+- Locked decisions: `{vault}/locked.md`
+- Scratch: `{kh}/scratch.md`
 
 ## Instructions
 
 When the user invokes `/wrap`, perform these steps in order:
 
-### Step 0: Load Configuration
-
-Read `kh/.kh-config.json` to get vault and kh paths. If config missing, show error and abort.
-
 ### Step 1: Read Session Scratch
 
 Read the session scratch file using native Read (consistent with Vault I/O Strategy):
-- Path: `{kh_path}/scratch.md`
+- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
 
 Extract:
 - **Session number** from Meta section
@@ -63,7 +52,7 @@ If session number is in scratch.md Meta section, use that.
 Otherwise, scan the Sessions folder to find the next session number:
 
 ```bash
-ls -1 {vault_path}/Sessions/*.md {vault_path}/Sessions/transcripts/*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
+ls -1 /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/*.md /home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/transcripts/*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1
 ```
 
 Use N+1 as the session number.
@@ -83,7 +72,7 @@ This synthesis informs all document updates below.
 ### Step 4: Update Runbook
 
 Read and update runbook using native Read/Write (consistent with Vault I/O Strategy):
-- Path: `{vault_path}/runbook.md`
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/runbook.md`
 
 1. **Mark completed tasks:** Change `- [ ]` to `- [x]` and add completion date `✅YYYY-MM-DD`
 2. **Add new tasks:** From scratch.md Tasks section, add to Active with `[phase:: x] [priority:: n]`
@@ -99,7 +88,7 @@ Use native Read to get current content, Edit for surgical updates, or Write for 
 ### Step 5: Update Overview
 
 Read and update overview using native Read/Write:
-- Path: `{vault_path}/overview.md`
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/overview.md`
 
 1. **Update frontmatter:**
    - `updated`: Today's date
@@ -113,7 +102,7 @@ Read and update overview using native Read/Write:
 ### Step 6: Update Locked Decisions (if applicable)
 
 If any LOCKED decisions are in scratch.md or were made this session, update locked.md using native Read/Write:
-- Path: `{vault_path}/locked.md`
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/locked.md`
 - Add to Decisions table with Area, Decision, Rationale
 
 Skip this step if no new LOCKED decisions were made.
@@ -168,12 +157,12 @@ tags:
 ### Step 8: Write Session Note
 
 Write the session note using native Write:
-- Path: `{vault_path}/Sessions/session-{N}.md`
+- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-{N}.md`
 
 ### Step 9: Reset Session Scratch for Next Session
 
 Reset scratch.md and prepare it for the next session using native Write:
-- Path: `{kh_path}/scratch.md`
+- Path: `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
 - Set session number to **N+1** (current session + 1)
 
 **Template content:**
@@ -239,7 +228,7 @@ Would you like me to add any of these to CLAUDE.md?
 Invoking `/wrap` signals approval to commit. Commit changes to the kh repo:
 
 ```bash
-cd {kh_path}
+cd /home/berkaygkv/Dev/headquarter/kh
 git status
 git add -A
 git commit -m "Session {N}: {brief summary}"
@@ -307,7 +296,7 @@ Use `/begin` in next session to resume.
 
 ## Scratch File Reference
 
-The scratch file (`{kh_path}/scratch.md`) is a staging area for vault writes:
+The scratch file (`/home/berkaygkv/Dev/headquarter/kh/scratch.md`) is a staging area for vault writes:
 
 | Section | Purpose | Maps to |
 |---------|---------|---------|
