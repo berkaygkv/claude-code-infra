@@ -1,8 +1,8 @@
 ---
 type: runbook
-project: {{PROJECT_NAME}}
-updated: {{DATE}}
-phase: infrastructure
+project: {{ cookiecutter.project_slug }}
+updated: {% now 'local', '%Y-%m-%d' %}
+phase: planning
 blockers: none
 ---
 

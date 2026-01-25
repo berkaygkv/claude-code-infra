@@ -10,42 +10,27 @@ This command loads context from the previous session and activates the specified
 /begin build        → Execution mode (ship artifacts)
 ```
 
-## Configuration
+## Paths
 
-First, read the KH config to get paths:
-- Config file: `kh/.kh-config.json`
-
-Extract:
-- `vault_root` → Base path for vault operations
-- `vault_path` → Path to notes folder
-- `project_name` → Project identifier
-
-All paths below use these config values:
-- Session notes: `{vault_path}/Sessions/session-{N}.md`
-- Runbook: `{vault_path}/runbook.md`
-- Locked decisions: `{vault_path}/locked.md`
-- Plans: `{vault_path}/plans/`
-- Scratch: `kh/scratch.md`
+- Session notes: `vault/Sessions/session-{N}.md`
+- Runbook: `vault/runbook.md`
+- Locked decisions: `vault/locked.md`
+- Plans: `vault/plans/`
+- Scratch: `scratch.md`
 
 ## Mode Protocol
 
-!`kh/scripts/load-protocol.sh $ARGUMENTS`
+!`scripts/load-protocol.sh $ARGUMENTS`
 
 ---
 
 ## Session Context
 
-Last session: !`kh/scripts/last-session.sh`
+Last session: !`scripts/last-session.sh`
 
 ## Instructions
 
 When the user invokes `/begin [mode]`, perform these steps:
-
-### Step 0: Load Configuration
-
-Read `kh/.kh-config.json` to get vault paths. Store:
-- `vault_path` for session/runbook/locked paths
-- `project_name` for display
 
 ### Step 1: Acknowledge Mode
 
@@ -69,9 +54,9 @@ Display:
 ```
 ## Session 1 (First Run)
 
-Welcome to {project_name}. No previous sessions found.
+Welcome to {{ cookiecutter.project_name }}. No previous sessions found.
 
-**Vault:** {vault_root}
+**Vault:** vault/
 
 This is a fresh installation. The following files are ready:
 - locked.md — for committed decisions
@@ -86,7 +71,7 @@ Then skip to Step 7 (confirm session start).
 ### Step 3: Read Previous Session Handoff
 
 Use native Read for the session note:
-- Path: `{vault_path}/Sessions/session-{N}.md`
+- Path: `vault/Sessions/session-{N}.md`
 
 ### Step 4: Display Handoff Context
 
@@ -113,8 +98,8 @@ Use native Read for the session note:
 ### Step 5: Read Operational State
 
 Load current state (use native Read):
-- `{vault_path}/runbook.md` — tasks, knowledge gaps, blockers
-- `{vault_path}/locked.md` — committed decisions/constraints
+- `vault/runbook.md` — tasks, knowledge gaps, blockers
+- `vault/locked.md` — committed decisions/constraints
 
 ### Step 6: Summarize Current State
 
@@ -152,7 +137,7 @@ Suggested (from previous session):
 **Build mode:**
 Additionally, read the active plan file if one exists:
 - Check runbook for active plan reference, or
-- List `{vault_path}/plans/` for in-progress plans
+- List `vault/plans/` for in-progress plans
 
 ```
 Ready to build.
@@ -172,7 +157,6 @@ Session {N+1} started. [{mode} mode]
 
 ## Notes
 
-- If config file is missing, show error: "KH not initialized. Run: python scripts/bootstrap.py init --project NAME --vault PATH"
 - If previous session outcome was `blocked`, highlight the blocker prominently
 - scratch.md is prepared by `/wrap` at the end of each session
-- Mode protocols are loaded from `kh/protocols/` — edit those files to change cognitive behavior
+- Mode protocols are loaded from `protocols/` — edit those files to change cognitive behavior

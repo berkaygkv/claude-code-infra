@@ -7,7 +7,7 @@ This hook runs when any subagent finishes but only captures deep-research
 the official Research Schema v1.0.
 
 Output structure (folder per output):
-  research/outputs/OUTPUT-{timestamp}-{slug}/
+  vault/research/outputs/OUTPUT-{timestamp}-{slug}/
     ├── findings.md   (main output + top sources)
     └── sources.md    (full source list)
 
@@ -30,41 +30,28 @@ from urllib.parse import urlparse
 
 
 # ============================================================================
-# Configuration
+# Configuration - Relative paths from project root
 # ============================================================================
 
-def load_kh_config() -> dict[str, Any]:
-    """Load KH config from repo root.
-
-    Raises FileNotFoundError if config doesn't exist.
-    """
-    config_path = Path(__file__).parent.parent.parent / ".kh-config.json"
-    if not config_path.exists():
-        raise FileNotFoundError(f"KH config not found: {config_path}")
-    return json.loads(config_path.read_text())
+def get_project_root() -> Path:
+    """Get project root (parent of .claude/hooks/)."""
+    return Path(__file__).parent.parent.parent
 
 
 def get_vault_paths() -> tuple[Path, Path, Path]:
-    """Get vault paths from config.
+    """Get vault paths relative to project root.
 
     Returns (vault_root, outputs_dir, targets_dir).
     """
-    config = load_kh_config()
-    vault_root = Path(config["vault_root"])
-    outputs_dir = vault_root / "notes" / "research" / "outputs"
-    targets_dir = vault_root / "notes" / "research" / "targets"
+    project_root = get_project_root()
+    vault_root = project_root / "vault"
+    outputs_dir = vault_root / "research" / "outputs"
+    targets_dir = vault_root / "research" / "targets"
     return vault_root, outputs_dir, targets_dir
 
 
-# Load paths from config
-try:
-    OBSIDIAN_VAULT, RESEARCH_OUTPUTS_DIR, RESEARCH_TARGETS_DIR = get_vault_paths()
-except FileNotFoundError as e:
-    print(f"Warning: {e}", file=sys.stderr)
-    # Fallback for development - will fail gracefully if needed
-    OBSIDIAN_VAULT = Path("/tmp/kh-vault")
-    RESEARCH_OUTPUTS_DIR = OBSIDIAN_VAULT / "notes" / "research" / "outputs"
-    RESEARCH_TARGETS_DIR = OBSIDIAN_VAULT / "notes" / "research" / "targets"
+# Load paths
+OBSIDIAN_VAULT, RESEARCH_OUTPUTS_DIR, RESEARCH_TARGETS_DIR = get_vault_paths()
 PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
 ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 
@@ -494,7 +481,7 @@ def should_capture_agent(parsed: dict) -> bool:
 def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None, str | None]:
     """Export agent research to Obsidian vault as OUTPUT folder with findings + sources.
 
-    Creates: research/outputs/OUTPUT-{timestamp}-{slug}/
+    Creates: vault/research/outputs/OUTPUT-{timestamp}-{slug}/
                ├── findings.md
                └── sources.md
 

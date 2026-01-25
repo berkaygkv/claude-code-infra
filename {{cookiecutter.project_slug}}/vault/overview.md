@@ -1,17 +1,19 @@
 ---
 type: project-overview
-project: {{PROJECT_NAME}}
-updated: '{{DATE}}'
-current_phase: infrastructure
+project: {{ cookiecutter.project_slug }}
+updated: '{% now 'local', '%Y-%m-%d' %}'
+current_phase: planning
 next_action: Define project goals and scope
 ---
-# {{PROJECT_NAME}} Project
+# {{ cookiecutter.project_name }}
+
+{{ cookiecutter.project_description }}
 
 ## Current State
 
 | Phase | Next Action | Blockers |
 |-------|-------------|----------|
-| Infrastructure | Define project goals | None |
+| Planning | Define project goals | None |
 
 ## Key Documents
 

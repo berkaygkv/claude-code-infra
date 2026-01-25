@@ -1,15 +1,15 @@
 ---
 type: locked-decisions
-project: {{PROJECT_NAME}}
-updated: '{{DATE}}'
+project: {{ cookiecutter.project_slug }}
+updated: '{% now 'local', '%Y-%m-%d' %}'
 ---
 # Locked Decisions
 
-> Committed decisions for the {{PROJECT_NAME}} project. High bar to change — requires proof or strong reason to unlock.
+> Committed decisions for the {{ cookiecutter.project_name }} project. High bar to change — requires proof or strong reason to unlock.
 
 ## Target
 
-Define your project target here.
+{{ cookiecutter.project_description }}
 
 ## LOCK/UNLOCK Protocol
 

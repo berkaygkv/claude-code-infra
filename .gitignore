@@ -1,6 +1,0 @@
-__pycache__/
-*.pyc
-*.pyo
-
-# User-specific config (contains local paths)
-.kh-config.json
