@@ -22,13 +22,13 @@ This command loads context from the previous session and activates the specified
 
 ## Mode Protocol
 
-!`kh/scripts/load-protocol.sh $ARGUMENTS`
+!`scripts/load-protocol.sh $ARGUMENTS`
 
 ---
 
 ## Session Context
 
-Last session: !`kh/scripts/last-session.sh`
+Last session: !`scripts/last-session.sh`
 
 ## Instructions
 
@@ -161,4 +161,4 @@ Session {N+1} started. [{mode} mode]
 
 - If previous session outcome was `blocked`, highlight the blocker prominently
 - scratch.md is prepared by `/wrap` at the end of each session
-- Mode protocols are loaded from `kh/protocols/` — edit those files to change cognitive behavior
+- Mode protocols are loaded from `protocols/` — edit those files to change cognitive behavior

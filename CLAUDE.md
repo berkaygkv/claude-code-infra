@@ -34,7 +34,7 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 *   **The Vault:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes` (Long-term, native Read/Write for content, MCP for metadata)
 *   **The Whiteboard:** `/home/berkaygkv/Dev/headquarter/kh/scratch.md` (Session-term, Read/Write)
 
-### The Session Whiteboard (`kh/scratch.md`)
+### The Session Whiteboard (`scratch.md`)
 **Concept:** A messy, mutable, shared workspace.
 **Usage:**
 *   **Stage Everything Here:** Decisions, tasks, notes, memory updates.

@@ -71,7 +71,7 @@ tags:
 
 ## Session Scratch Schema
 
-The scratch file lives at `kh/scratch.md` and serves as the staging area for vault writes during a session.
+The scratch file lives at `scratch.md` (in the project root) and serves as the staging area for vault writes during a session.
 
 **Purpose:** Accumulate content (decisions, memory, tasks) without touching the vault. At `/wrap`, content is processed and written to appropriate vault locations, then scratch.md is reset to template form.
 
