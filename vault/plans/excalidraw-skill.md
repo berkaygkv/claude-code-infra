@@ -1,6 +1,6 @@
 ---
 type: plan
-status: approved
+status: complete
 created: 2026-02-04
 project: kh
 topic: excalidraw-skill
@@ -10,38 +10,32 @@ topic: excalidraw-skill
 
 ## Summary
 
-Create a comprehensive excalidraw skill that produces quality diagrams on first attempt, supporting 5 diagram types with modification capability.
+Create a proper Claude Code skill that produces Obsidian-compatible Excalidraw diagrams with validation and compression.
 
 ## Decisions (LOCKED)
 
 | Decision | Detail |
 |----------|--------|
 | Diagram types | Flowchart, System, Mind Map, Sequence, Timeline |
-| Output location | `vault/canvas/{slug}.excalidraw` |
-| Naming | Claude picks contextual slug |
-| Invocation | Auto-detect drawing requests + manual `/excalidraw` |
-| Modification | Support editing existing diagrams |
+| Output format | `.excalidraw.md` (Obsidian-compatible, LZ-string compressed) |
+| Output location | `vault/canvas/{slug}.excalidraw.md` |
+| Skill location | `.claude/skills/excalidraw/` |
+| Validation | Script-based (`scripts/validate.py`) |
+| Compression | Script-based (`scripts/compress.py`) |
 
-## Diagram Types
-
-| Type | Purpose | When to Use |
-|------|---------|-------------|
-| Flowchart | Process logic, decisions | "How does X work?" |
-| System | Components & connections | "What are the parts?" |
-| Mind Map | Idea exploration | "What are our options?" |
-| Sequence | Interactions over time | "Who talks to whom?" |
-| Timeline | Phases & milestones | "What's the plan?" |
-
-## File Structure
+## File Structure (Implemented)
 
 ```
-.claude/commands/
-  excalidraw.md                    # Main skill file
-  excalidraw/                      # Reference directory
-    ├── core-spec.md               # JSON structure, critical rules
-    ├── arrows.md                  # Routing, bindings, edge math
-    ├── colors.md                  # Semantic palette
-    └── diagram-types.md           # Layout templates per type
+.claude/skills/excalidraw/
+├── SKILL.md                    # Main skill file (concise)
+├── scripts/
+│   ├── validate.py             # Validates JSON before writing
+│   └── compress.py             # LZ-string compression for Obsidian
+└── references/
+    ├── json-spec.md            # Element templates, required properties
+    ├── arrows.md               # Routing patterns, bindings
+    ├── colors.md               # Semantic color palettes
+    └── layouts.md              # Diagram type layouts
 ```
 
 ## Workflow
@@ -49,105 +43,54 @@ Create a comprehensive excalidraw skill that produces quality diagrams on first 
 ### Generation Flow
 
 1. **UNDERSTAND** — What to visualize, which type, key elements
-2. **CONFIRM** — Brief confirmation before generating
-3. **GENERATE** — Load references, apply template, create JSON
-4. **VALIDATE** — Check labels, arrows, spacing, proportions
-5. **WRITE** — Save to vault/canvas/{slug}.excalidraw
+2. **CONFIRM** — "Creating {type} showing {summary}. Output: vault/canvas/{slug}.excalidraw.md"
+3. **GENERATE** — Build JSON following spec (read references)
+4. **VALIDATE** — `python scripts/validate.py <json-file>`
+5. **COMPRESS** — `python scripts/compress.py <json-file> <output.excalidraw.md>`
 
 ### Modification Flow
 
-1. **READ** existing diagram
-2. **PARSE** current elements
-3. **APPLY** changes (add/remove/move)
-4. **RE-VALIDATE**
-5. **WRITE** updated file
+1. **DECOMPRESS** — `python scripts/compress.py --decompress <file> /tmp/edit.json`
+2. **MODIFY** — Edit JSON
+3. **VALIDATE** — Run validation
+4. **COMPRESS** — Write back
 
 ## Critical Technical Rules
 
 ### Labels (Two-Element Binding)
-
-Every labeled shape needs TWO elements:
-- Shape with `boundElements: [{ id: "text-id", type: "text" }]`
-- Text with `containerId: "shape-id"`
-
-The `label` property does NOT work in raw JSON.
+- Shape: `boundElements: [{ id: "text-id", type: "text" }]`
+- Text: `containerId: "shape-id"`
+- Never use `label` property
 
 ### Arrows (Elbow Configuration)
-
-Three required properties for 90-degree arrows:
 ```json
-{
-  "elbowed": true,
-  "roughness": 0,
-  "roundness": null
-}
+{"roughness": 0, "roundness": null, "elbowed": true}
 ```
 
-### Edge Point Calculations
+### Banned
+- Diamond shapes (broken in raw JSON)
 
-| Edge | Formula |
-|------|---------|
-| Top | `(x + width/2, y)` |
-| Bottom | `(x + width/2, y + height)` |
-| Left | `(x, y + height/2)` |
-| Right | `(x + width, y + height/2)` |
+## Implementation Complete
 
-### Shape Restrictions
+- [x] SKILL.md with concise instructions
+- [x] scripts/validate.py for pre-write validation
+- [x] scripts/compress.py for LZ-string compression + Obsidian format
+- [x] references/json-spec.md with element templates
+- [x] references/arrows.md with routing patterns
+- [x] references/colors.md with semantic palettes
+- [x] references/layouts.md with diagram layouts
+- [x] Round-trip compression test passed
 
-- NO diamond shapes (break in raw JSON)
-- Use styled rectangles for decision points (orange, dashed stroke)
+## Key Improvements Over Initial Attempt
 
-## Implementation Phases
+1. **Proper skill location**: `.claude/skills/` not `.claude/commands/`
+2. **Obsidian compatibility**: LZ-string compression into `.excalidraw.md` format
+3. **Validation script**: Catches silent rendering failures before write
+4. **Progressive disclosure**: SKILL.md under 100 lines, details in references/
+5. **Text Elements section**: For Obsidian search indexing
 
-### Phase 1: Core Infrastructure
-- [ ] Create `excalidraw.md` main skill file
-- [ ] Create `excalidraw/core-spec.md` with JSON format rules
-- [ ] Create `vault/canvas/` directory
+## Sources
 
-### Phase 2: Arrow System
-- [ ] Create `excalidraw/arrows.md` with routing logic
-- [ ] Document edge calculations and binding patterns
-
-### Phase 3: Visual System
-- [ ] Create `excalidraw/colors.md` with semantic palette
-- [ ] Define spacing constants and proportions
-
-### Phase 4: Diagram Templates
-- [ ] Create `excalidraw/diagram-types.md`
-- [ ] Flowchart template and layout
-- [ ] System diagram template and layout
-- [ ] Mind map template and layout
-- [ ] Sequence diagram template and layout
-- [ ] Timeline template and layout
-
-### Phase 5: Validation & Polish
-- [ ] Add validation checklist to main skill
-- [ ] Add modification workflow
-- [ ] Test with sample diagrams
-
-## Auto-Detection Triggers
-
-Skill should activate when user says:
-- "Draw a diagram of..."
-- "Visualize the flow..."
-- "Create a flowchart..."
-- "Map out the system..."
-- "Show me a timeline..."
-- "Sketch out..."
-- "Diagram the..."
-
-## Quality Checklist (Pre-Output)
-
-- [ ] All shapes have bound text labels (two-element pattern)
-- [ ] All arrows use elbow configuration
-- [ ] All arrows connect to shape edges (within 5px)
-- [ ] No overlapping elements
-- [ ] Consistent spacing (40-50px gaps)
-- [ ] Proportional sizing (width accommodates label + padding)
-- [ ] Color palette applied semantically
-
-## References
-
-- Source: https://github.com/ooiyeefei/ccc/tree/main/skills/excalidraw
-- Excalidraw JSON format documentation
-- Obsidian Excalidraw plugin compatibility
+- [Obsidian Excalidraw Plugin - File Formats](https://deepwiki.com/zsviczian/obsidian-excalidraw-plugin/3.1-file-formats-and-storage)
+- [zsviczian/obsidian-excalidraw-plugin](https://github.com/zsviczian/obsidian-excalidraw-plugin)
+- [ooiyeefei/ccc excalidraw skill](https://github.com/ooiyeefei/ccc/tree/main/skills/excalidraw)

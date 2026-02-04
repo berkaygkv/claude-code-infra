@@ -2,19 +2,19 @@
 type: state
 project: kh
 phase: build
-current_session: 22
+current_session: 23
 updated: 2026-02-04
-last_session: "[[sessions/session-22]]"
-active_plan: "[[plans/excalidraw-skill]]"
+last_session: "[[sessions/session-23]]"
+active_plan: null
 ---
 
 # State
 
 ## Focus
-Implement excalidraw skill (Phase 1: Core Infrastructure).
+Merge vault-redesign branch to main.
 
 ## Plan
-Excalidraw skill — 5 diagram types, auto-detect + manual invocation, modification support.
+None — excalidraw skill complete.
 
 ## Tasks
 | Task | Status | Blocked By |
@@ -24,8 +24,8 @@ Excalidraw skill — 5 diagram types, auto-detect + manual invocation, modificat
 | Update path references | [status:: done] | - |
 | E2E test /begin and /wrap | [status:: done] | - |
 | Update /begin for two-file cold start | [status:: done] | - |
-| Merge to main | [status:: parked] | excalidraw skill |
-| Build excalidraw skill | [status:: pending] | - |
+| Build excalidraw skill | [status:: done] | - |
+| Merge to main | [status:: pending] | - |
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree

@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(/home/berkaygkv/Dev/headquarter/kh/scripts/*)"
+      "Bash(/home/berkaygkv/Dev/headquarter/kh/scripts/*)",
+      "Bash(uv run /home/berkaygkv/Dev/headquarter/kh/.claude/skills/excalidraw/scripts/*)"
     ]
   },
   "hooks": {
