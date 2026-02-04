@@ -102,11 +102,12 @@ Read and update `vault/state.md`:
    - `active_plan`: update if plan status changed
 
 2. Update content:
-   - **Focus**: Next session's focus (from Next Steps)
+   - **Focus**: Next session's focus (first item from Next Steps)
    - **Plan**: Current plan summary or "None"
    - **Tasks**: Update task table (completed → done, new tasks added)
    - **Constraints**: Add links to new decisions
-   - **Context**: Brief summary for next session cold start
+
+**Note:** state.md stays lean. Rich context lives in the session handoff, which `/begin` also reads.
 
 ### Step 6: Create Session Note
 

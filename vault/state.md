@@ -11,7 +11,7 @@ active_plan: null
 # State
 
 ## Focus
-Merge vault-redesign branch to main and validate with real usage.
+Merge vault-redesign branch to main.
 
 ## Plan
 None
@@ -23,13 +23,9 @@ None
 | Move vault inside kh/ | [status:: done] | - |
 | Update path references | [status:: done] | - |
 | E2E test /begin and /wrap | [status:: done] | - |
+| Update /begin for two-file cold start | [status:: done] | - |
 | Merge to main | [status:: pending] | - |
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
 - [[decisions/vault-location]] — vault inside kh/, git-tracked
-
-## Context
-Session 21 implemented the vault redesign. Key fix: vault now lives inside kh/
-(was incorrectly at external Obsidian path). All paths updated. E2E test passed.
-Ready to merge vault-redesign branch to main.
