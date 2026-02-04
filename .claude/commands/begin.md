@@ -1,22 +1,22 @@
 # Session Begin Command
 
-This command loads context from the previous session and activates the specified mode.
+This command loads context from state.md and activates the specified mode.
 
 ## Usage
 
 ```
 /begin              → Quick fix mode (minimal protocols)
-/begin brainstorm   → Plan mode (alignment before action)
-/begin build        → Execution mode (ship artifacts)
+/begin brainstorm   → Brainstorm mode (alignment before action)
+/begin build        → Build mode (ship artifacts)
 ```
 
 ## Paths
 
 - Vault: `/home/berkaygkv/Dev/Docs/.obs-vault/notes`
 - KH: `/home/berkaygkv/Dev/headquarter/kh`
-- Session notes: `{vault}/Sessions/session-{N}.md`
-- Runbook: `{vault}/runbook.md`
-- Locked decisions: `{vault}/locked.md`
+- State: `{vault}/state.md`
+- Sessions: `{vault}/sessions/session-{N}.md`
+- Decisions: `{vault}/decisions/`
 - Plans: `{vault}/plans/`
 - Scratch: `{kh}/scratch.md`
 
@@ -26,33 +26,35 @@ This command loads context from the previous session and activates the specified
 
 ---
 
-## Session Context
-
-Last session: !`scripts/last-session.sh`
-
 ## Instructions
 
 When the user invokes `/begin [mode]`, perform these steps:
 
-### Step 1: Acknowledge Mode
+### Step 1: Read State
 
-State which mode is active:
-- No argument → "Quick fix mode — minimal overhead, direct execution"
-- `brainstorm` → "Brainstorm mode — alignment before action"
-- `build` → "Build mode — executing approved plan"
+Read `/home/berkaygkv/Dev/Docs/.obs-vault/notes/state.md` using native Read.
 
-### Step 2: Check for First Run
+Extract from frontmatter:
+- `phase` — current mode (brainstorm/build/idle)
+- `current_session` — session number
+- `last_session` — link to previous session
+- `active_plan` — current plan if any
 
-If last-session.sh returns "FIRST_RUN":
-- Skip Steps 3-4 (no previous session to load)
-- Initialize scratch.md with session: 1
-- Display first-run welcome (see Step 2a)
-- Continue from Step 5
+Extract from content:
+- Focus — what we're working on
+- Plan — current plan summary
+- Tasks — active tasks table
+- Constraints — linked decisions to honor
+- Context — background information
 
-### Step 2a: First-Run Welcome
+### Step 2: Handle First Run
 
-Display:
+If state.md doesn't exist or is empty:
+- Create state.md with session: 1
+- Display first-run welcome
+- Skip to Step 5
 
+**First-run welcome:**
 ```
 ## Session 1 (First Run)
 
@@ -60,67 +62,42 @@ Welcome to kh. No previous sessions found.
 
 **Vault:** /home/berkaygkv/Dev/Docs/.obs-vault/notes
 
-This is a fresh installation. The following files are ready:
-- locked.md — for committed decisions
-- runbook.md — for task tracking
-- overview.md — for project state
+This is a fresh installation. The following are ready:
+- state.md — session state
+- dashboard.md — Dataview queries
+- decisions/ — committed decisions
+- sessions/ — session handoffs
 
 Ready to begin. What are we working on?
 ```
 
-Then skip to Step 7 (confirm session start).
+### Step 3: Acknowledge Mode
 
-### Step 3: Read Previous Session Handoff
+State which mode is active:
+- No argument → "Quick fix mode — minimal overhead, direct execution"
+- `brainstorm` → "Brainstorm mode — alignment before action"
+- `build` → "Build mode — executing approved plan"
 
-Use native Read for the session note:
-- Path: `/home/berkaygkv/Dev/Docs/.obs-vault/notes/Sessions/session-{N}.md`
-
-### Step 4: Display Handoff Context
+### Step 4: Display Current State
 
 ```
-## Resuming from Session {N}
+## Resuming Session {N+1}
 
-**Date:** {date}
-**Topics:** {topics}
-**Outcome:** {outcome}
+**Phase:** {phase}
+**Focus:** {focus}
+**Plan:** {plan or "none"}
+
+### Active Tasks
+{tasks from state.md or "none"}
+
+### Constraints
+{constraints from state.md or "none"}
 
 ### Context
-{context from handoff}
-
-### Decisions
-{decisions from handoff}
-
-### Memory
-{memory from handoff}
-
-### Next Steps
-{next steps from handoff}
+{context from state.md}
 ```
 
-### Step 5: Read Operational State
-
-Load current state (use native Read):
-- `/home/berkaygkv/Dev/Docs/.obs-vault/notes/runbook.md` — tasks, knowledge gaps, blockers
-- `/home/berkaygkv/Dev/Docs/.obs-vault/notes/locked.md` — committed decisions/constraints
-
-### Step 6: Summarize Current State
-
-```
-## Current State
-
-**Phase:** {from runbook frontmatter}
-**Blockers:** {from runbook frontmatter, or "none"}
-
-**Active Tasks:**
-{incomplete tasks from runbook Active section}
-
-**Knowledge Gaps:**
-{from runbook Knowledge Gaps table, or "None"}
-```
-
-Note: locked.md is read for Claude's context but not displayed.
-
-### Step 7: Mode-Specific Prompt
+### Step 5: Mode-Specific Prompt
 
 **Quick fix mode (no argument):**
 ```
@@ -130,27 +107,26 @@ Ready. What needs fixing?
 **Brainstorm mode:**
 ```
 Ready to brainstorm. What are we thinking through?
-
-Suggested (from previous session):
-- {first next step}
-- {second next step}
 ```
 
 **Build mode:**
-Additionally, read the active plan file if one exists:
-- Check runbook for active plan reference, or
-- List `/home/berkaygkv/Dev/Docs/.obs-vault/notes/plans/` for in-progress plans
-
+If `active_plan` exists, read the plan file and display:
 ```
 Ready to build.
 
-**Active Plan:** {plan name or "none"}
-**Current Phase:** {phase number and name}
+**Active Plan:** {plan name}
+**Current Phase:** {next incomplete phase}
 
-Continuing from where we left off. Confirm to proceed.
+Confirm to proceed.
 ```
 
-### Step 8: Confirm Session Start
+If no active plan:
+```
+Build mode requested but no active plan found.
+Switch to brainstorm mode to create a plan, or specify what to build.
+```
+
+### Step 6: Confirm Session Start
 
 After user responds:
 ```
@@ -159,6 +135,7 @@ Session {N+1} started. [{mode} mode]
 
 ## Notes
 
-- If previous session outcome was `blocked`, highlight the blocker prominently
-- scratch.md is prepared by `/wrap` at the end of each session
-- Mode protocols are loaded from `protocols/` — edit those files to change cognitive behavior
+- state.md is the ONLY file read for cold start (minimal token overhead)
+- If previous session was blocked, the Context section should highlight the blocker
+- Mode protocols are in `protocols/` — edit those files to change cognitive behavior
+- scratch.md is prepared by `/wrap` at end of each session
