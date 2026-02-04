@@ -38,6 +38,12 @@ PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
 # How many high-relevance sources to include inline in findings
 MAX_INLINE_SOURCES = 5
 
+
+def extract_target_id(initial_prompt: str) -> str | None:
+    """Extract TARGET ID from agent's initial prompt if present."""
+    match = re.search(r'TARGET-(\d{8}-\d{6})', initial_prompt)
+    return f"TARGET-{match.group(1)}" if match else None
+
 # Domain authority tiers for fallback ranking
 HIGH_AUTHORITY_DOMAINS = {
     "docs.anthropic.com", "code.claude.com", "anthropic.com",
@@ -265,7 +271,8 @@ def generate_slug(text: str, max_len: int = 40) -> str:
 def format_findings_markdown(
     parsed: dict[str, Any],
     ranked_sources: dict[str, list],
-    output_folder: str
+    output_folder: str,
+    target_id: str | None = None
 ) -> str:
     """Create findings.md with minimal inline sources."""
     now = datetime.now()
@@ -274,6 +281,11 @@ def format_findings_markdown(
     query = parsed['initial_prompt']
     topic_match = re.sub(r'^(Research|Investigate|.*?research\s+)', '', query, flags=re.IGNORECASE)
     topic = topic_match[:80].strip() if topic_match else "Research Findings"
+
+    # Build target fields if present
+    target_fields = ""
+    if target_id:
+        target_fields = f"\ntarget_id: {target_id}\ntarget_link: \"[[research/targets/{target_id}]]\""
 
     # Build frontmatter
     frontmatter = f"""---
@@ -284,7 +296,7 @@ created: {now.strftime('%Y-%m-%d')}
 completed: null
 session: null
 confidence: medium
-led_to_decision: null
+led_to_decision: null{target_fields}
 tags:
   - research
 ---"""
@@ -321,13 +333,15 @@ def format_sources_markdown(
     output_folder: str,
     ranked_sources: dict[str, list],
     query: str,
-    created: str
+    created: str,
+    target_id: str | None = None
 ) -> str:
     """Create sources.md with full source list."""
+    target_field = f"\ntarget_id: {target_id}" if target_id else ""
     frontmatter = f"""---
 type: research-sources
 output-id: {output_folder}
-created: {created}
+created: {created}{target_field}
 ---
 """
     content_parts = [frontmatter]
@@ -375,6 +389,9 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
     if not parsed['final_summary'] and parsed['tool_count'] == 0:
         return None, None
 
+    # Extract TARGET ID from initial prompt if present
+    target_id = extract_target_id(parsed['initial_prompt'])
+
     # Get sources - try agent's ranking first, fallback to domain-based
     agent_ranked = extract_ranked_sources_from_summary(parsed['final_summary'])
     if agent_ranked:
@@ -395,7 +412,7 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
 
     # Generate findings markdown
     findings_markdown = format_findings_markdown(
-        parsed, ranked_sources, output_folder
+        parsed, ranked_sources, output_folder, target_id
     )
 
     # Generate sources markdown
@@ -403,7 +420,8 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
         output_folder,
         ranked_sources,
         parsed['initial_prompt'],
-        now.strftime('%Y-%m-%d')
+        now.strftime('%Y-%m-%d'),
+        target_id
     )
 
     # Write findings.md

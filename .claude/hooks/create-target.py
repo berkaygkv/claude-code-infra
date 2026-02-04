@@ -23,8 +23,8 @@ from typing import Any
 # Configuration (hardcoded for dev environment)
 # ============================================================================
 
-OBSIDIAN_VAULT = Path("/home/berkaygkv/Dev/Docs/.obs-vault")
-RESEARCH_TARGETS_DIR = OBSIDIAN_VAULT / "notes" / "research" / "targets"
+KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
+RESEARCH_TARGETS_DIR = KH_DIR / "vault" / "research" / "targets"
 
 ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 

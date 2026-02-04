@@ -29,8 +29,8 @@ from typing import Any
 # Configuration (hardcoded for dev environment)
 # ============================================================================
 
-OBSIDIAN_VAULT = Path("/home/berkaygkv/Dev/Docs/.obs-vault")
-SESSIONS_DIR = OBSIDIAN_VAULT / "notes" / "Sessions"
+KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
+SESSIONS_DIR = KH_DIR / "vault" / "sessions"
 TRANSCRIPTS_DIR = SESSIONS_DIR / "transcripts"
 
 
@@ -139,7 +139,7 @@ date: {date}
 time_start: "{time_start}"
 time_end: "{time_end}"
 project: kh
-session_note: "[[Sessions/{session_name}]]"
+session_note: "[[sessions/{session_name}]]"
 tags:
   - session
   - transcript

@@ -90,15 +90,33 @@ Session-scoped staging area:
 
 ## 5. Research Pipeline
 
-### Quick Lookup
-Single-source answers, syntax/API reference, known-location docs.
-→ Use tools directly (Context7, WebFetch, WebSearch)
+Research operations follow a two-tier system with hard enforcement:
 
-### Deep Research
-Multi-source investigation, comparison, best practices, unknowns.
-→ Spawn deep-research agent with question
+### Quick Lookup (No TARGET)
+- 2-3 pages max, single source
+- Syntax/API reference, known-location docs
+- Use tools directly: Context7, WebFetch, WebSearch
+- No pre-registration required
 
-**No TARGET pre-registration required.** The SubagentStop hook automatically captures output to:
+### Deep Research (TARGET REQUIRED)
+- Multi-source investigation, 5+ searches
+- Comparison, best practices, unknowns
+
+**Assessment Protocol:**
+1. Before any research, ask: "Is this a quick lookup or deep research?"
+2. Quick lookup: Proceed directly with tools
+3. Deep research: Create TARGET file FIRST, then spawn agent
+
+**TARGET Flow:**
+1. Create TARGET: `vault/research/targets/TARGET-{timestamp}-{slug}.md`
+2. Spawn deep-research agent with TARGET ID in prompt
+3. On completion: Hook links OUTPUT to TARGET automatically
+
+**Bidirectional Linking:**
+- OUTPUT frontmatter: `target_link: "[[research/targets/TARGET-xxx]]"`
+- TARGET updated manually: `status: complete`, `output: "[[research/{timestamp}/findings]]"`
+
+**Output location:**
 ```
 vault/research/{timestamp}-{slug}/
   ├── findings.md

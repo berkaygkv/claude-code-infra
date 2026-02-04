@@ -17,7 +17,7 @@ tags:
 
 <!-- New entries are prepended below this line -->
 
-### 2026-01-25 — [[Sessions/session-19|session-19: cookiecutter-template-refactor]]
+### 2026-01-25 — [[sessions/session-19|session-19: cookiecutter-template-refactor]]
 
 We needed to maintain both a development workspace (where `/begin` and `/wrap` work) and a distributable cookiecutter template. After merging the template to main, we lost the ability to develop—the `.claude/` directory was now nested inside `{{cookiecutter.project_slug}}/`.
 
@@ -37,7 +37,7 @@ Each time the user pushed back, I proposed another complex solution instead of a
 
 ---
 
-### 2026-01-25 — [[Sessions/session-19|session-19: path-architecture-brainstorm]]
+### 2026-01-25 — [[sessions/session-19|session-19: path-architecture-brainstorm]]
 
 We were brainstorming a new path architecture to eliminate runtime config reads. I proposed using symlinks to create relative paths (`kh/notes/` → user's vault). Before committing to this approach, the user asked me to search previous discussions about symlinks.
 
@@ -47,7 +47,7 @@ The search returned hits across sessions 2, 4, and 5. Reading those handoffs rev
 
 ---
 
-### 2026-01-20 — [[Sessions/session-8|session-8: rollback-refinement]]
+### 2026-01-20 — [[sessions/session-8|session-8: rollback-refinement]]
 
 We built a `/rollback` command in session 7 to handle mid-session file reversals after discovering Claude Code's `/rewind` is broken. The specific concern was that MCP tool writes (Obsidian vault changes) would never be tracked by `/rewind` even when fixed. So we invested effort building tooling to parse conversation history and reverse file changes.
 
