@@ -1,20 +1,20 @@
 ---
 type: state
 project: kh
-phase: build
-current_session: 24
-updated: 2026-02-04
-last_session: "[[sessions/session-24]]"
+phase: idle
+current_session: 25
+updated: 2026-02-05
+last_session: "[[sessions/session-25]]"
 active_plan: null
 ---
 
 # State
 
 ## Focus
-Fix pre-merge issues: MCP vault path, hook scripts, TARGET system implementation.
+System operational. Restart Claude Code to activate MCP, then verify with /begin.
 
 ## Plan
-None — implementation tasks defined in session-24 handoff.
+None — vault-redesign merged, system ready for use.
 
 ## Tasks
 | Task | Status | Blocked By |
@@ -25,14 +25,14 @@ None — implementation tasks defined in session-24 handoff.
 | E2E test /begin and /wrap | [status:: done] | - |
 | Update /begin for two-file cold start | [status:: done] | - |
 | Build excalidraw skill | [status:: done] | - |
-| Fix MCP config (vault path) | [status:: pending] | - |
-| Fix export-transcript.py | [status:: pending] | - |
-| Fix create-target.py | [status:: pending] | - |
-| Update capture-research.py (TARGET linking) | [status:: pending] | - |
-| Update CLAUDE.md (TARGET enforcement) | [status:: pending] | - |
-| Fix meta.md (wikilink casing) | [status:: pending] | - |
-| Create vault/research/targets/ | [status:: pending] | - |
-| Merge to main | [status:: pending] | all above |
+| Fix MCP config (vault path) | [status:: done] | - |
+| Fix export-transcript.py | [status:: done] | - |
+| Fix create-target.py | [status:: done] | - |
+| Update capture-research.py (TARGET linking) | [status:: done] | - |
+| Update CLAUDE.md (TARGET enforcement) | [status:: done] | - |
+| Fix meta.md (wikilink casing) | [status:: done] | - |
+| Create vault/research/targets/ | [status:: done] | - |
+| Merge to main | [status:: done] | - |
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
