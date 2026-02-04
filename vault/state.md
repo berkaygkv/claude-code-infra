@@ -1,17 +1,17 @@
 ---
 type: state
 project: kh
-phase: brainstorm
-current_session: 20
+phase: build
+current_session: 21
 updated: 2026-02-04
-last_session: "[[sessions/session-19]]"
+last_session: "[[sessions/session-21]]"
 active_plan: null
 ---
 
 # State
 
 ## Focus
-Implementing vault redesign from Session 20 brainstorm.
+Merge vault-redesign branch to main and validate with real usage.
 
 ## Plan
 None
@@ -19,12 +19,17 @@ None
 ## Tasks
 | Task | Status | Blocked By |
 |------|--------|------------|
-| Implement vault restructure | [status:: in_progress] | - |
+| Implement vault restructure | [status:: done] | - |
+| Move vault inside kh/ | [status:: done] | - |
+| Update path references | [status:: done] | - |
+| E2E test /begin and /wrap | [status:: done] | - |
+| Merge to main | [status:: pending] | - |
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
+- [[decisions/vault-location]] — vault inside kh/, git-tracked
 
 ## Context
-Session 20 redesigned the entire vault structure. Key changes: single state.md
-for Claude cold start, dashboard.md for user oversight, decisions/ folder
-replacing locked.md, simplified research flow without TARGETs.
+Session 21 implemented the vault redesign. Key fix: vault now lives inside kh/
+(was incorrectly at external Obsidian path). All paths updated. E2E test passed.
+Ready to merge vault-redesign branch to main.
