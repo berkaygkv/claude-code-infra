@@ -6,7 +6,7 @@ A cookiecutter template for structured Claude Code sessions with context handoff
 
 ```bash
 # Generate a new project
-uvx cookiecutter gh:berkaygkv/claude-code-infra --checkout template
+uvx cookiecutter gh:berkaygkv/claude-code-infra
 
 # Answer the prompts
 # - project_name: My Project
