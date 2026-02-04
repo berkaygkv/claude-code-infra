@@ -1,6 +1,6 @@
 # Session Begin Command
 
-This command loads context from state.md and activates the specified mode.
+This command loads context from state.md + last session handoff and activates the specified mode.
 
 ## Usage
 
@@ -38,7 +38,7 @@ Read `vault/state.md` using native Read.
 Extract from frontmatter:
 - `phase` — current mode (brainstorm/build/idle)
 - `current_session` — session number
-- `last_session` — link to previous session
+- `last_session` — link to previous session (e.g., "[[sessions/session-21]]")
 - `active_plan` — current plan if any
 
 Extract from content:
@@ -46,14 +46,29 @@ Extract from content:
 - Plan — current plan summary
 - Tasks — active tasks table
 - Constraints — linked decisions to honor
-- Context — background information
 
-### Step 2: Handle First Run
+### Step 2: Read Last Session Handoff
+
+Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `vault/sessions/session-21.md`).
+
+Read the last session file using native Read.
+
+Extract:
+- `topics` — what the session covered
+- `outcome` — successful/blocked/abandoned
+- **Context** section — what was worked on
+- **Decisions** section — LOCKED and OPEN items
+- **Memory** section — facts to persist
+- **Next Steps** section — where to pick up
+
+This provides the rich narrative context for cold start.
+
+### Step 3: Handle First Run
 
 If state.md doesn't exist or is empty:
 - Create state.md with session: 1
 - Display first-run welcome
-- Skip to Step 5
+- Skip to Step 6
 
 **First-run welcome:**
 ```
@@ -72,33 +87,46 @@ This is a fresh installation. The following are ready:
 Ready to begin. What are we working on?
 ```
 
-### Step 3: Acknowledge Mode
+### Step 4: Acknowledge Mode
 
 State which mode is active:
 - No argument → "Quick fix mode — minimal overhead, direct execution"
 - `brainstorm` → "Brainstorm mode — alignment before action"
 - `build` → "Build mode — executing approved plan"
 
-### Step 4: Display Current State
+### Step 5: Display Current State
 
 ```
 ## Resuming Session {N+1}
 
 **Phase:** {phase}
-**Focus:** {focus}
+**Focus:** {focus from state.md}
 **Plan:** {plan or "none"}
 
+### Last Session ({N})
+**Topics:** {topics from last session}
+**Outcome:** {outcome}
+
+**Context:**
+{Context section from last session handoff}
+
+**Decisions:**
+{Decisions section from last session handoff}
+
+**Memory:**
+{Memory section from last session handoff}
+
 ### Active Tasks
-{tasks from state.md or "none"}
+{tasks table from state.md}
 
 ### Constraints
-{constraints from state.md or "none"}
+{constraints from state.md}
 
-### Context
-{context from state.md}
+### Next Steps (from last session)
+{Next Steps section from last session handoff}
 ```
 
-### Step 5: Mode-Specific Prompt
+### Step 6: Mode-Specific Prompt
 
 **Quick fix mode (no argument):**
 ```
@@ -127,7 +155,7 @@ Build mode requested but no active plan found.
 Switch to brainstorm mode to create a plan, or specify what to build.
 ```
 
-### Step 6: Confirm Session Start
+### Step 7: Confirm Session Start
 
 After user responds:
 ```
@@ -136,7 +164,9 @@ Session {N+1} started. [{mode} mode]
 
 ## Notes
 
-- vault/state.md is the ONLY file read for cold start (minimal token overhead)
-- If previous session was blocked, the Context section should highlight the blocker
+- Two files read for cold start: state.md (structure) + last session (narrative)
+- state.md provides: phase, focus, tasks, constraints
+- Last session provides: context, decisions, memory, next steps
+- If previous session outcome was `blocked`, highlight the blocker prominently
 - Mode protocols are in `protocols/` — edit those files to change cognitive behavior
 - scratch.md is prepared by `/wrap` at end of each session

@@ -116,10 +116,11 @@ vault/research/{timestamp}-{slug}/
 ## 8. Session Lifecycle
 
 ### `/begin [mode]`
-1. Read vault/state.md (the ONLY file for cold start)
-2. Display: phase, focus, plan, tasks, constraints, context
-3. Activate mode-specific protocol
-4. Confirm session start
+1. Read vault/state.md (structure: phase, focus, tasks, constraints)
+2. Read last session handoff (narrative: context, decisions, memory, next steps)
+3. Display combined context for cold start
+4. Activate mode-specific protocol
+5. Confirm session start
 
 ### `/wrap`
 1. Read scratch.md
