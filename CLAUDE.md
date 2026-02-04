@@ -68,10 +68,23 @@ Session-scoped staging area:
 
 ## 4. I/O Strategy
 
-**Native Read/Write** for content operations (state.md, sessions, decisions, scratch.md)
-**MCP** for metadata operations (frontmatter, search, tags, directory listing)
+**HARD CONSTRAINT:** Choose tools based on operation type, not convenience.
 
-This minimizes token overhead on high-frequency operations.
+| Operation | Tool | Examples |
+|-----------|------|----------|
+| **Direct file access** (known path) | Native Read/Write | Read `vault/state.md`, Write `vault/sessions/session-24.md` |
+| **Search & exploration** (discovery) | MCP Obsidian | Find files, list directories, search content, query tags |
+
+### DO
+- `Read vault/state.md` — you know the exact path
+- `mcp__obsidian__list_directory` — discovering what sessions exist
+- `mcp__obsidian__search_notes` — finding notes mentioning "TARGET"
+
+### DO NOT
+- `Glob("vault/sessions/*.md")` — use MCP list_directory instead
+- `Grep` on vault/ — use MCP search_notes instead
+
+**Why:** MCP provides Obsidian-native search that understands vault structure, frontmatter, and links. Native Glob/Grep bypass this intelligence.
 
 ---
 
