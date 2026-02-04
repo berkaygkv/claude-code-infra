@@ -32,7 +32,7 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 ## 3. Memory Architecture
 
 ### The Vault
-**Path:** `/home/berkaygkv/Dev/Docs/.obs-vault/notes`
+**Path:** `vault/` (inside kh directory)
 
 | File/Folder | Purpose | Access Pattern |
 |-------------|---------|----------------|
@@ -46,7 +46,7 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 | `templates/` | Obsidian templates | Reference |
 
 ### The Whiteboard
-**Path:** `/home/berkaygkv/Dev/headquarter/kh/scratch.md`
+**Path:** `scratch.md` (in kh root)
 
 Session-scoped staging area:
 - Stage decisions, tasks, notes during the session
@@ -87,7 +87,7 @@ Multi-source investigation, comparison, best practices, unknowns.
 
 **No TARGET pre-registration required.** The SubagentStop hook automatically captures output to:
 ```
-research/{timestamp}-{slug}/
+vault/research/{timestamp}-{slug}/
   ├── findings.md
   └── sources.md
 ```
@@ -116,16 +116,16 @@ research/{timestamp}-{slug}/
 ## 8. Session Lifecycle
 
 ### `/begin [mode]`
-1. Read state.md (the ONLY file for cold start)
+1. Read vault/state.md (the ONLY file for cold start)
 2. Display: phase, focus, plan, tasks, constraints, context
 3. Activate mode-specific protocol
 4. Confirm session start
 
 ### `/wrap`
 1. Read scratch.md
-2. Create decision files in decisions/ for LOCKED items
-3. Create session handoff in sessions/
-4. Update state.md (current_session, last_session, context)
+2. Create decision files in vault/decisions/ for LOCKED items
+3. Create session handoff in vault/sessions/
+4. Update vault/state.md (current_session, last_session, context)
 5. Reset scratch.md for next session
 6. Git commit (if changes)
 
@@ -133,17 +133,17 @@ research/{timestamp}-{slug}/
 
 ## 9. Key Paths
 
+All paths relative to kh directory:
+
 ```
-Vault:     /home/berkaygkv/Dev/Docs/.obs-vault/notes
-KH:        /home/berkaygkv/Dev/headquarter/kh
+vault/state.md           # Claude cold start
+vault/sessions/          # Session handoffs
+vault/decisions/         # LOCKED decisions
+vault/research/          # Deep research outputs
+vault/plans/             # Implementation plans
 
-state.md:      {vault}/state.md
-sessions:      {vault}/sessions/session-{N}.md
-decisions:     {vault}/decisions/{slug}.md
-research:      {vault}/research/{timestamp}-{slug}/
-plans:         {vault}/plans/plan-{slug}.md
-
-scratch.md:    {kh}/scratch.md
-protocols:     {kh}/protocols/
-commands:      {kh}/.claude/commands/
+scratch.md               # Session whiteboard
+protocols/               # Mode protocols
+.claude/commands/        # Slash commands
+.claude/hooks/           # Event hooks
 ```

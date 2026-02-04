@@ -12,13 +12,14 @@ This command loads context from state.md and activates the specified mode.
 
 ## Paths
 
-- Vault: `/home/berkaygkv/Dev/Docs/.obs-vault/notes`
-- KH: `/home/berkaygkv/Dev/headquarter/kh`
-- State: `{vault}/state.md`
-- Sessions: `{vault}/sessions/session-{N}.md`
-- Decisions: `{vault}/decisions/`
-- Plans: `{vault}/plans/`
-- Scratch: `{kh}/scratch.md`
+All paths relative to kh directory:
+
+- Vault: `vault/`
+- State: `vault/state.md`
+- Sessions: `vault/sessions/session-{N}.md`
+- Decisions: `vault/decisions/`
+- Plans: `vault/plans/`
+- Scratch: `scratch.md`
 
 ## Mode Protocol
 
@@ -32,7 +33,7 @@ When the user invokes `/begin [mode]`, perform these steps:
 
 ### Step 1: Read State
 
-Read `/home/berkaygkv/Dev/Docs/.obs-vault/notes/state.md` using native Read.
+Read `vault/state.md` using native Read.
 
 Extract from frontmatter:
 - `phase` — current mode (brainstorm/build/idle)
@@ -60,13 +61,13 @@ If state.md doesn't exist or is empty:
 
 Welcome to kh. No previous sessions found.
 
-**Vault:** /home/berkaygkv/Dev/Docs/.obs-vault/notes
+**Vault:** vault/
 
 This is a fresh installation. The following are ready:
-- state.md — session state
-- dashboard.md — Dataview queries
-- decisions/ — committed decisions
-- sessions/ — session handoffs
+- vault/state.md — session state
+- vault/dashboard.md — Dataview queries
+- vault/decisions/ — committed decisions
+- vault/sessions/ — session handoffs
 
 Ready to begin. What are we working on?
 ```
@@ -135,7 +136,7 @@ Session {N+1} started. [{mode} mode]
 
 ## Notes
 
-- state.md is the ONLY file read for cold start (minimal token overhead)
+- vault/state.md is the ONLY file read for cold start (minimal token overhead)
 - If previous session was blocked, the Context section should highlight the blocker
 - Mode protocols are in `protocols/` — edit those files to change cognitive behavior
 - scratch.md is prepared by `/wrap` at end of each session

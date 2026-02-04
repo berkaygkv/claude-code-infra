@@ -4,3 +4,8 @@ __pycache__/
 
 # User-specific config (contains local paths)
 .kh-config.json
+
+# Obsidian plugin binaries (can be reinstalled)
+vault/.obsidian/plugins/*/main.js
+vault/.obsidian/plugins/*/styles.css
+vault/.obsidian/workspace.json

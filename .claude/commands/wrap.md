@@ -9,20 +9,21 @@ End-of-session tasks: process scratch.md, update state.md, create session handof
 - MCP only for metadata operations if needed (frontmatter-only updates, search, tags)
 
 **Documents updated:**
-- `state.md` — Current state, tasks, context
-- `decisions/*.md` — New LOCKED decisions (created)
-- `sessions/session-{N}.md` — Session handoff note (created)
+- `vault/state.md` — Current state, tasks, context
+- `vault/decisions/*.md` — New LOCKED decisions (created)
+- `vault/sessions/session-{N}.md` — Session handoff note (created)
 - `scratch.md` — Reset for next session
 
 ## Paths
 
-- Vault: `/home/berkaygkv/Dev/Docs/.obs-vault/notes`
-- KH: `/home/berkaygkv/Dev/headquarter/kh`
-- State: `{vault}/state.md`
-- Sessions: `{vault}/sessions/session-{N}.md`
-- Transcripts: `{vault}/sessions/transcripts/session-{N}.md`
-- Decisions: `{vault}/decisions/`
-- Scratch: `{kh}/scratch.md`
+All paths relative to kh directory:
+
+- Vault: `vault/`
+- State: `vault/state.md`
+- Sessions: `vault/sessions/session-{N}.md`
+- Transcripts: `vault/sessions/transcripts/session-{N}.md`
+- Decisions: `vault/decisions/`
+- Scratch: `scratch.md`
 
 ## Instructions
 
@@ -30,7 +31,7 @@ When the user invokes `/wrap`, perform these steps:
 
 ### Step 1: Read Session Scratch
 
-Read `/home/berkaygkv/Dev/headquarter/kh/scratch.md` using native Read.
+Read `scratch.md` using native Read.
 
 Extract:
 - **Session number** from Meta section
@@ -45,7 +46,7 @@ If scratch.md is empty, synthesize from conversation context.
 
 If session number is in scratch.md, use that.
 
-Otherwise, read state.md to get current_session, use that.
+Otherwise, read vault/state.md to get current_session, use that.
 
 ### Step 3: Synthesize Session Work
 
@@ -62,7 +63,7 @@ Combine scratch.md content with conversation context:
 For each LOCKED decision in scratch.md:
 
 1. Generate slug from decision title (lowercase, hyphens)
-2. Create decision file at `/home/berkaygkv/Dev/Docs/.obs-vault/notes/decisions/{slug}.md`
+2. Create decision file at `vault/decisions/{slug}.md`
 
 ```yaml
 ---
@@ -92,7 +93,7 @@ Skip this step if no new LOCKED decisions.
 
 ### Step 5: Update State
 
-Read and update `/home/berkaygkv/Dev/Docs/.obs-vault/notes/state.md`:
+Read and update `vault/state.md`:
 
 1. Update frontmatter:
    - `current_session`: N (current session number)
@@ -109,7 +110,7 @@ Read and update `/home/berkaygkv/Dev/Docs/.obs-vault/notes/state.md`:
 
 ### Step 6: Create Session Note
 
-Create session handoff at `/home/berkaygkv/Dev/Docs/.obs-vault/notes/sessions/session-{N}.md`:
+Create session handoff at `vault/sessions/session-{N}.md`:
 
 ```yaml
 ---
@@ -199,7 +200,6 @@ Skip if no patterns or user declines.
 Invoking `/wrap` signals approval to commit:
 
 ```bash
-cd /home/berkaygkv/Dev/headquarter/kh
 git status
 git add -A
 git commit -m "Session {N}: {brief summary}"
@@ -207,7 +207,7 @@ git commit -m "Session {N}: {brief summary}"
 
 Skip if no changes. Report hash in confirmation.
 
-**Note:** Vault files are not git-tracked. Only kh/ files are committed.
+**Note:** All vault files are now git-tracked since they're inside kh/.
 
 ### Step 10: Confirm Completion
 
@@ -216,9 +216,9 @@ Skip if no changes. Report hash in confirmation.
 
 | Document | Action |
 |----------|--------|
-| state.md | Updated: phase={phase}, tasks updated |
-| decisions/ | {Created N files / No new decisions} |
-| session-{N}.md | Created with handoff |
+| vault/state.md | Updated: phase={phase}, tasks updated |
+| vault/decisions/ | {Created N files / No new decisions} |
+| vault/sessions/session-{N}.md | Created with handoff |
 | scratch.md | Reset for session {N+1} |
 | CLAUDE.md | {Updated / No changes} |
 

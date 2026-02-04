@@ -31,8 +31,8 @@ from urllib.parse import urlparse
 # Configuration (hardcoded for dev environment)
 # ============================================================================
 
-OBSIDIAN_VAULT = Path("/home/berkaygkv/Dev/Docs/.obs-vault")
-RESEARCH_DIR = OBSIDIAN_VAULT / "notes" / "research"
+KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
+RESEARCH_DIR = KH_DIR / "vault" / "research"
 PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
 
 # How many high-relevance sources to include inline in findings
