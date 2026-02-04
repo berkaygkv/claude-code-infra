@@ -11,7 +11,7 @@ Behavior:
 - /wrap NOT run → skip export (session discarded)
 
 Naming: session-N.md (sequential numbering, matches session note)
-Location: vault/Sessions/transcripts/session-N.md
+Location: vault/sessions/transcripts/session-N.md
 
 Usage: Configured in .claude/settings.json under hooks.SessionEnd
 """
@@ -41,7 +41,7 @@ def get_session_paths() -> tuple[Path, Path, Path]:
     """
     project_root = get_project_root()
     vault_root = project_root / "vault"
-    sessions_dir = vault_root / "Sessions"
+    sessions_dir = vault_root / "sessions"
     transcripts_dir = sessions_dir / "transcripts"
     return vault_root, sessions_dir, transcripts_dir
 
@@ -154,7 +154,7 @@ session: {session_num}
 date: {date}
 time_start: "{time_start}"
 time_end: "{time_end}"
-session_note: "[[Sessions/{session_name}]]"
+session_note: "[[sessions/{session_name}]]"
 tags:
   - session
   - transcript

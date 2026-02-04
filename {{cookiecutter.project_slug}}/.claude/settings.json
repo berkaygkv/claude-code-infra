@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(scripts/*)"
+      "Bash(scripts/*)",
+      "Bash(uv run .claude/skills/excalidraw/scripts/*)"
     ]
   },
   "hooks": {

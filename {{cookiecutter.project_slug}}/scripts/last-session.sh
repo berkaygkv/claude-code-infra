@@ -8,7 +8,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-SESSIONS_DIR="$PROJECT_ROOT/vault/Sessions"
+SESSIONS_DIR="$PROJECT_ROOT/vault/sessions"
 
 # Find last session
 LAST_SESSION=$(ls -1 "$SESSIONS_DIR"/session-*.md 2>/dev/null | grep -oP 'session-\d+' | sort -t- -k2 -n | tail -1)

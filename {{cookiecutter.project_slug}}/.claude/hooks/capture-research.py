@@ -3,17 +3,16 @@
 Claude Code SubagentStop Hook: Capture deep-research agent findings.
 
 This hook runs when any subagent finishes but only captures deep-research
-(web-research) agents, exporting findings to the Obsidian vault following
-the official Research Schema v1.0.
+(web-research) agents, exporting findings to the Obsidian vault.
 
 Output structure (folder per output):
-  vault/research/outputs/OUTPUT-{timestamp}-{slug}/
+  vault/research/{timestamp}-{slug}/
     ├── findings.md   (main output + top sources)
     └── sources.md    (full source list)
 
 Features:
 - Only captures web-research agents (filters out Explore, Bash, Plan)
-- Creates OUTPUT folder with findings.md and sources.md
+- Creates research folder with findings.md and sources.md
 - Parses agent's own source ranking (High/Medium/Low) if present
 - Falls back to domain-based ranking when agent doesn't provide structured sources
 - Links to open TARGET if one exists (bidirectional linking)
@@ -41,17 +40,17 @@ def get_project_root() -> Path:
 def get_vault_paths() -> tuple[Path, Path, Path]:
     """Get vault paths relative to project root.
 
-    Returns (vault_root, outputs_dir, targets_dir).
+    Returns (vault_root, research_dir, targets_dir).
     """
     project_root = get_project_root()
     vault_root = project_root / "vault"
-    outputs_dir = vault_root / "research" / "outputs"
+    research_dir = vault_root / "research"
     targets_dir = vault_root / "research" / "targets"
-    return vault_root, outputs_dir, targets_dir
+    return vault_root, research_dir, targets_dir
 
 
 # Load paths
-OBSIDIAN_VAULT, RESEARCH_OUTPUTS_DIR, RESEARCH_TARGETS_DIR = get_vault_paths()
+OBSIDIAN_VAULT, RESEARCH_DIR, RESEARCH_TARGETS_DIR = get_vault_paths()
 PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
 ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 
@@ -140,7 +139,7 @@ def mark_target_complete(target_file: Path, output_folder: str) -> bool:
         )
 
         # Update output: null -> wikilink
-        output_link = f"'[[research/outputs/{output_folder}/findings]]'"
+        output_link = f"'[[research/{output_folder}/findings]]'"
         content = re.sub(
             r'^output:\s*null',
             f'output: {output_link}',
@@ -151,7 +150,7 @@ def mark_target_complete(target_file: Path, output_folder: str) -> bool:
         # Add completion note to Status Notes section if present
         today = datetime.now().strftime('%Y-%m-%d')
         if '## Status Notes' in content:
-            content = content.rstrip() + f"\n**{today}**: Research complete, see [[research/outputs/{output_folder}/findings]]\n"
+            content = content.rstrip() + f"\n**{today}**: Research complete, see [[research/{output_folder}/findings]]\n"
 
         target_file.write_text(content)
         return True
@@ -432,7 +431,7 @@ def format_findings_markdown(
         content_parts.append("*No high-relevance sources identified*\n")
 
     # Link to sources file (same folder)
-    content_parts.append(f"**Full sources:** [[research/outputs/{output_folder}/sources]]\n")
+    content_parts.append(f"**Full sources:** [[research/{output_folder}/sources]]\n")
 
     return "\n".join(content_parts)
 
@@ -452,7 +451,7 @@ created: {created}
 """
     content_parts = [frontmatter]
     content_parts.append(f"# Sources: {query[:60]}{'...' if len(query) > 60 else ''}\n")
-    content_parts.append(f"**Findings:** [[research/outputs/{output_folder}/findings]]\n")
+    content_parts.append(f"**Findings:** [[research/{output_folder}/findings]]\n")
     content_parts.append("---\n")
 
     total_sources = 0
@@ -479,9 +478,9 @@ def should_capture_agent(parsed: dict) -> bool:
 
 
 def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None, str | None]:
-    """Export agent research to Obsidian vault as OUTPUT folder with findings + sources.
+    """Export agent research to Obsidian vault as research folder with findings + sources.
 
-    Creates: vault/research/outputs/OUTPUT-{timestamp}-{slug}/
+    Creates: vault/research/{timestamp}-{slug}/
                ├── findings.md
                └── sources.md
 
@@ -512,10 +511,10 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
     slug = generate_slug(parsed['initial_prompt'])
     now = datetime.now()
     timestamp = now.strftime("%Y%m%d-%H%M%S")
-    output_folder = f"OUTPUT-{timestamp}-{slug}"
+    output_folder = f"{timestamp}-{slug}"
 
     # Create output folder
-    folder_path = RESEARCH_OUTPUTS_DIR / output_folder
+    folder_path = RESEARCH_DIR / output_folder
     folder_path.mkdir(parents=True, exist_ok=True)
 
     # Generate findings markdown
