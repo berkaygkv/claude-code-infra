@@ -2,6 +2,10 @@
 
 This command loads context from state.md + last session handoff and activates the specified mode.
 
+## Schema Reference
+
+**IMPORTANT:** All files follow `vault/schemas.md`. Reference it for field definitions.
+
 ## Usage
 
 ```
@@ -40,11 +44,11 @@ Extract from frontmatter:
 - `current_session` — session number
 - `last_session` — link to previous session (e.g., "[[sessions/session-21]]")
 - `active_plan` — current plan if any
+- `focus` — what we're working on (1 line)
+- `plan_summary` — current plan summary (1 line)
 
 Extract from content:
-- Focus — what we're working on
-- Plan — current plan summary
-- Tasks — active tasks table
+- Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
 - Constraints — linked decisions to honor
 
 ### Step 2: Read Last Session Handoff
@@ -100,8 +104,8 @@ State which mode is active:
 ## Resuming Session {N+1}
 
 **Phase:** {phase}
-**Focus:** {focus from state.md}
-**Plan:** {plan or "none"}
+**Focus:** {focus from frontmatter}
+**Plan:** {plan_summary from frontmatter, or "none"}
 
 ### Last Session ({N})
 **Topics:** {topics from last session}
@@ -117,7 +121,7 @@ State which mode is active:
 {Memory section from last session handoff}
 
 ### Active Tasks
-{tasks table from state.md}
+{tasks as checkbox list from state.md content}
 
 ### Constraints
 {constraints from state.md}
@@ -165,8 +169,10 @@ Session {N+1} started. [{mode} mode]
 ## Notes
 
 - Two files read for cold start: state.md (structure) + last session (narrative)
-- state.md provides: phase, focus, tasks, constraints
+- state.md frontmatter provides: phase, focus, plan_summary
+- state.md content provides: tasks (checkbox format), constraints
 - Last session provides: context, decisions, memory, next steps
 - If previous session outcome was `blocked`, highlight the blocker prominently
 - Mode protocols are in `protocols/` — edit those files to change cognitive behavior
 - scratch.md is prepared by `/wrap` at end of each session
+- All vault files follow `vault/schemas.md` — reference it for field definitions

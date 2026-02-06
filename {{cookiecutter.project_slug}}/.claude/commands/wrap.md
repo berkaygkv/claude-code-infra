@@ -2,6 +2,10 @@
 
 End-of-session tasks: process scratch.md, update state.md, create session handoff, create decision files.
 
+## Schema Reference
+
+**IMPORTANT:** All files must follow `vault/schemas.md`. Read it before creating/updating any vault file.
+
 ## Design Rationale
 
 **I/O Strategy:**
@@ -62,6 +66,16 @@ Combine scratch.md content with conversation context:
 
 For each LOCKED decision in scratch.md:
 
+**Granularity rule:** One decision file per distinct decision. Related decisions made together may be bundled into one file with sub-sections (e.g., "MVP Scope" containing D1-D7), but each bundle gets ONE file.
+
+**Scratch format for decisions:**
+```markdown
+## Decisions
+<!-- One line per decision OR one line per bundle -->
+- LOCKED: [slug] Decision title — rationale
+- LOCKED: [slug] Bundle title (contains D1, D2, D3) — rationale
+```
+
 1. Generate slug from decision title (lowercase, hyphens)
 2. Create decision file at `vault/decisions/{slug}.md`
 
@@ -93,55 +107,62 @@ Skip this step if no new LOCKED decisions.
 
 ### Step 5: Update State
 
-Read and update `vault/state.md`:
+Read and update `vault/state.md` following `vault/schemas.md`:
 
 1. Update frontmatter:
    - `current_session`: N (current session number)
    - `updated`: today's date
    - `last_session`: "[[sessions/session-{N}]]"
    - `active_plan`: update if plan status changed
+   - `focus`: Next session's focus (1 line, from Next Steps)
+   - `plan_summary`: Current plan summary (1 line) or empty
 
 2. Update content:
-   - **Focus**: Next session's focus (first item from Next Steps)
-   - **Plan**: Current plan summary or "None"
-   - **Tasks**: Update task table (completed → done, new tasks added)
+   - **Tasks**: Use Obsidian checkbox format (NOT markdown tables):
+     ```markdown
+     - [ ] Task description #pending
+     - [ ] Task description #blocked/other-task
+     - [/] Task description #in-progress
+     - [x] Task description #done
+     ```
    - **Constraints**: Add links to new decisions
 
 **Note:** state.md stays lean. Rich context lives in the session handoff, which `/begin` also reads.
 
 ### Step 6: Create Session Note
 
-Create session handoff at `vault/sessions/session-{N}.md`:
+Create session handoff at `vault/sessions/session-{N}.md` following `vault/schemas.md`:
 
 ```yaml
 ---
 type: session
 session: {N}
 date: {YYYY-MM-DD}
-project: {{ cookiecutter.project_slug }}
+mode: {brainstorm | build | quick-fix}
 topics: [topic1, topic2]
 outcome: successful | blocked | abandoned
 continues_from: "[[sessions/session-{N-1}]]"
-transcript: "[[sessions/transcripts/session-{N}]]"
 decisions: ["[[decisions/slug]]"]
-research_spawned: []
-tags:
-  - session
 ---
 
-## Handoff
+# Session {N}: {Title}
 
-### Context
+## Context
 {What we worked on - 2-3 sentences}
 
-### Decisions
-{LOCKED and OPEN decisions from this session}
+## Decisions
 
-### Memory
-{Facts to persist across sessions}
+### Locked
+- {decision} — {rationale}
 
-### Next Steps
-{Actionable items for next session}
+### Open
+- {question}
+
+## Memory
+- {fact to persist}
+
+## Next Steps
+1. {action item}
 ```
 
 **Outcome guidelines:**

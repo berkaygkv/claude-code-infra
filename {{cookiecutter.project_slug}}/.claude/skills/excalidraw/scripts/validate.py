@@ -62,6 +62,14 @@ def validate_excalidraw(data: dict) -> ValidationResult:
 
         # Validate text elements
         if el_type == 'text':
+            # Check for tiny fonts that are hard to read
+            font_size = el.get('fontSize', 16)
+            if font_size < 13:
+                result.warning(
+                    f"Text {el_id} has fontSize {font_size} (min recommended: 13). "
+                    f"Content: \"{el.get('text', '')[:40]}...\""
+                )
+
             container_id = el.get('containerId')
             if container_id:
                 # This is a bound text - verify container exists and has boundElements
