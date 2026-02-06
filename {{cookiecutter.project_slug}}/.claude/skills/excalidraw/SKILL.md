@@ -44,6 +44,7 @@ Read `references/visual-polish.md` for techniques.
 ### Fallback: Manual JSON (error-prone)
 
 If layout engine doesn't fit, build JSON manually following `references/json-spec.md`.
+**You MUST still run validate + compress (steps 5-6 above).** Never write `.excalidraw.md` directly.
 
 ---
 
@@ -179,12 +180,17 @@ Read before generating:
 
 ## Output Format
 
-Files are saved as `.excalidraw.md` (Obsidian-compatible):
-- LZ-string compressed JSON
-- `## Text Elements` section for search indexing
-- YAML frontmatter
+**HARD CONSTRAINT:** NEVER write `.excalidraw.md` files by hand. The Obsidian Excalidraw plugin requires a specific internal format (LZ-string compressed JSON, `## Text Elements` section, `compressed-json` code blocks) that cannot be reliably reproduced manually. Manually written wrappers (frontmatter + fenced JSON) will fail to open.
 
-The `scripts/compress.py` handles this automatically.
+**Always use the pipeline:**
+1. Write raw JSON to a temp file (e.g., `/tmp/diagram.json`)
+2. Validate: `uv run .claude/skills/excalidraw/scripts/validate.py /tmp/diagram.json`
+3. Compress: `uv run .claude/skills/excalidraw/scripts/compress.py /tmp/diagram.json vault/canvas/{slug}.excalidraw.md`
+
+The `compress.py` script generates the correct Obsidian-compatible `.excalidraw.md` with:
+- YAML frontmatter (`excalidraw-plugin: parsed`)
+- `## Text Elements` section for search indexing
+- LZ-string compressed drawing data in `compressed-json` code blocks
 
 ## Quick Color Reference
 
@@ -198,6 +204,11 @@ The `scripts/compress.py` handles this automatically.
 | Hub | `#ffa8a8` | `#c92a2a` |
 
 ## Validation Checklist
+
+**Output (critical):**
+- [ ] JSON written to temp file first (NOT directly to `.excalidraw.md`)
+- [ ] `validate.py` run with zero errors
+- [ ] `compress.py` used to generate final `.excalidraw.md`
 
 **Technical (required):**
 - [ ] Every shape with label has `boundElements` array
