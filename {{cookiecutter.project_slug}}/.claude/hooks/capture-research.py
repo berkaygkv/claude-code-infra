@@ -222,8 +222,8 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
     ranked = {"high": [], "medium": [], "low": []}
     found_any = False
 
-    # Pattern to find section headers
-    section_pattern = r'(?:^|\n)(?:#{2,4}\s*|\*\*)(High|Medium|Low)(?:\*\*)?[:\s]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*)(High|Medium|Low)|\n#{1,2}\s+[^#]|\Z))'
+    # Pattern to find section headers (e.g., "### High Relevance", "**High:**")
+    section_pattern = r'(?:^|\n)(?:#{2,4}\s*|\*\*)(High|Medium|Low)(?:\*\*)?[^\n]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*)(High|Medium|Low)|\n#{1,2}\s+[^#]|\Z))'
     matches = re.findall(section_pattern, summary, re.IGNORECASE | re.DOTALL)
 
     for match in matches:
@@ -233,11 +233,10 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
         if tier not in ranked:
             continue
 
-        link_pattern = r'\[([^\]]+)\]\((https?://[^\)]+)\)'
-        links = re.findall(link_pattern, content)
-
-        for title, url in links:
-            ranked[tier].append({"title": title.strip(), "url": url})
+        # Extract sources using all URL formats (not just markdown links)
+        tier_sources = extract_sources_from_text(content)
+        for source in tier_sources:
+            ranked[tier].append(source)
             found_any = True
 
     if found_any:
@@ -252,26 +251,58 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
     if sources_section:
         section_content = sources_section.group(1)
         for tier in ["high", "medium", "low"]:
-            tier_pattern = rf'(?:^|\n)(?:#{2,4}\s*|\*\*|-)?\s*{tier}[:\s]*(?:\*\*)?\n?(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*|-)?\s*(?:high|medium|low)|\Z))'
+            tier_pattern = rf'(?:^|\n)(?:#{2,4}\s*|\*\*|-)?\s*{tier}[^\n]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*|-)?\s*(?:high|medium|low)|\Z))'
             tier_match = re.search(tier_pattern, section_content, re.IGNORECASE | re.DOTALL)
             if tier_match:
-                links = re.findall(r'\[([^\]]+)\]\((https?://[^\)]+)\)', tier_match.group(1))
-                for title, url in links:
-                    ranked[tier].append({"title": title.strip(), "url": url})
+                tier_sources = extract_sources_from_text(tier_match.group(1))
+                for source in tier_sources:
+                    ranked[tier].append(source)
                     found_any = True
 
     return ranked if found_any else None
 
 
+def _clean_url(url: str) -> str:
+    """Strip trailing punctuation from URLs."""
+    return url.rstrip(".,;:)'\">")
+
+
 def extract_sources_from_text(text: str) -> list[dict]:
-    """Extract all markdown links from text."""
+    """Extract all URLs from text — markdown links, labeled URLs, and bare URLs."""
     sources = []
     seen = set()
+
+    # Pattern 1: Markdown links [title](url)
     for match in re.finditer(r'\[([^\]]+)\]\((https?://[^\)]+)\)', text):
         title, url = match.groups()
+        url = _clean_url(url)
         if url not in seen:
             seen.add(url)
             sources.append({"title": title.strip(), "url": url})
+
+    # Pattern 2: "title - url" or "title: url" (numbered/bulleted lists)
+    # Matches: "1. LangChain docs - https://...", "- Title: https://..."
+    for match in re.finditer(
+        r'(?:^|\n)\s*(?:\d+\.?\s+|-\s+)?(.+?)\s*[-\u2013\u2014:]\s+(https?://\S+)',
+        text
+    ):
+        title, url = match.groups()
+        url = _clean_url(url)
+        if url not in seen:
+            seen.add(url)
+            # Strip bold markers
+            title = re.sub(r'\*+', '', title).strip()
+            if title:
+                sources.append({"title": title, "url": url})
+
+    # Pattern 3: Bare URLs not already captured
+    for match in re.finditer(r'(https?://[^\s\)\]>]+)', text):
+        url = _clean_url(match.group(1))
+        if url not in seen:
+            seen.add(url)
+            domain = urlparse(url).netloc
+            sources.append({"title": domain, "url": url})
+
     return sources
 
 
@@ -336,6 +367,26 @@ def parse_agent_transcript(agent_file: Path) -> dict[str, Any]:
             if final_summary:
                 break
 
+    # Collect all text from assistant messages and tool results (for source extraction)
+    all_text_parts = []
+    for entry in entries:
+        if entry.get("type") == "assistant":
+            for block in entry.get("message", {}).get("content", []):
+                if isinstance(block, dict) and block.get("type") == "text":
+                    all_text_parts.append(block.get("text", ""))
+        elif entry.get("type") in ("human", "user"):
+            content = entry.get("message", {}).get("content", [])
+            if isinstance(content, list):
+                for block in content:
+                    if isinstance(block, dict) and block.get("type") == "tool_result":
+                        rc = block.get("content", "")
+                        if isinstance(rc, str):
+                            all_text_parts.append(rc)
+                        elif isinstance(rc, list):
+                            for rb in rc:
+                                if isinstance(rb, dict) and rb.get("type") == "text":
+                                    all_text_parts.append(rb.get("text", ""))
+
     # Detect agent type
     agent_type = "unknown"
     tool_names = [tc["tool"] for tc in tool_calls]
@@ -349,6 +400,7 @@ def parse_agent_transcript(agent_file: Path) -> dict[str, Any]:
     return {
         "initial_prompt": initial_prompt,
         "final_summary": final_summary,
+        "all_text": "\n".join(all_text_parts),
         "agent_type": agent_type,
         "tool_count": len(tool_calls)
     }
@@ -500,11 +552,13 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
         target_id, target_link, target_file = find_active_target()
 
     # Get sources - try agent's ranking first, fallback to domain-based
+    # Use all_text (all messages + tool results) for maximum source coverage
+    source_text = parsed.get('all_text') or parsed['final_summary']
     agent_ranked = extract_ranked_sources_from_summary(parsed['final_summary'])
     if agent_ranked:
         ranked_sources = agent_ranked
     else:
-        all_sources = extract_sources_from_text(parsed['final_summary'])
+        all_sources = extract_sources_from_text(source_text)
         ranked_sources = rank_sources_by_domain(all_sources)
 
     # Generate folder name
