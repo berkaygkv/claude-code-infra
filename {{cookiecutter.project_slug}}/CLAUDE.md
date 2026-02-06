@@ -2,6 +2,11 @@
 
 {{ cookiecutter.project_description }}
 
+<!-- SESSION 0: Rewrite the description above collaboratively (user + AI).
+     1 paragraph, max 5 sentences. Capture the project's aim, core needs, and end-to-end essence.
+     This is the cold-start anchor — every future session reads it first.
+     Remove this comment once done. -->
+
 ---
 
 # Operational Protocol: Symbiotic Partner
