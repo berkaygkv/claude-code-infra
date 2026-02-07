@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 27
+current_session: 28
 updated: 2026-02-07
-last_session: "[[sessions/session-27]]"
+last_session: "[[sessions/session-28]]"
 active_plan: null
-focus: "Template sync complete — verify hooks in practice, plan next work"
+focus: "Excalidraw skill improved — test on different diagram types, verify hooks"
 plan_summary: ""
 ---
 
@@ -14,9 +14,10 @@ plan_summary: ""
 
 ## Tasks
 - [x] Full template sync to main #done
+- [x] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #done
 - [ ] Verify capture-research hook works with new source extraction #pending
 - [ ] Verify export-transcript hook works with relative paths #pending
-- [ ] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #pending
+- [ ] Test excalidraw skill on a different diagram type (flowchart or timeline) #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree

@@ -157,6 +157,99 @@ d.add_grid(
 - Choose `cols` to minimize orphan items (13 items / 3 cols = 4 full + 1 orphan)
 - Use smaller `box_height` for compact grids (26-30px)
 
+## Hub-and-Spoke with Child Grids
+
+A central hub card with satellite cards around it, each with anchored child grids.
+
+```python
+from layout import Diagram, Theme
+
+d = Diagram(start_x=0, start_y=0)
+
+# Title
+title = d.add_title("SYSTEM ARCHITECTURE",
+                     subtitle="Components & Relationships",
+                     x=100, y=40)
+
+# --- Layout constants ---
+HUB_X, HUB_Y = 400, 300     # Center hub position
+SPOKE_OFFSET_X = 320         # Horizontal distance from hub to side spokes
+SPOKE_OFFSET_Y = 280         # Vertical distance from hub to top/bottom spokes
+
+# --- Hub (center) ---
+hub = d.add_card("Core Engine", subtitle="Orchestrator",
+                 icon="🤖", theme=Theme.BLUE,
+                 width=180, height=100, x=HUB_X, y=HUB_Y)
+
+# --- Spokes (positioned relative to hub) ---
+# Top-left
+tl = d.add_card("Module A", subtitle="Description",
+                icon="🧠", theme=Theme.PURPLE,
+                width=160, height=80,
+                x=HUB_X - SPOKE_OFFSET_X, y=HUB_Y - SPOKE_OFFSET_Y)
+# Anchor child grid below its parent
+gx, gy = d.position_below(tl, offset=10)
+tl_grid = d.add_grid(["sub-a", "sub-b"], cols=2, theme=Theme.PURPLE, x=gx, y=gy)
+
+# Top-right
+tr = d.add_card("Module B", subtitle="Description",
+                icon="⚙️", theme=Theme.PURPLE,
+                width=160, height=80,
+                x=HUB_X + SPOKE_OFFSET_X, y=HUB_Y - SPOKE_OFFSET_Y)
+gx, gy = d.position_below(tr, offset=10)
+tr_grid = d.add_grid(["sub-c", "sub-d"], cols=2, theme=Theme.PURPLE, x=gx, y=gy)
+
+# Left
+left = d.add_card("Module C", subtitle="Description",
+                  icon="📝", theme=Theme.ORANGE,
+                  width=160, height=80,
+                  x=HUB_X - SPOKE_OFFSET_X, y=HUB_Y + 10)
+
+# Right
+right = d.add_card("Module D", subtitle="Description",
+                   icon="🔧", theme=Theme.ORANGE,
+                   width=160, height=80,
+                   x=HUB_X + SPOKE_OFFSET_X, y=HUB_Y + 10)
+
+# Bottom-center
+bottom = d.add_card("Module E", subtitle="Description",
+                    icon="💾", theme=Theme.GREEN,
+                    width=180, height=100,
+                    x=HUB_X, y=HUB_Y + SPOKE_OFFSET_Y)
+gx, gy = d.position_below(bottom, offset=10)
+btm_grid = d.add_grid(["item-1", "item-2", "item-3"], cols=3,
+                       theme=Theme.GREEN, x=gx, y=gy)
+
+# --- Arrows (hub to spokes) ---
+d.add_arrow(hub, tl, from_side="left", to_side="bottom", label="/loads")
+d.add_arrow(hub, tr, from_side="right", to_side="bottom", label="invokes")
+d.add_arrow(hub, left, from_side="left", to_side="right", label="reads")
+d.add_arrow(hub, right, from_side="right", to_side="left", label="triggers")
+d.add_arrow(hub, bottom, from_side="bottom", to_side="top", label="persists")
+
+# --- Cross-connections (spoke to spoke) ---
+d.add_arrow(left, bottom, from_side="bottom", to_side="left",
+            stroke_style="dashed", label="processes")
+
+d.to_json("hub-spoke.json")
+```
+
+**Key points:**
+- Use explicit coordinates for spokes — define `SPOKE_OFFSET_X/Y` constants relative to hub
+- **Always** anchor child grids with `position_below(parent, offset=10)` — never let auto-layout place them
+- Use different themes per spoke category (purple for modules, orange for tools, green for storage)
+- Hub card is slightly larger than spokes (180 vs 160 width)
+- Arrows from hub use side-appropriate edges (left→left spokes, right→right spokes, bottom→bottom spoke)
+- Dashed arrows for indirect/secondary connections
+
+**Spoke positioning for N satellites:**
+
+| Satellites | Layout | Positions (relative to hub) |
+|------------|--------|-----------------------------|
+| 4 | Cardinal | top, right, bottom, left |
+| 5 | Cardinal + bottom-center | top-left, top-right, left, right, bottom |
+| 6 | Hex | top-left, top-right, left, right, bottom-left, bottom-right |
+
 ## Arrow Routing Quick Reference
 
 | Scenario | `from_side` | `to_side` | Auto Route | Manual Override |

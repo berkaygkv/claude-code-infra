@@ -2,6 +2,7 @@
 name: excalidraw
 description: Generate Excalidraw diagrams for visual sense-making. Use when user asks to visualize, diagram, map out, sketch, draw, or create flowcharts/mind maps/timelines/system diagrams. Outputs Obsidian-compatible .excalidraw.md files.
 allowed-tools: Bash(uv run *)
+context: fork
 ---
 
 # Excalidraw Diagram Generator
@@ -49,7 +50,7 @@ If layout engine doesn't fit, build JSON manually following `references/json-spe
 
 ## Layout Engine (Recommended)
 
-The layout engine (`scripts/layout.py`) prevents positioning bugs automatically.
+The layout engine (`scripts/layout.py`) handles positioning, text sizing, element grouping, and arrow binding automatically.
 
 ### Quick Example
 
@@ -60,10 +61,19 @@ from layout import Diagram, Theme
 
 diagram = Diagram(start_x=100, start_y=100)
 
-# Add elements - positions calculated automatically
+# Title with subtitle — properly stacked
+title = diagram.add_title("SYSTEM OVERVIEW", subtitle="Architecture & Data Flow")
+
+# Card with icon — all elements (body, text, icon, emoji) auto-grouped
 card = diagram.add_card("Title", subtitle="desc", icon="📦", theme=Theme.BLUE)
-grid = diagram.add_grid(["A", "B", "C", "D"], cols=2, theme=Theme.GREEN)
-diagram.add_arrow(card, grid, from_side="bottom", to_side="top")
+
+# Grid anchored below card — auto-sized cells, auto-grouped with parent
+grid = diagram.add_grid(["Item A", "Item B", "Item C", "Item D"],
+                        cols=2, theme=Theme.GREEN, below=card)
+
+# Arrow with bound label — label sits ON the arrow, moves with it
+diagram.add_arrow(card, grid, from_side="bottom", to_side="top",
+                  label="produces")
 
 diagram.to_json("output.json")
 ```
@@ -72,15 +82,73 @@ diagram.to_json("output.json")
 
 | Method | Description |
 |--------|-------------|
-| `add_card(title, subtitle, icon, theme)` | Card with icon circle (text auto-offset below icon) |
+| `add_title(text, subtitle)` | Diagram title + subtitle, properly stacked vertically |
+| `add_card(title, subtitle, icon, theme)` | Card with icon circle — all elements auto-grouped |
 | `add_box(label, theme)` | Simple labeled rectangle |
-| `add_grid(labels, cols, theme, center_last_row)` | Grid of labeled boxes (last row auto-centered) |
+| `add_grid(labels, cols, theme, below=parent)` | Grid of labeled boxes — auto-sized cells, anchors + groups with parent |
 | `add_group(label, label_position)` | Dashed grouping rectangle (`"above-center"` default) |
-| `add_panel(title, content, width)` | Auto-sized panel with title + body text |
-| `add_arrow(from, to, routing, label)` | Arrow with smart routing and optional label |
+| `add_panel(title, content, width, below=parent)` | Auto-sized panel — anchors + groups with parent |
+| `add_arrow(from, to, routing, label)` | Arrow with smart routing — label bound to arrow |
 | `add_text(text)` | Standalone text |
 | `position_below(component)` | Get (x, y) below a component |
 | `position_right_of(component)` | Get (x, y) to the right |
+
+### Automatic Grouping
+
+The engine auto-groups related elements so they move together in Excalidraw:
+
+| What | Grouping | Behavior |
+|------|----------|----------|
+| Card (body + text + icon + emoji) | `card-group` | Click card → selects entire card unit |
+| Parent + children (via `below=`) | `spoke-group` | Click any part → selects card + grid/panel together |
+| Arrow + label | Bound via `containerId` | Label sits on arrow, moves natively with it |
+
+Nested selection: first click selects the outer group (spoke), double-click selects inner group (card only), triple-click selects individual element.
+
+### Grid Auto-Sizing
+
+`add_grid()` auto-calculates cell width from the longest label when `box_width` is not specified. This prevents text overflow.
+
+```python
+# Auto-sized: cells fit "brainstorm.md" without overflow
+grid = d.add_grid(["brainstorm.md", "build.md"], cols=2, theme=Theme.PURPLE)
+
+# Explicit override when you want fixed-width cells
+grid = d.add_grid(["A", "B", "C"], cols=3, theme=Theme.GREEN, box_width=100)
+```
+
+### Card with Children Pattern
+
+When a card has associated sub-items (grid, panel), **always use the `below` parameter**. This anchors children below the parent AND groups them so they move together.
+
+```python
+# Parent card
+protocols = d.add_card("Protocols", subtitle="Cognitive Modes",
+                       icon="🧠", theme=Theme.PURPLE, x=100, y=200)
+
+# Children grid — anchored + grouped with parent in one call
+proto_grid = d.add_grid(["brainstorm.md", "build.md"], cols=2,
+                        theme=Theme.PURPLE, below=protocols)
+
+# Panel — same pattern
+info = d.add_panel("Details", "Line 1\nLine 2", below=protocols)
+```
+
+**Never** let auto-layout position grids independently — they will detach from their parent card. Always pass `below=parent_card`.
+
+### Arrow Labels (Bound to Arrow)
+
+Arrow labels are **bound to the arrow element** via `boundElements`/`containerId`. The label sits directly on the arrow path and moves with it natively — no manual positioning needed.
+
+```python
+# Label is bound to arrow — Excalidraw positions it on the path
+d.add_arrow(hub, vault, from_side="bottom", to_side="top",
+            label="persists to", theme=Theme.GREEN)
+
+# Dashed arrow with label
+d.add_arrow(scratch, vault, from_side="bottom", to_side="left",
+            stroke_style="dashed", label="/wrap processes", theme=Theme.ORANGE)
+```
 
 ### Arrow Routing
 
@@ -95,14 +163,6 @@ diagram.to_json("output.json")
 | `"l-down-right"` | Vertical first, then horizontal | Yes, for perpendicular |
 | `"u-left"` | Feedback loops going left (same-side connections) | Yes, when from_side == to_side (left/top) |
 | `"u-right"` | Feedback loops going right | Yes, when from_side == to_side (right/bottom) |
-
-Arrow labels: `label="text"` auto-positions text at the arrow midpoint.
-
-```python
-# Feedback loop with label (auto U-shape)
-d.add_arrow(store, context, from_side="left", to_side="left",
-            stroke_style="dashed", label="Existing entities")
-```
 
 ### Themes
 
@@ -141,7 +201,7 @@ box = diagram.add_box("Label", x=500, y=200)
 {"id": "box-text", "containerId": "box", "text": "Label"}
 ```
 
-**Never use `label` property — it doesn't work in raw JSON.**
+**This applies to shapes AND arrows.** The layout engine handles this automatically.
 
 ### 2. Elbow Arrows Need THREE Properties
 
@@ -171,7 +231,7 @@ Read before generating:
 | File | Content |
 |------|---------|
 | `references/visual-polish.md` | **Read first** — Icon circles, text hierarchy, min font sizes |
-| `references/patterns.md` | **Read second** — Pipelines, feedback loops, panels, grids |
+| `references/patterns.md` | **Read second** — Pipelines, feedback loops, panels, grids, hub-and-spoke |
 | `references/json-spec.md` | Element templates, required properties |
 | `references/arrows.md` | Routing patterns, binding |
 | `references/colors.md` | Semantic palettes |
@@ -202,6 +262,7 @@ The `scripts/compress.py` handles this automatically.
 **Technical (required):**
 - [ ] Every shape with label has `boundElements` array
 - [ ] Every text has `containerId` pointing to parent shape
+- [ ] Arrow labels bound via `boundElements`/`containerId` (not floating text)
 - [ ] Multi-point arrows have all three elbow properties
 - [ ] No diamond shapes
 - [ ] No duplicate IDs
@@ -212,6 +273,7 @@ The `scripts/compress.py` handles this automatically.
 - [ ] Colors from one hue family
 - [ ] Rounded corners on rectangles
 - [ ] Generous spacing (not cramped)
+- [ ] All grids/panels use `below=parent` for anchoring
 
 ## Modification Flow
 
