@@ -147,7 +147,56 @@ vault/research/{timestamp}-{slug}/
 
 ---
 
-## 7. Git Discipline
+## 7. Codebase vs Template
+
+This project has **two branches** served via git worktrees:
+
+| Branch | Path | Purpose |
+|--------|------|---------|
+| `main` | Project root | **Development workspace.** Live project with real vault data, sessions, decisions. This is where all work happens. |
+| `template` | `../{{ cookiecutter.project_slug }}-template` | **Cookiecutter template.** Distributable scaffold for new projects. Files live under `{% raw %}{{cookiecutter.project_slug}}{% endraw %}/`. |
+
+### What lives where
+
+- **main** has everything: `.claude/`, `vault/`, `protocols/`, `scratch.md`, real session data
+- **template** has the same structure but with cookiecutter placeholders and no project-specific data (no vault sessions, no decisions, no scratch state)
+
+### Sync Protocol
+
+**Direction:** Always `main → template`. Never the reverse.
+
+**When to sync:** After modifying any shared infrastructure file — skills, hooks, commands, protocols, schemas, CLAUDE.md, settings, scripts.
+
+**How to sync:**
+1. Make and commit changes on `main` (normal development)
+2. Copy changed files to the template worktree:
+   ```bash
+   TMPL="../{{ cookiecutter.project_slug }}-template/{% raw %}{{cookiecutter.project_slug}}{% endraw %}"
+   cp <source-file> "$TMPL/<same-relative-path>"
+   ```
+3. Commit on `template` branch with reference to the source session
+
+**What to sync (shared infrastructure):**
+- `.claude/skills/` — skill definitions, layout engine, reference docs
+- `.claude/commands/` — slash command definitions
+- `.claude/hooks/` — event hooks and hook scripts
+- `.claude/settings.json` — Claude Code settings
+- `protocols/` — mode protocol files
+- `vault/schemas.md` — schema definitions
+- `vault/dashboard.md` — Dataview queries
+- `vault/templates/` — Obsidian templates
+- `CLAUDE.md` — operational protocol
+
+**What NOT to sync (project-specific):**
+- `vault/state.md`, `vault/sessions/`, `vault/decisions/` — real project data
+- `vault/research/`, `vault/plans/`, `vault/canvas/` — project artifacts
+- `scratch.md` — session-scoped
+
+**HARD RULE:** When `/wrap` commits changes to shared infrastructure on `main`, always sync to `template` before ending the session.
+
+---
+
+## 8. Git Discipline
 
 - **Autonomous commits:** FORBIDDEN
 - **Staging:** You may stage files
@@ -155,7 +204,7 @@ vault/research/{timestamp}-{slug}/
 
 ---
 
-## 8. Session Lifecycle
+## 9. Session Lifecycle
 
 ### `/begin [mode]`
 1. Read vault/state.md (structure: phase, focus, tasks, constraints)
@@ -174,7 +223,7 @@ vault/research/{timestamp}-{slug}/
 
 ---
 
-## 9. Key Paths
+## 10. Key Paths
 
 All paths relative to project root:
 
