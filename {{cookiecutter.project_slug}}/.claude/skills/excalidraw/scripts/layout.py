@@ -405,12 +405,16 @@ def card_with_icon(
     """
     elements = []
 
+    # Group all card elements so they move together in Excalidraw
+    card_group_id = _uid("card-group")
+
     # --- Card body FIRST (renders behind icon) ---
     card_id = _uid("card")
     text_id = _uid("card-text")
 
     card = make_rectangle(x, y, width, height, theme, el_id=card_id)
     card["boundElements"] = [{"type": "text", "id": text_id}]
+    card["groupIds"] = [card_group_id]
 
     # Text content
     text_content = title
@@ -447,6 +451,7 @@ def card_with_icon(
     )
     text["width"] = width - 10
     text["height"] = text_height
+    text["groupIds"] = [card_group_id]
 
     elements.extend([card, text])
 
@@ -463,6 +468,7 @@ def card_with_icon(
         circle = make_ellipse(icon_x, icon_y, icon_size, icon_size, theme, el_id=circle_id)
         circle["boundElements"] = [{"type": "text", "id": emoji_id}]
         circle["strokeWidth"] = 2
+        circle["groupIds"] = [card_group_id]
 
         # Emoji sized proportionally to icon (roughly 50% of icon diameter)
         emoji_font_size = int(icon_size * 0.5)
@@ -481,6 +487,7 @@ def card_with_icon(
         )
         emoji["width"] = emoji_font_size
         emoji["height"] = emoji_font_size
+        emoji["groupIds"] = [card_group_id]
 
         elements.extend([circle, emoji])
 
@@ -699,19 +706,46 @@ class Diagram:
         labels: list[str],
         cols: int = 4,
         theme: ColorTheme = Theme.GREEN,
-        box_width: float = 80,
+        box_width: float | None = None,
         box_height: float = 50,
         spacing: float = 10,
         x: float | None = None,
         y: float | None = None,
         center_last_row: bool = True,
+        font_size: int = 14,
+        below: Component | None = None,
+        below_offset: float = 10,
     ) -> Component:
         """Add a grid of labeled boxes.
 
         Args:
+            box_width: Width of each grid cell. If None, auto-calculated from
+                the longest label text to prevent overflow.
             center_last_row: If True, center items in an incomplete last row
                 within the grid width. Default True.
+            font_size: Font size for labels (default 14). Used for auto-width
+                calculation when box_width is None.
+            below: Parent component to anchor this grid below. The grid is
+                positioned directly below the parent with its left edge aligned.
+                Overrides x/y if provided.
+            below_offset: Gap between parent bottom and grid top (default 10px).
         """
+        # Auto-size cell width from content if not explicitly set
+        if box_width is None:
+            char_width = font_size * 0.6
+            padding = 20  # 10px padding on each side
+            max_label_width = max(len(label) for label in labels) * char_width
+            box_width = self._snap(max(80, max_label_width + padding))
+
+        # Anchor below parent component if specified
+        parent_child_group_id = None
+        if below is not None:
+            x, y = self.position_below(below, offset=below_offset)
+            # Create outer group so parent + children move together
+            parent_child_group_id = _uid("spoke-group")
+            for el in below.elements:
+                el["groupIds"].append(parent_child_group_id)
+
         rows = (len(labels) + cols - 1) // cols
         total_width = cols * box_width + (cols - 1) * spacing
         total_height = rows * box_height + (rows - 1) * spacing
@@ -734,8 +768,13 @@ class Diagram:
 
             bx = px + col * (box_width + spacing) + x_offset
             by = py + row * (box_height + spacing)
-            box = labeled_box(bx, by, box_width, box_height, label, theme)
+            box = labeled_box(bx, by, box_width, box_height, label, theme, font_size)
             all_elements.extend(box.elements)
+
+        # Add parent-child group to all grid elements
+        if parent_child_group_id:
+            for el in all_elements:
+                el["groupIds"].append(parent_child_group_id)
 
         component = Component(
             elements=all_elements,
@@ -775,6 +814,8 @@ class Diagram:
         content_color: str = "#495057",
         x: float | None = None,
         y: float | None = None,
+        below: Component | None = None,
+        below_offset: float = 10,
     ) -> Component:
         """Add an auto-sized panel with title and content text.
 
@@ -791,7 +832,18 @@ class Diagram:
             content_font_size: Body text font size (default 13)
             title_color: Header text color
             content_color: Body text color
+            below: Parent component to anchor this panel below.
+            below_offset: Gap between parent and panel (default 10px).
         """
+        # Anchor below parent component if specified
+        parent_child_group_id = None
+        if below is not None:
+            x, y = self.position_below(below, offset=below_offset)
+            # Create outer group so parent + children move together
+            parent_child_group_id = _uid("spoke-group")
+            for el in below.elements:
+                el["groupIds"].append(parent_child_group_id)
+
         # Auto-calculate height from content
         title_height = title_font_size * 1.25
         content_lines = content.split("\n")
@@ -839,6 +891,11 @@ class Diagram:
             vertical_align="top",
         )
         elements.append(content_text)
+
+        # Add parent-child group to all panel elements
+        if parent_child_group_id:
+            for el in elements:
+                el["groupIds"].append(parent_child_group_id)
 
         component = Component(
             elements=elements,
@@ -897,30 +954,23 @@ class Diagram:
         arrow = make_arrow(start_x, start_y, points, theme, stroke_style=stroke_style)
         arrow_elements = [arrow]
 
-        # Add label at midpoint if provided
+        # Bind label text to arrow — Excalidraw auto-positions it on the path
         if label:
-            mid_x, mid_y = self._arrow_midpoint(start_x, start_y, points)
+            label_id = _uid("arrow-label")
             lbl_color = label_color or (theme.stroke if theme else "#495057")
 
-            # Position label to avoid overlapping the arrow line
-            if routing == "u-left":
-                # Place label to the left of the vertical segment
-                lx = mid_x - len(label) * label_font_size * 0.6 - 8
-                ly = mid_y - label_font_size * 0.625
-            elif routing == "u-right":
-                # Place label to the right of the vertical segment
-                lx = mid_x + 8
-                ly = mid_y - label_font_size * 0.625
-            else:
-                # Default: above and slightly right of midpoint
-                lx = mid_x + 8
-                ly = mid_y - label_font_size * 1.25 - 4
+            # Approximate midpoint for initial coordinates (Excalidraw adjusts on render)
+            mid_x, mid_y = self._arrow_midpoint(start_x, start_y, points)
 
             lbl = make_text(
-                x=lx, y=ly, text=label,
+                x=mid_x, y=mid_y, text=label,
                 font_size=label_font_size, color=lbl_color,
-                align="left", vertical_align="top",
+                align="center", vertical_align="middle",
+                container_id=arrow["id"],
+                el_id=label_id,
             )
+            # Bind: arrow references text, text references arrow
+            arrow["boundElements"] = [{"type": "text", "id": label_id}]
             arrow_elements.append(lbl)
 
         component = Component(
@@ -1042,6 +1092,74 @@ class Diagram:
         self._register_component(component)
         return component
 
+    def add_title(
+        self,
+        text: str,
+        subtitle: str | None = None,
+        font_size: int = 28,
+        subtitle_font_size: int = 16,
+        color: str = "#1e1e1e",
+        subtitle_color: str = "#868e96",
+        x: float | None = None,
+        y: float | None = None,
+    ) -> Component:
+        """Add a diagram title with optional subtitle, properly stacked.
+
+        Creates a title text element and an optional subtitle below it.
+        Both are left-aligned and vertically stacked with consistent spacing.
+
+        Args:
+            text: Main title text
+            subtitle: Secondary description line (smaller, lighter)
+            font_size: Title font size (default 28)
+            subtitle_font_size: Subtitle font size (default 16)
+            color: Title text color
+            subtitle_color: Subtitle text color
+        """
+        title_height = font_size * 1.25
+        char_width = font_size * 0.6
+        title_width = len(text) * char_width
+
+        # Account for subtitle width too
+        total_width = title_width
+        if subtitle:
+            sub_width = len(subtitle) * subtitle_font_size * 0.6
+            total_width = max(title_width, sub_width)
+
+        # Calculate total height
+        gap = 4
+        subtitle_height = subtitle_font_size * 1.25 if subtitle else 0
+        total_height = title_height + (gap + subtitle_height if subtitle else 0)
+
+        px, py = self._find_free_position(total_width, total_height, x, y)
+
+        elements = []
+
+        # Title text
+        title_el = make_text(
+            px, py, text,
+            font_size=font_size, color=color,
+            align="left", vertical_align="top",
+        )
+        elements.append(title_el)
+
+        # Subtitle text
+        if subtitle:
+            sub_y = py + title_height + gap
+            sub_el = make_text(
+                px, sub_y, subtitle,
+                font_size=subtitle_font_size, color=subtitle_color,
+                align="left", vertical_align="top",
+            )
+            elements.append(sub_el)
+
+        component = Component(
+            elements=elements,
+            bbox=BBox(px, py, total_width, total_height),
+        )
+        self._register_component(component)
+        return component
+
     def position_below(
         self,
         reference: Component,
@@ -1065,7 +1183,7 @@ class Diagram:
         return {
             "type": "excalidraw",
             "version": 2,
-            "source": "skb-layout-engine",
+            "source": "kh-layout-engine",
             "elements": self.elements,
             "appState": {
                 "gridSize": int(self.config.grid_size),
