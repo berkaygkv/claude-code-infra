@@ -1,31 +1,26 @@
 ---
 type: state
 project: kh
-phase: brainstorm
-current_session: 26
+phase: idle
+current_session: 27
 updated: 2026-02-07
-last_session: "[[sessions/session-26]]"
-active_plan: "[[plans/sync-template-to-main]]"
+last_session: "[[sessions/session-27]]"
+active_plan: null
+focus: "Template sync complete — verify hooks in practice, plan next work"
+plan_summary: ""
 ---
 
 # State
 
-## Focus
-Execute sync plan: bring template improvements (protocols, hooks, config) back into main.
-
-## Plan
-[[plans/sync-template-to-main]] — 3 phases: protocols, hooks, config. Locked and approved.
-
 ## Tasks
-| Task | Status | Blocked By |
-|------|--------|------------|
-| Sync protocols from template | [status:: todo] | - |
-| Sync hook scripts from template | [status:: todo] | - |
-| Sync settings & config from template | [status:: todo] | - |
+- [x] Full template sync to main #done
+- [ ] Verify capture-research hook works with new source extraction #pending
+- [ ] Verify export-transcript hook works with relative paths #pending
+- [ ] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
-- [[decisions/vault-location]] — vault inside kh/, git-tracked
+- [[decisions/vault-location]] — vault inside project root, git-tracked
 - [[decisions/excalidraw-skill-design]] — 5 types, vault/canvas/, auto-detect
 - [[decisions/research-pipeline-v2]] — TARGET required for deep research
 - [[decisions/io-strategy-v2]] — hard constraint: native for known paths, MCP for discovery

@@ -1,10 +1,6 @@
-# Brainstorm Protocol
+# Brainstorm Protocol (Plan Mode)
 
-## Trigger
-New idea, unclear requirements, multiple approaches, need alignment.
-
-## Purpose
-Explore, challenge, converge on direction.
+You are in **brainstorm** mode. Alignment before action.
 
 ## Cognitive Stance
 
@@ -15,48 +11,31 @@ Explore, challenge, converge on direction.
 | Output target | LOCKED decisions or approved plan |
 | Code writes | **None** — no codebase changes until plan is approved |
 
-## Phases
+## Protocol
 
-### 1. Understand
-- Clarify user's intent
-- Surface hidden assumptions
-- Paraphrase back: "What I'm hearing is..."
+1. **Extract Essence**
+   - Paraphrase the user's intent back to them
+   - "What I'm hearing is..."
+   - Ensure alignment before proceeding
 
-### 2. Explore
-- Generate options and approaches
-- Identify trade-offs
-- Research if needed (spawn deep-research agent)
+2. **Challenge Weakness**
+   - If a premise is flawed, push back
+   - Surface hidden assumptions
+   - A detailed "why" is better than blind compliance
 
-### 3. Challenge
-- Validate soundness of proposed approach
-- Identify risks and edge cases
-- Push back on flawed premises
-
-### 4. Converge
-- Mark decisions as OPEN or LOCKED
-- Create plan file (if ready)
-- Note parked items (explicitly "not doing")
-
-## Constraints
-- No codebase writes
-- Decisions OPEN until explicitly LOCKED
-- Route all staging through scratch.md
-
-## Outputs
-- Refined problem statement
-- Decisions (OPEN/LOCKED)
-- Plan (if ready)
-- Research spawned (if needed)
-- Parked items
+3. **Drive to Consensus**
+   - **OPEN:** Still exploring. Cheap to change.
+   - **LOCKED:** Decided & Immutable. Requires new evidence or critical flaw to change.
+   - **PARKED:** Explicitly "not doing".
 
 ## Writes Allowed
 
 | Target | Allowed | Notes |
 |--------|---------|-------|
-| scratch.md | Yes | Stage decisions, notes, questions |
-| plans/ | Yes | Create/update plan files |
-| Codebase | No | No code until plan approved |
-| Vault (other) | No | Route through scratch.md |
+| scratch.md | ✓ | Stage decisions, notes, questions |
+| Plan files | ✓ | Create/update plans in vault |
+| Codebase | ✗ | No code until plan approved |
+| Vault (other) | ✗ | Route through scratch.md |
 
 ## Anti-Pattern Guards
 

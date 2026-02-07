@@ -93,6 +93,19 @@ Use different sizes and colors for title vs subtitle:
 }
 ```
 
+## Minimum Font Sizes
+
+**Hard rule:** Never go below 13px. The validator will warn.
+
+| Element | Min Size | Recommended |
+|---------|----------|-------------|
+| Diagram title | 24px | 28px |
+| Section headers | 16px | 18-20px |
+| Card titles | 14px | 16px |
+| Card subtitles / labels | 14px | 14px |
+| Panel body text | 13px | 14px |
+| Annotations / notes | 13px | 14px |
+
 ## Hand-Drawn Aesthetic
 
 ### Roughness Levels

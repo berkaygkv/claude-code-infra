@@ -1,10 +1,6 @@
-# Build Protocol
+# Build Protocol (Execution Mode)
 
-## Trigger
-Plan approved. User says "go", "LGTM", "approved".
-
-## Purpose
-Execute the plan. Ship working artifacts.
+You are in **build** mode. Execute the plan.
 
 ## Cognitive Stance
 
@@ -15,59 +11,50 @@ Execute the plan. Ship working artifacts.
 | Output target | Shipped artifacts |
 | Code writes | **Full access** — codebase, vault, anywhere |
 
-## Phases
+## Protocol
 
-### 1. Pre-flight
-- Read the approved plan
-- Confirm scope: "Executing Plan: {name}. Starting Phase {N}."
-- If plan stale or unclear: Propose returning to Brainstorm
+### 1. Pre-flight Check
+- Re-read the approved plan (if exists)
+- Confirm: "Executing Plan: {name}. Starting Phase {N}."
+- If plan seems stale or scope unclear: Propose returning to Brainstorm
 
-### 2. Execute
+### 2. Phase Execution
 - State which phase you're starting
 - Break into working tasks (ephemeral by default)
-- Delegate to sub-agents for exploration, bash ops, isolated coding
-- Give sub-agents "Why" and "Constraints", not just "What"
-- On phase completion: check off in plan file
+- **Delegate:** Spawn sub-agents for exploration, bash ops, isolated coding
+- **Contextualize:** Give sub-agents "Why" and "Constraints", not just "What"
+- On phase completion: check off phase in plan file, brief status
 
-### 3. Deviate
+### 3. Deviation Handling
+
 | Situation | Response |
 |-----------|----------|
 | Minor friction (typo, small refactor) | Fix and continue |
 | Unexpected complexity | Voice it, propose refinement, continue if approved |
-| Scope change / new requirement | **Stop.** "This is new. Return to Brainstorm?" |
+| Scope change / new requirement | **Stop.** "This is new. Return to Plan mode?" |
 | Blocker (dependency missing, unclear req) | **Stop.** Flag blocker, propose next step |
 
-### 4. Complete
+### 4. Completion
 - All phases checked off
 - Success criteria verified
 - Update plan status to `complete`
 - Report: "Plan complete. {summary}."
 
-## Constraints
-- Stay within approved scope
-- No silent expansion
-- Deviations flagged immediately
-- Commits at checkpoints only (or /wrap)
+## Adaptive Sub-task Tracking
 
-## Outputs
-- Working code/artifacts
-- Updated plan (phases checked off)
-- Deviation log (if any)
+- **Default:** Sub-tasks are ephemeral (Claude's working memory)
+- **Triggers to persist:** Session ends mid-phase, blocker discovered, unexpected complexity
+- **Action:** Add explicit checkpoints to that phase in the plan file
+- **Principle:** Phases are sized to complete in one session. Sub-tasks in plan file are exception handlers.
 
 ## Writes Allowed
 
 | Target | Allowed | Notes |
 |--------|---------|-------|
-| Codebase | Yes | Full access |
-| plans/ | Yes | Update progress, check off phases |
-| Vault | Yes | Session notes via /wrap |
-| scratch.md | Yes | Stage wrap content |
-
-## Adaptive Sub-task Tracking
-- **Default:** Sub-tasks are ephemeral (Claude's working memory)
-- **Persist if:** Session ends mid-phase, blocker discovered, unexpected complexity
-- **Action:** Add explicit checkpoints to plan phase
-- **Principle:** Phases sized to complete in one session. Sub-tasks in plan are exception handlers.
+| Codebase | ✓ | Full access |
+| Plan files | ✓ | Update progress, check off phases |
+| Vault | ✓ | Session notes, runbook updates |
+| scratch.md | ✓ | Stage wrap content |
 
 ## Guard
 
@@ -77,6 +64,6 @@ No execution without:
 
 ## Exit Condition
 
-All phases complete OR blocked OR scope explosion
+All phases complete OR explicit stop OR blocker
 
 **Then:** `/wrap` to close session

@@ -1,7 +1,7 @@
 # Session Scratch
 
 ## Meta
-- session: 27
+- session: 28
 
 ## Decisions
 <!-- LOCKED: decision — rationale -->

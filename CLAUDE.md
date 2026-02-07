@@ -32,7 +32,7 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 ## 3. Memory Architecture
 
 ### The Vault
-**Path:** `vault/` (inside kh directory)
+**Path:** `vault/` (inside project root)
 
 | File/Folder | Purpose | Access Pattern |
 |-------------|---------|----------------|
@@ -46,7 +46,7 @@ Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cogniti
 | `templates/` | Obsidian templates | Reference |
 
 ### The Whiteboard
-**Path:** `scratch.md` (in kh root)
+**Path:** `scratch.md` (in project root)
 
 Session-scoped staging area:
 - Stage decisions, tasks, notes during the session
@@ -165,7 +165,7 @@ vault/research/{timestamp}-{slug}/
 
 ## 9. Key Paths
 
-All paths relative to kh directory:
+All paths relative to project root:
 
 ```
 vault/state.md           # Claude cold start

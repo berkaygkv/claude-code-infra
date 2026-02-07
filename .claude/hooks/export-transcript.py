@@ -11,7 +11,7 @@ Behavior:
 - /wrap NOT run → skip export (session discarded)
 
 Naming: session-N.md (sequential numbering, matches session note)
-Location: /notes/Sessions/transcripts/session-N.md
+Location: vault/sessions/transcripts/session-N.md
 
 Usage: Configured in .claude/settings.json under hooks.SessionEnd
 """
@@ -26,12 +26,28 @@ from typing import Any
 
 
 # ============================================================================
-# Configuration (hardcoded for dev environment)
+# Configuration - Relative paths from project root
 # ============================================================================
 
-KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
-SESSIONS_DIR = KH_DIR / "vault" / "sessions"
-TRANSCRIPTS_DIR = SESSIONS_DIR / "transcripts"
+def get_project_root() -> Path:
+    """Get project root (parent of .claude/hooks/)."""
+    return Path(__file__).parent.parent.parent
+
+
+def get_session_paths() -> tuple[Path, Path, Path]:
+    """Get session paths relative to project root.
+
+    Returns (vault_root, sessions_dir, transcripts_dir).
+    """
+    project_root = get_project_root()
+    vault_root = project_root / "vault"
+    sessions_dir = vault_root / "sessions"
+    transcripts_dir = sessions_dir / "transcripts"
+    return vault_root, sessions_dir, transcripts_dir
+
+
+# Load paths
+OBSIDIAN_VAULT, SESSIONS_DIR, TRANSCRIPTS_DIR = get_session_paths()
 
 
 def get_session_number_if_wrapped() -> int | None:
@@ -138,7 +154,6 @@ session: {session_num}
 date: {date}
 time_start: "{time_start}"
 time_end: "{time_end}"
-project: kh
 session_note: "[[sessions/{session_name}]]"
 tags:
   - session

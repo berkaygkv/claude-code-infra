@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(/home/berkaygkv/Dev/headquarter/kh/scripts/*)",
-      "Bash(uv run /home/berkaygkv/Dev/headquarter/kh/.claude/skills/excalidraw/scripts/*)"
+      "Bash(scripts/*)",
+      "Bash(uv run .claude/skills/excalidraw/scripts/*)"
     ]
   },
   "hooks": {
@@ -11,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run /home/berkaygkv/Dev/headquarter/kh/.claude/hooks/export-transcript.py"
+            "command": "uv run .claude/hooks/export-transcript.py"
           }
         ]
       }
@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run /home/berkaygkv/Dev/headquarter/kh/.claude/hooks/capture-research.py"
+            "command": "uv run .claude/hooks/capture-research.py"
           }
         ]
       }

@@ -21,8 +21,8 @@ Bring polished template improvements back into the dev workspace (main branch) s
 ### Phase 1: Protocols
 Update brainstorm.md and build.md with template's tightened versions.
 
-- [ ] `protocols/brainstorm.md` — Replace with template version (no cookiecutter vars in this file, direct copy)
-- [ ] `protocols/build.md` — Replace with template version (direct copy)
+- [x] `protocols/brainstorm.md` — Replace with template version (no cookiecutter vars in this file, direct copy)
+- [x] `protocols/build.md` — Replace with template version (direct copy)
 
 ### Phase 2: Hook Scripts (relative paths + TARGET linking)
 All three hooks switch from hardcoded paths to `get_project_root()` pattern.

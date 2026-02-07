@@ -20,12 +20,27 @@ from typing import Any
 
 
 # ============================================================================
-# Configuration (hardcoded for dev environment)
+# Configuration - Relative paths from project root
 # ============================================================================
 
-KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
-RESEARCH_TARGETS_DIR = KH_DIR / "vault" / "research" / "targets"
+def get_project_root() -> Path:
+    """Get project root (parent of .claude/hooks/)."""
+    return Path(__file__).parent.parent.parent
 
+
+def get_research_paths() -> tuple[Path, Path]:
+    """Get research paths relative to project root.
+
+    Returns (vault_root, targets_dir).
+    """
+    project_root = get_project_root()
+    vault_root = project_root / "vault"
+    targets_dir = vault_root / "research" / "targets"
+    return vault_root, targets_dir
+
+
+# Load paths
+OBSIDIAN_VAULT, RESEARCH_TARGETS_DIR = get_research_paths()
 ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 
 

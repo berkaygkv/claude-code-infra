@@ -3,7 +3,9 @@
 # Usage: ./load-protocol.sh [brainstorm|build]
 
 MODE="$1"
-PROTOCOL_DIR="/home/berkaygkv/Dev/headquarter/kh/protocols"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR/.."
+PROTOCOL_DIR="$PROJECT_ROOT/protocols"
 
 if [ "$MODE" = "brainstorm" ]; then
     cat "$PROTOCOL_DIR/brainstorm.md"

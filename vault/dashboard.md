@@ -6,21 +6,18 @@ type: dashboard
 
 ## Current State
 **Phase:** `= [[state]].phase`
-**Focus:** `= [[state]].Focus`
-**Plan:** `= [[state]].Plan`
+**Focus:** `= [[state]].focus`
+**Plan:** `= [[state]].plan_summary`
 
 ---
 
 ## Tasks
 
 ```dataview
-TABLE WITHOUT ID
-  T.text AS "Task",
-  T.status AS "Status",
-  T.blocked_by AS "Blocked By"
+TASK
 FROM "state"
-FLATTEN file.tasks AS T
-WHERE T.status != "done"
+WHERE !completed
+GROUP BY file.link
 ```
 
 ---
@@ -60,9 +57,9 @@ LIMIT 5
 ```dataview
 TABLE WITHOUT ID
   topic AS "Topic",
-  confidence AS "Confidence"
-FROM "research"
-WHERE status = "open"
+  status AS "Status"
+FROM "research/targets"
+WHERE status = "open" OR status = "pending"
 ```
 
 ---

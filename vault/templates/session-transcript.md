@@ -12,7 +12,7 @@ date: <% now %>
 time_start: <% timeStart %>
 time_end:
 project: kh
-session_note: "[[Sessions/<% sessionName %>]]"
+session_note: "[[sessions/<% sessionName %>]]"
 tags:
   - session
   - transcript

@@ -6,7 +6,7 @@ This hook runs when any subagent finishes but only captures deep-research
 (web-research) agents, exporting findings to the Obsidian vault.
 
 Output structure (folder per output):
-  research/{timestamp}-{slug}/
+  vault/research/{timestamp}-{slug}/
     ├── findings.md   (main output + top sources)
     └── sources.md    (full source list)
 
@@ -15,7 +15,8 @@ Features:
 - Creates research folder with findings.md and sources.md
 - Parses agent's own source ranking (High/Medium/Low) if present
 - Falls back to domain-based ranking when agent doesn't provide structured sources
-- Links to session in frontmatter
+- Links to open TARGET if one exists (bidirectional linking)
+- Marks TARGET as complete after OUTPUT is created
 """
 
 import json
@@ -28,21 +29,33 @@ from urllib.parse import urlparse
 
 
 # ============================================================================
-# Configuration (hardcoded for dev environment)
+# Configuration - Relative paths from project root
 # ============================================================================
 
-KH_DIR = Path("/home/berkaygkv/Dev/headquarter/kh")
-RESEARCH_DIR = KH_DIR / "vault" / "research"
+def get_project_root() -> Path:
+    """Get project root (parent of .claude/hooks/)."""
+    return Path(__file__).parent.parent.parent
+
+
+def get_vault_paths() -> tuple[Path, Path, Path]:
+    """Get vault paths relative to project root.
+
+    Returns (vault_root, research_dir, targets_dir).
+    """
+    project_root = get_project_root()
+    vault_root = project_root / "vault"
+    research_dir = vault_root / "research"
+    targets_dir = vault_root / "research" / "targets"
+    return vault_root, research_dir, targets_dir
+
+
+# Load paths
+OBSIDIAN_VAULT, RESEARCH_DIR, RESEARCH_TARGETS_DIR = get_vault_paths()
 PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
+ACTIVE_TARGET_FILE = Path("/tmp/claude-active-research-target.txt")
 
-# How many high-relevance sources to include inline in findings
+# How many high-relevance sources to include inline in OUTPUT
 MAX_INLINE_SOURCES = 5
-
-
-def extract_target_id(initial_prompt: str) -> str | None:
-    """Extract TARGET ID from agent's initial prompt if present."""
-    match = re.search(r'TARGET-(\d{8}-\d{6})', initial_prompt)
-    return f"TARGET-{match.group(1)}" if match else None
 
 # Domain authority tiers for fallback ranking
 HIGH_AUTHORITY_DOMAINS = {
@@ -57,6 +70,92 @@ MEDIUM_AUTHORITY_DOMAINS = {
     "medium.com", "dev.to", "hackernews.com", "reddit.com",
     "pypi.org", "npmjs.com", "crates.io",
 }
+
+
+def get_active_target() -> tuple[str, str, Path | None]:
+    """Get the currently active research target ID and link, if any.
+
+    Returns (target_id, wikilink, file_path) or ("", "", None) if none.
+    """
+    if ACTIVE_TARGET_FILE.exists():
+        try:
+            target_id = ACTIVE_TARGET_FILE.read_text().strip()
+            if target_id:
+                # Find the target file
+                for target_file in RESEARCH_TARGETS_DIR.glob(f"{target_id}*.md"):
+                    return target_id, f"[[research/targets/{target_file.stem}]]", target_file
+        except IOError:
+            pass
+    return "", "", None
+
+
+def find_active_target() -> tuple[str, str, Path | None]:
+    """Find the most recent open TARGET file.
+
+    Returns (target_id, wikilink, file_path) or ("", "", None) if none found.
+    """
+    if not RESEARCH_TARGETS_DIR.exists():
+        return "", "", None
+
+    open_targets = []
+    for target_file in RESEARCH_TARGETS_DIR.glob("TARGET-*.md"):
+        try:
+            content = target_file.read_text()
+            # Check frontmatter for status: open
+            if re.search(r'^status:\s*open', content, re.MULTILINE):
+                mtime = target_file.stat().st_mtime
+                open_targets.append((mtime, target_file))
+        except IOError:
+            continue
+
+    if open_targets:
+        # Return most recently modified open target
+        _, target_file = max(open_targets, key=lambda x: x[0])
+        # Extract target_id from filename (e.g., TARGET-20260118-143052-topic)
+        match = re.match(r'(TARGET-\d{8}-\d{6})', target_file.stem)
+        if match:
+            return match.group(1), f"[[research/targets/{target_file.stem}]]", target_file
+
+    return "", "", None
+
+
+def mark_target_complete(target_file: Path, output_folder: str) -> bool:
+    """Update TARGET file: set status=complete and add output link.
+
+    Returns True if successful, False otherwise.
+    """
+    if not target_file or not target_file.exists():
+        return False
+
+    try:
+        content = target_file.read_text()
+
+        # Update status: open -> complete
+        content = re.sub(
+            r'^status:\s*open',
+            'status: complete',
+            content,
+            flags=re.MULTILINE
+        )
+
+        # Update output: null -> wikilink
+        output_link = f"'[[research/{output_folder}/findings]]'"
+        content = re.sub(
+            r'^output:\s*null',
+            f'output: {output_link}',
+            content,
+            flags=re.MULTILINE
+        )
+
+        # Add completion note to Status Notes section if present
+        today = datetime.now().strftime('%Y-%m-%d')
+        if '## Status Notes' in content:
+            content = content.rstrip() + f"\n**{today}**: Research complete, see [[research/{output_folder}/findings]]\n"
+
+        target_file.write_text(content)
+        return True
+    except IOError:
+        return False
 
 
 def load_processed_agents() -> set[str]:
@@ -123,8 +222,8 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
     ranked = {"high": [], "medium": [], "low": []}
     found_any = False
 
-    # Pattern to find section headers
-    section_pattern = r'(?:^|\n)(?:#{2,4}\s*|\*\*)(High|Medium|Low)(?:\*\*)?[:\s]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*)(High|Medium|Low)|\n#{1,2}\s+[^#]|\Z))'
+    # Pattern to find section headers (e.g., "### High Relevance", "**High:**")
+    section_pattern = r'(?:^|\n)(?:#{2,4}\s*|\*\*)(High|Medium|Low)(?:\*\*)?[^\n]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*)(High|Medium|Low)|\n#{1,2}\s+[^#]|\Z))'
     matches = re.findall(section_pattern, summary, re.IGNORECASE | re.DOTALL)
 
     for match in matches:
@@ -134,11 +233,10 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
         if tier not in ranked:
             continue
 
-        link_pattern = r'\[([^\]]+)\]\((https?://[^\)]+)\)'
-        links = re.findall(link_pattern, content)
-
-        for title, url in links:
-            ranked[tier].append({"title": title.strip(), "url": url})
+        # Extract sources using all URL formats (not just markdown links)
+        tier_sources = extract_sources_from_text(content)
+        for source in tier_sources:
+            ranked[tier].append(source)
             found_any = True
 
     if found_any:
@@ -153,26 +251,58 @@ def extract_ranked_sources_from_summary(summary: str) -> dict[str, list] | None:
     if sources_section:
         section_content = sources_section.group(1)
         for tier in ["high", "medium", "low"]:
-            tier_pattern = rf'(?:^|\n)(?:#{2,4}\s*|\*\*|-)?\s*{tier}[:\s]*(?:\*\*)?\n?(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*|-)?\s*(?:high|medium|low)|\Z))'
+            tier_pattern = rf'(?:^|\n)(?:#{2,4}\s*|\*\*|-)?\s*{tier}[^\n]*\n(.*?)(?=(?:\n(?:#{2,4}\s*|\*\*|-)?\s*(?:high|medium|low)|\Z))'
             tier_match = re.search(tier_pattern, section_content, re.IGNORECASE | re.DOTALL)
             if tier_match:
-                links = re.findall(r'\[([^\]]+)\]\((https?://[^\)]+)\)', tier_match.group(1))
-                for title, url in links:
-                    ranked[tier].append({"title": title.strip(), "url": url})
+                tier_sources = extract_sources_from_text(tier_match.group(1))
+                for source in tier_sources:
+                    ranked[tier].append(source)
                     found_any = True
 
     return ranked if found_any else None
 
 
+def _clean_url(url: str) -> str:
+    """Strip trailing punctuation from URLs."""
+    return url.rstrip(".,;:)'\">")
+
+
 def extract_sources_from_text(text: str) -> list[dict]:
-    """Extract all markdown links from text."""
+    """Extract all URLs from text — markdown links, labeled URLs, and bare URLs."""
     sources = []
     seen = set()
+
+    # Pattern 1: Markdown links [title](url)
     for match in re.finditer(r'\[([^\]]+)\]\((https?://[^\)]+)\)', text):
         title, url = match.groups()
+        url = _clean_url(url)
         if url not in seen:
             seen.add(url)
             sources.append({"title": title.strip(), "url": url})
+
+    # Pattern 2: "title - url" or "title: url" (numbered/bulleted lists)
+    # Matches: "1. LangChain docs - https://...", "- Title: https://..."
+    for match in re.finditer(
+        r'(?:^|\n)\s*(?:\d+\.?\s+|-\s+)?(.+?)\s*[-\u2013\u2014:]\s+(https?://\S+)',
+        text
+    ):
+        title, url = match.groups()
+        url = _clean_url(url)
+        if url not in seen:
+            seen.add(url)
+            # Strip bold markers
+            title = re.sub(r'\*+', '', title).strip()
+            if title:
+                sources.append({"title": title, "url": url})
+
+    # Pattern 3: Bare URLs not already captured
+    for match in re.finditer(r'(https?://[^\s\)\]>]+)', text):
+        url = _clean_url(match.group(1))
+        if url not in seen:
+            seen.add(url)
+            domain = urlparse(url).netloc
+            sources.append({"title": domain, "url": url})
+
     return sources
 
 
@@ -237,6 +367,26 @@ def parse_agent_transcript(agent_file: Path) -> dict[str, Any]:
             if final_summary:
                 break
 
+    # Collect all text from assistant messages and tool results (for source extraction)
+    all_text_parts = []
+    for entry in entries:
+        if entry.get("type") == "assistant":
+            for block in entry.get("message", {}).get("content", []):
+                if isinstance(block, dict) and block.get("type") == "text":
+                    all_text_parts.append(block.get("text", ""))
+        elif entry.get("type") in ("human", "user"):
+            content = entry.get("message", {}).get("content", [])
+            if isinstance(content, list):
+                for block in content:
+                    if isinstance(block, dict) and block.get("type") == "tool_result":
+                        rc = block.get("content", "")
+                        if isinstance(rc, str):
+                            all_text_parts.append(rc)
+                        elif isinstance(rc, list):
+                            for rb in rc:
+                                if isinstance(rb, dict) and rb.get("type") == "text":
+                                    all_text_parts.append(rb.get("text", ""))
+
     # Detect agent type
     agent_type = "unknown"
     tool_names = [tc["tool"] for tc in tool_calls]
@@ -250,6 +400,7 @@ def parse_agent_transcript(agent_file: Path) -> dict[str, Any]:
     return {
         "initial_prompt": initial_prompt,
         "final_summary": final_summary,
+        "all_text": "\n".join(all_text_parts),
         "agent_type": agent_type,
         "tool_count": len(tool_calls)
     }
@@ -271,8 +422,9 @@ def generate_slug(text: str, max_len: int = 40) -> str:
 def format_findings_markdown(
     parsed: dict[str, Any],
     ranked_sources: dict[str, list],
-    output_folder: str,
-    target_id: str | None = None
+    target_id: str,
+    target_link: str,
+    output_folder: str
 ) -> str:
     """Create findings.md with minimal inline sources."""
     now = datetime.now()
@@ -282,28 +434,35 @@ def format_findings_markdown(
     topic_match = re.sub(r'^(Research|Investigate|.*?research\s+)', '', query, flags=re.IGNORECASE)
     topic = topic_match[:80].strip() if topic_match else "Research Findings"
 
-    # Build target fields if present
-    target_fields = ""
-    if target_id:
-        target_fields = f"\ntarget_id: {target_id}\ntarget_link: \"[[research/targets/{target_id}]]\""
-
     # Build frontmatter
-    frontmatter = f"""---
-type: research
-topic: {topic}
-status: open
-created: {now.strftime('%Y-%m-%d')}
-completed: null
-session: null
-confidence: medium
-led_to_decision: null{target_fields}
-tags:
-  - research
----"""
+    frontmatter_lines = [
+        "---",
+        "type: research-output",
+        f"id: {output_folder}",
+    ]
+
+    if target_link:
+        frontmatter_lines.append(f"target: '{target_link}'")
+    else:
+        frontmatter_lines.append("target: null")
+
+    frontmatter_lines.extend([
+        f"created: {now.strftime('%Y-%m-%d')}",
+        "researcher: claude-deep-research",
+        "tags:",
+        "  - research",
+        "---"
+    ])
+
+    frontmatter = "\n".join(frontmatter_lines)
 
     # Build content
     content_parts = [frontmatter, ""]
-    content_parts.append(f"# Research: {topic}\n")
+    content_parts.append(f"# Research Output: {topic}\n")
+
+    if target_link:
+        content_parts.append(f"**Target:** {target_link}\n")
+
     content_parts.append(f"**Question:** {query[:200]}{'...' if len(query) > 200 else ''}\n")
     content_parts.append("---\n")
 
@@ -333,15 +492,13 @@ def format_sources_markdown(
     output_folder: str,
     ranked_sources: dict[str, list],
     query: str,
-    created: str,
-    target_id: str | None = None
+    created: str
 ) -> str:
     """Create sources.md with full source list."""
-    target_field = f"\ntarget_id: {target_id}" if target_id else ""
     frontmatter = f"""---
 type: research-sources
 output-id: {output_folder}
-created: {created}{target_field}
+created: {created}
 ---
 """
     content_parts = [frontmatter]
@@ -373,9 +530,9 @@ def should_capture_agent(parsed: dict) -> bool:
 
 
 def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None, str | None]:
-    """Export agent research to Obsidian vault as folder with findings + sources.
+    """Export agent research to Obsidian vault as research folder with findings + sources.
 
-    Creates: research/{timestamp}-{slug}/
+    Creates: vault/research/{timestamp}-{slug}/
                ├── findings.md
                └── sources.md
 
@@ -389,18 +546,22 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
     if not parsed['final_summary'] and parsed['tool_count'] == 0:
         return None, None
 
-    # Extract TARGET ID from initial prompt if present
-    target_id = extract_target_id(parsed['initial_prompt'])
+    # Try to find active target
+    target_id, target_link, target_file = get_active_target()
+    if not target_id:
+        target_id, target_link, target_file = find_active_target()
 
     # Get sources - try agent's ranking first, fallback to domain-based
+    # Use all_text (all messages + tool results) for maximum source coverage
+    source_text = parsed.get('all_text') or parsed['final_summary']
     agent_ranked = extract_ranked_sources_from_summary(parsed['final_summary'])
     if agent_ranked:
         ranked_sources = agent_ranked
     else:
-        all_sources = extract_sources_from_text(parsed['final_summary'])
+        all_sources = extract_sources_from_text(source_text)
         ranked_sources = rank_sources_by_domain(all_sources)
 
-    # Generate folder name (no OUTPUT- prefix)
+    # Generate folder name
     slug = generate_slug(parsed['initial_prompt'])
     now = datetime.now()
     timestamp = now.strftime("%Y%m%d-%H%M%S")
@@ -412,7 +573,7 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
 
     # Generate findings markdown
     findings_markdown = format_findings_markdown(
-        parsed, ranked_sources, output_folder, target_id
+        parsed, ranked_sources, target_id, target_link, output_folder
     )
 
     # Generate sources markdown
@@ -420,8 +581,7 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
         output_folder,
         ranked_sources,
         parsed['initial_prompt'],
-        now.strftime('%Y-%m-%d'),
-        target_id
+        now.strftime('%Y-%m-%d')
     )
 
     # Write findings.md
@@ -433,6 +593,10 @@ def export_agent_research(agent_file: Path, session_id: str) -> tuple[str | None
     sources_path = folder_path / "sources.md"
     with open(sources_path, "w", encoding="utf-8") as f:
         f.write(sources_markdown)
+
+    # Update TARGET to complete if we found one
+    if target_file:
+        mark_target_complete(target_file, output_folder)
 
     return str(findings_path), str(sources_path)
 
