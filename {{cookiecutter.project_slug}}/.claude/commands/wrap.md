@@ -2,10 +2,6 @@
 
 End-of-session tasks: process scratch.md, update state.md, create session handoff, create decision files.
 
-## Schema Reference
-
-**IMPORTANT:** All files must follow `vault/schemas.md`. Read it before creating/updating any vault file.
-
 ## Design Rationale
 
 **I/O Strategy:**
@@ -33,16 +29,9 @@ All paths relative to project root:
 
 When the user invokes `/wrap`, perform these steps:
 
-### Step 1: Read Session Scratch
+### Step 1: Read Session Changelog
 
-Read `scratch.md` using native Read.
-
-Extract:
-- **Session number** from Meta section
-- **Decisions** (LOCKED and OPEN items)
-- **Memory** items to persist
-- **Tasks** (new, completed, blockers)
-- **Notes** (additional context)
+Read `scratch.md` changelog. Synthesize decisions, memory, tasks from the Events log.
 
 If scratch.md is empty, synthesize from conversation context.
 
@@ -77,7 +66,8 @@ For each LOCKED decision in scratch.md:
 ```
 
 1. Generate slug from decision title (lowercase, hyphens)
-2. Create decision file at `vault/decisions/{slug}.md`
+2. Read `vault/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
+3. Write decision file at `vault/decisions/{slug}.md`
 
 ```yaml
 ---
@@ -86,28 +76,20 @@ title: {title}
 status: locked
 date: {YYYY-MM-DD}
 session: "[[sessions/session-{N}]]"
-supersedes: null
-superseded_by: null
-related: []
-tags:
-  - decision
+supersedes: {only if applicable, otherwise omit}
+tags: [decision]
 ---
 
-## Decision
-{the decision}
+# {Title}
 
-## Rationale
-{why we chose this}
-
-## Alternatives Considered
-{what we rejected, if any}
+{Free-form: rationale, context, alternatives — whatever's relevant}
 ```
 
 Skip this step if no new LOCKED decisions.
 
 ### Step 5: Update State
 
-Read and update `vault/state.md` following `vault/schemas.md`:
+Read and update `vault/state.md`:
 
 1. Update frontmatter:
    - `current_session`: N (current session number)
@@ -131,14 +113,14 @@ Read and update `vault/state.md` following `vault/schemas.md`:
 
 ### Step 6: Create Session Note
 
-Create session handoff at `vault/sessions/session-{N}.md` following `vault/schemas.md`:
+Create session handoff at `vault/sessions/session-{N}.md`:
 
 ```yaml
 ---
 type: session
 session: {N}
 date: {YYYY-MM-DD}
-mode: {brainstorm | build | quick-fix}
+mode: {brainstorm | build | direct}
 topics: [topic1, topic2]
 outcome: successful | blocked | abandoned
 continues_from: "[[sessions/session-{N-1}]]"
@@ -172,26 +154,15 @@ decisions: ["[[decisions/slug]]"]
 
 ### Step 7: Reset Scratch
 
-Reset scratch.md for next session:
+scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
 ```markdown
-# Session Scratch
+# Session Changelog
 
 ## Meta
 - session: {N+1}
 
-## Decisions
-<!-- LOCKED: decision — rationale -->
-<!-- OPEN: question still unresolved -->
-
-## Memory
-<!-- Facts, preferences, constraints to persist -->
-
-## Tasks
-<!-- New tasks, completed tasks, blockers -->
-
-## Notes
-<!-- Anything else to capture -->
+## Events
 ```
 
 ### Step 8: Living CLAUDE.md Review

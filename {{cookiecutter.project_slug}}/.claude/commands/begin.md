@@ -2,14 +2,10 @@
 
 This command loads context from state.md + last session handoff and activates the specified mode.
 
-## Schema Reference
-
-**IMPORTANT:** All files follow `vault/schemas.md`. Reference it for field definitions.
-
 ## Usage
 
 ```
-/begin              → Quick fix mode (minimal protocols)
+/begin              → Direct execution (no protocol loaded)
 /begin brainstorm   → Brainstorm mode (alignment before action)
 /begin build        → Build mode (ship artifacts)
 ```
@@ -51,7 +47,28 @@ Extract from content:
 - Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
 - Constraints — linked decisions to honor
 
-### Step 2: Read Last Session Handoff
+### Step 2: Initialize scratch.md
+
+Read scratch.md first (it may already exist from a previous session), then overwrite with the session changelog format:
+
+```markdown
+# Session Changelog
+
+## Meta
+- session: {N+1}
+- mode: {brainstorm|build|direct}
+- objective: {focus from state.md or user's stated goal}
+
+## Events
+- Session started — {objective}
+```
+
+Where:
+- `{N+1}` is current_session + 1 from state.md
+- `mode` is `brainstorm`, `build`, or `direct` (for no argument)
+- `objective` comes from state.md `focus` field or the user's first message
+
+### Step 3: Read Last Session Handoff
 
 Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `vault/sessions/session-21.md`).
 
@@ -67,18 +84,19 @@ Extract:
 
 This provides the rich narrative context for cold start.
 
-### Step 3: Handle First Run
+### Step 4: Handle First Run
 
 If state.md doesn't exist or is empty:
 - Create state.md with session: 1
+- Read scratch.md (may not exist — that's fine, the Read attempt is sufficient), then initialize with session: 1
 - Display first-run welcome
-- Skip to Step 6
+- Skip to Step 7
 
 **First-run welcome:**
 ```
 ## Session 1 (First Run)
 
-Welcome to {{ cookiecutter.project_name }}. No previous sessions found.
+Welcome to kh. No previous sessions found.
 
 **Vault:** vault/
 
@@ -91,14 +109,14 @@ This is a fresh installation. The following are ready:
 Ready to begin. What are we working on?
 ```
 
-### Step 4: Acknowledge Mode
+### Step 5: Acknowledge Mode
 
 State which mode is active:
-- No argument → "Quick fix mode — minimal overhead, direct execution"
+- No argument → "Direct execution — no protocol loaded"
 - `brainstorm` → "Brainstorm mode — alignment before action"
 - `build` → "Build mode — executing approved plan"
 
-### Step 5: Display Current State
+### Step 6: Display Current State
 
 ```
 ## Resuming Session {N+1}
@@ -130,11 +148,11 @@ State which mode is active:
 {Next Steps section from last session handoff}
 ```
 
-### Step 6: Mode-Specific Prompt
+### Step 7: Mode-Specific Prompt
 
-**Quick fix mode (no argument):**
+**Direct execution (no argument):**
 ```
-Ready. What needs fixing?
+Ready. What needs doing?
 ```
 
 **Brainstorm mode:**
@@ -159,7 +177,7 @@ Build mode requested but no active plan found.
 Switch to brainstorm mode to create a plan, or specify what to build.
 ```
 
-### Step 7: Confirm Session Start
+### Step 8: Confirm Session Start
 
 After user responds:
 ```
@@ -174,5 +192,4 @@ Session {N+1} started. [{mode} mode]
 - Last session provides: context, decisions, memory, next steps
 - If previous session outcome was `blocked`, highlight the blocker prominently
 - Mode protocols are in `protocols/` — edit those files to change cognitive behavior
-- scratch.md is prepared by `/wrap` at end of each session
-- All vault files follow `vault/schemas.md` — reference it for field definitions
+- scratch.md is initialized at session start with the changelog format
