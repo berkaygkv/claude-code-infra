@@ -88,7 +88,23 @@ Session-scoped staging area:
 
 ---
 
-## 5. Research Pipeline
+## 5. Brain Vault
+
+**Path:** `~/Documents/Notes/` (Obsidian Sync, cross-device)
+**MCP Server:** `brain` — tools namespaced as `mcp__brain__*`
+**Access:** On-demand only. Never auto-loaded at `/begin`.
+
+Cross-project, cross-machine knowledge layer shared with Clawbot (KL). Always use `mcp__brain__*` tools — never native Read/Write/Glob/Grep on the brain vault path.
+
+**HARD RULE:** Search (`mcp__brain__search_notes`) before creating any file. Update existing content rather than creating duplicates.
+
+All brain vault files require provenance frontmatter: `created_by`, `last_modified_by`, `source_session`.
+
+For folder contracts, provenance details, and handoff protocol → see `vault/decisions/brain-vault-integration.md`.
+
+---
+
+## 6. Research Pipeline
 
 Research operations follow a two-tier system with hard enforcement:
 
@@ -125,7 +141,7 @@ vault/research/{timestamp}-{slug}/
 
 ---
 
-## 6. Anti-Pattern Guards
+## 7. Anti-Pattern Guards
 
 | Trigger | Guard |
 |---------|-------|
@@ -136,7 +152,7 @@ vault/research/{timestamp}-{slug}/
 
 ---
 
-## 7. Codebase vs Template
+## 8. Codebase vs Template
 
 This project has **two branches** served via git worktrees:
 
@@ -185,7 +201,7 @@ This project has **two branches** served via git worktrees:
 
 ---
 
-## 8. Git Discipline
+## 9. Git Discipline
 
 - **Autonomous commits:** FORBIDDEN
 - **Staging:** You may stage files
@@ -193,7 +209,7 @@ This project has **two branches** served via git worktrees:
 
 ---
 
-## 9. Session Lifecycle
+## 10. Session Lifecycle
 
 ### `/begin [mode]`
 1. Read vault/state.md (structure: phase, focus, tasks, constraints)
@@ -212,7 +228,7 @@ This project has **two branches** served via git worktrees:
 
 ---
 
-## 10. Key Paths
+## 11. Key Paths
 
 All paths relative to project root:
 

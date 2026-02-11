@@ -112,7 +112,7 @@ Everything from `# Operational Protocol: Symbiotic Partner` onward in the templa
    - **Content structure changes**: new sections, renamed sections, removed sections
 4. Overwrite `vault/schemas.md` with the template version (this is the new source of truth)
 
-**If schemas are identical:** Skip to Step 6. Report "schemas unchanged."
+**If schemas are identical:** Skip to Step 7. Report "schemas unchanged."
 
 ---
 
@@ -169,7 +169,77 @@ For every file of a changed type:
 
 ---
 
-## Step 6: Validate
+## Step 6: Alignment Audit
+
+After migration, audit project-specific content for consistency with the upgraded infrastructure. This catches broken cross-references, stale constraints, and structural drift that schema migration alone cannot detect.
+
+Run each checklist item and report **pass**, **warn**, or **fail**:
+- **Pass**: consistent, no action needed
+- **Warn**: technically valid but worth noting (e.g., many superseded decisions, gaps in session numbering that predate this upgrade)
+- **Fail**: inconsistency found — include file path and what's wrong
+
+### 6a: CLAUDE.md Integrity
+
+1. **Section coverage**: All numbered sections from the template protocol are present in the merged CLAUDE.md and correctly numbered (sequential, no gaps, no duplicates)
+2. **Brain Vault section**: If `vault/decisions/brain-vault-integration.md` exists, §5 (Brain Vault) must be present. If the decision file doesn't exist, the section should be absent or stubbed
+3. **Codebase vs Template paths**: The section listing worktree paths must contain actual machine-specific paths (not `{{ cookiecutter.* }}` placeholders and not paths from a different machine). Verify both `main` and `template` paths point to real directories
+4. **Key Paths section**: Every directory listed in the Key Paths section should exist on disk. Flag any listed paths that don't exist and any vault subdirectories that exist but aren't listed
+
+### 6b: Decision Coherence
+
+1. **Status validity**: Every `vault/decisions/*.md` has a `status` field with value `locked` or `superseded`. Any other value (or missing field) is a fail
+2. **Supersession forward link**: Every decision with `status: superseded` has a `superseded_by` field pointing to a file that actually exists in `vault/decisions/`
+3. **Supersession back link**: The file referenced by `superseded_by` has a `supersedes` field pointing back to the original decision
+4. **State constraint references**: All decision wikilinks in `state.md` constraints resolve to existing, non-superseded decision files. A constraint referencing a superseded decision is a fail
+
+### 6c: State.md Consistency
+
+1. **Current session number**: `current_session` value matches the highest N found across `vault/sessions/session-*.md` filenames
+2. **Last session link**: `last_session` wikilink resolves to an existing session file
+3. **Active plan**: If `active_plan` is non-null, the referenced plan file exists and its `status` is not `completed` or `abandoned`
+4. **Task tags**: All task entries use valid tags: `#pending`, `#done`, `#blocked/{id}`, `#in-progress`. Any other tag format is a warn
+
+### 6d: Session Continuity
+
+1. **Sequential numbering**: Session files form a contiguous sequence from 1 to N (no gaps). Missing sessions are a warn (they may predate this project's tracking)
+2. **continues_from chain**: Each session N with a `continues_from` field points to session N-1. A broken chain (pointing to wrong session or missing file) is a fail
+3. **Decision wikilinks**: All `[[decisions/...]]` wikilinks in session frontmatter resolve to existing decision files
+
+### 6e: Plan Integrity
+
+1. **Phase counts**: For every plan, `phases_done` <= `phases_total`. If violated, **auto-fix** by clamping `phases_done` to `phases_total`
+2. **Status consistency**: If `phases_done` == `phases_total`, status should be `completed`. If status is `active` but all phases are done, this is a warn
+3. **State.md references**: Every plan referenced as `active_plan` in `state.md` must exist in `vault/plans/`
+
+### 6f: Auto-Fix Rules
+
+Apply fixes automatically for unambiguous issues:
+- `phases_done > phases_total` → set `phases_done = phases_total`
+- Missing `status` on decisions → set `status: locked` (conservative default)
+- `continues_from` missing on sessions → infer `"[[sessions/session-{N-1}]]"` from filename
+
+For ambiguous issues (e.g., constraint referencing superseded decision — should the constraint be removed or updated?), list them for the user without modifying.
+
+### 6g: Report
+
+```
+### Alignment Audit
+- ✓ CLAUDE.md integrity (4/4 checks passed)
+- ⚠ Decision coherence (3/4 passed, 1 warn: 3 superseded decisions)
+- ✓ State.md consistency (4/4 checks passed)
+- ✗ Session continuity (2/3 passed, 1 fail: session-12 continues_from points to session-10)
+- ✓ Plan integrity (3/3 checks passed)
+
+**Auto-fixed:**
+- vault/plans/some-plan.md: clamped phases_done from 5 to 4
+
+**Requires attention:**
+- vault/sessions/session-12.md: continues_from → [[sessions/session-10]] (expected session-11)
+```
+
+---
+
+## Step 7: Validate
 
 For every vault file (all types):
 
@@ -197,7 +267,7 @@ If any files fail validation, attempt to fix them. If the fix is ambiguous, list
 
 ---
 
-## Step 7: Cleanup and Summary
+## Step 8: Cleanup and Summary
 
 ```bash
 rm -rf /tmp/kh-upgrade-source
@@ -232,6 +302,15 @@ Display:
 - {count} decision files migrated
 - {count} plan files migrated
 - {count} research files migrated
+
+### Alignment Audit
+- CLAUDE.md integrity: {pass/warn/fail summary}
+- Decision coherence: {pass/warn/fail summary}
+- State.md consistency: {pass/warn/fail summary}
+- Session continuity: {pass/warn/fail summary}
+- Plan integrity: {pass/warn/fail summary}
+{If auto-fixes applied: list them}
+{If issues need attention: list them}
 
 ### Validation
 - {pass} ✓ / {fail} ✗
