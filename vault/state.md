@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: build
-current_session: 32
+current_session: 33
 updated: 2026-02-11
-last_session: "[[sessions/session-32]]"
+last_session: "[[sessions/session-33]]"
 active_plan: null
-focus: "Sync shared infrastructure to template branch, then verify hooks and upgrade skill on another machine"
+focus: "Test /upgrade skill on another machine, verify hooks (capture-research, export-transcript)"
 plan_summary: ""
 ---
 
@@ -14,7 +14,7 @@ plan_summary: ""
 
 ## Tasks
 - [x] Execute system overhaul plan (build mode) #done
-- [ ] Sync shared infrastructure to template branch (post-overhaul) #pending
+- [x] Sync shared infrastructure to template branch (post-overhaul) #done
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
 - [ ] Verify capture-research hook works after rewrite #pending
 - [ ] Verify export-transcript hook works with relative paths #pending

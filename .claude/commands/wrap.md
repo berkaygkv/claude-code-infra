@@ -66,7 +66,8 @@ For each LOCKED decision in scratch.md:
 ```
 
 1. Generate slug from decision title (lowercase, hyphens)
-2. Create decision file at `vault/decisions/{slug}.md`
+2. Read `vault/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
+3. Write decision file at `vault/decisions/{slug}.md`
 
 ```yaml
 ---
@@ -153,7 +154,7 @@ decisions: ["[[decisions/slug]]"]
 
 ### Step 7: Reset Scratch
 
-Reset scratch.md for next session:
+scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
 ```markdown
 # Session Changelog

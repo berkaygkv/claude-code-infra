@@ -28,7 +28,9 @@ If the insight isn't obvious from context, ask: "What's the takeaway?"
 
 ### Step 3: Write to Brain Vault
 
-Use `mcp__brain__write_note` to create an individual file:
+**First:** Search brain vault (`mcp__brain__search_notes`) for existing entries with similar topic/slug. If a match exists, update it with `mcp__brain__patch_note` instead of creating a duplicate.
+
+**If no match:** Use `mcp__brain__write_note` to create an individual file:
 
 **Path:** `_meta/journal/{slug}.md`
 
@@ -64,4 +66,4 @@ Meta-journal entry recorded: _meta/journal/{slug}.md
 - No interactive two-prompt flow — capture directly from conversation
 - Session reference is plain text, not wikilinks (brain vault doesn't have project sessions)
 - One file per entry in `_meta/journal/`
-- Search brain vault first (`mcp__brain__search_notes`) to avoid duplicating an existing insight
+- Search-before-write is enforced in Step 3 (not just a suggestion)

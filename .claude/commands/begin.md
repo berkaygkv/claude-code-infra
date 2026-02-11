@@ -49,7 +49,7 @@ Extract from content:
 
 ### Step 2: Initialize scratch.md
 
-Write scratch.md with the session changelog format:
+Read scratch.md first (it may already exist from a previous session), then overwrite with the session changelog format:
 
 ```markdown
 # Session Changelog
@@ -88,7 +88,7 @@ This provides the rich narrative context for cold start.
 
 If state.md doesn't exist or is empty:
 - Create state.md with session: 1
-- Initialize scratch.md with session: 1
+- Read scratch.md (may not exist — that's fine, the Read attempt is sufficient), then initialize with session: 1
 - Display first-run welcome
 - Skip to Step 7
 
