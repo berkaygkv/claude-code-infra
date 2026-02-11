@@ -5,6 +5,8 @@
   "author": "",
   "_copy_without_render": [
     "*.pyc",
-    "__pycache__"
+    "__pycache__",
+    "CLAUDE.md",
+    ".claude/skills/upgrade/SKILL.md"
   ]
 }
