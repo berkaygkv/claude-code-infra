@@ -54,7 +54,7 @@ You are in **build** mode. Execute the plan.
 | Codebase | ✓ | Full access |
 | Plan files | ✓ | Update progress, check off phases |
 | Vault | ✓ | Session notes, runbook updates |
-| scratch.md | ✓ | Stage wrap content |
+| scratch.md | ✓ | Session changelog |
 
 ## Guard
 

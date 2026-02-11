@@ -5,7 +5,7 @@ status: locked
 date: 2026-02-04
 session: "[[sessions/session-24]]"
 supersedes: null
-superseded_by: null
+superseded_by: "[[decisions/system-overhaul-v1]]"
 related:
   - "[[decisions/vault-location]]"
   - "[[decisions/vault-io-strategy]]"

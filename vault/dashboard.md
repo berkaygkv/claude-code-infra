@@ -52,18 +52,6 @@ LIMIT 5
 
 ---
 
-## Open Research
-
-```dataview
-TABLE WITHOUT ID
-  topic AS "Topic",
-  status AS "Status"
-FROM "research/targets"
-WHERE status = "open" OR status = "pending"
-```
-
----
-
 ## Plan Progress
 
 ```dataview

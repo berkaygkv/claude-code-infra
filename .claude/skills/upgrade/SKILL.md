@@ -53,7 +53,6 @@ These files have NO project-specific content. Overwrite completely using `cp -r`
 | `$SOURCE/.claude/commands/` | `.claude/commands/` |
 | `$SOURCE/protocols/` | `protocols/` |
 | `$SOURCE/scripts/` | `scripts/` |
-| `$SOURCE/vault/templates/` | `vault/templates/` |
 
 **Single files:**
 
@@ -68,7 +67,6 @@ These files have NO project-specific content. Overwrite completely using `cp -r`
 **Do NOT copy:**
 - `$SOURCE/CLAUDE.md` — handled separately in Step 3
 - `$SOURCE/vault/state.md` — project-specific
-- `$SOURCE/vault/schemas.md` — handled separately in Step 4
 - `$SOURCE/scratch.md` — session-scoped
 - Any `.gitkeep` files into directories that already have content
 
@@ -103,14 +101,14 @@ Everything from `# Operational Protocol: Symbiotic Partner` onward in the templa
 
 ## Step 4: Diff Schemas
 
-1. Read the NEW `vault/schemas.md` from `$SOURCE/vault/schemas.md`
-2. Read the CURRENT `vault/schemas.md` from `vault/schemas.md`
-3. Compare them. For each file type (state, session, decision, plan, research-target, research-output), identify:
+1. Read the NEW schemas from `$SOURCE/.claude/skills/upgrade/references/schemas.md`
+2. Read the CURRENT schemas from `.claude/skills/upgrade/references/schemas.md`
+3. Compare them. For each file type (state, session, decision, plan, research-output), identify:
    - **Added fields**: new in template schema, absent in current
    - **Removed fields**: present in current, absent in template schema
    - **Changed fields**: type, required status, or description changed
    - **Content structure changes**: new sections, renamed sections, removed sections
-4. Overwrite `vault/schemas.md` with the template version (this is the new source of truth)
+4. The schemas file is already overwritten in Step 2 (it's inside `.claude/skills/`). No separate copy needed.
 
 **If schemas are identical:** Skip to Step 7. Report "schemas unchanged."
 
@@ -128,7 +126,6 @@ For each file type that has schema changes:
 | session | `vault/sessions/session-*.md` |
 | decision | `vault/decisions/*.md` |
 | plan | `vault/plans/*.md` |
-| research-target | `vault/research/targets/TARGET-*.md` |
 | research-output | `vault/research/*/findings.md` |
 
 List all matching files. Skip `.gitkeep` and directories.

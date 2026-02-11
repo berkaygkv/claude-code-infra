@@ -67,7 +67,7 @@ One file per session. Handoff context for cold start.
 | `type` | string | yes | Always `session` |
 | `session` | number | yes | Session number |
 | `date` | date | yes | Session date (YYYY-MM-DD) |
-| `mode` | string | yes | Mode: `brainstorm`, `build`, `quick-fix` |
+| `mode` | string | yes | Mode: `brainstorm`, `build`, `direct` |
 | `topics` | list | yes | Topics covered |
 | `outcome` | string | yes | `successful`, `blocked`, `abandoned` |
 | `continues_from` | wikilink | no | Link to previous session |
@@ -111,22 +111,11 @@ One file per decision (or cohesive bundle).
 | `date` | date | yes | Decision date (YYYY-MM-DD) |
 | `session` | wikilink | yes | Link to session where decided |
 | `supersedes` | wikilink | no | Link to decision this replaces |
-| `superseded_by` | wikilink | no | Link to decision that replaced this |
-| `related` | list | no | Links to related decisions |
 | `tags` | list | yes | Tags including `decision` |
 
 ### Content
 
-```markdown
-## Decision
-{the decision}
-
-## Rationale
-{why we chose this}
-
-## Alternatives Considered
-{what we rejected}
-```
+Free-form. No forced body sections — structure the content as the decision demands.
 
 ---
 
@@ -141,8 +130,7 @@ One file per plan.
 | `type` | string | yes | Always `plan` |
 | `title` | string | yes | Plan title |
 | `status` | string | yes | `draft`, `approved`, `in_progress`, `completed`, `abandoned` |
-| `created` | date | yes | Creation date (YYYY-MM-DD) |
-| `project` | string | yes | Project name |
+| `date` | date | yes | Date (YYYY-MM-DD) |
 | `phases_total` | number | yes | Total number of phases |
 | `phases_done` | number | yes | Completed phases count |
 
@@ -169,41 +157,6 @@ One file per plan.
 
 ---
 
-## Research Target (`vault/research/targets/TARGET-{timestamp}-{slug}.md`)
-
-Research request before investigation.
-
-### Frontmatter
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | yes | Always `research-target` |
-| `status` | string | yes | `open`, `in_progress`, `complete` |
-| `created` | date | yes | Creation date (YYYY-MM-DD) |
-| `topic` | string | yes | Research topic (short) |
-| `confidence` | string | no | `low`, `medium`, `high` (after completion) |
-| `output` | wikilink | no | Link to findings (after completion) |
-
-### Content
-
-```markdown
-# Research Target: {Topic}
-
-## Question
-{What we need to learn}
-
-## Context
-{Why this matters}
-
-## Key Areas
-1. ...
-
-## Output
-{Link to findings once complete}
-```
-
----
-
 ## Research Output (`vault/research/{timestamp}-{slug}/findings.md`)
 
 Research results.
@@ -213,22 +166,7 @@ Research results.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `type` | string | yes | Always `research-output` |
-| `target_link` | wikilink | yes | Link back to TARGET |
 | `created` | date | yes | Creation date |
 | `topic` | string | yes | Research topic |
-| `confidence` | string | yes | `low`, `medium`, `high` |
-
----
-
-## Dashboard Queries Reference
-
-The dashboard expects these exact fields. Any schema changes must update both the file templates AND the dashboard queries.
-
-| Section | Source | Fields Used |
-|---------|--------|-------------|
-| Current State | `state.md` frontmatter | `phase`, `focus`, `plan_summary` |
-| Tasks | `state.md` content | `file.tasks` (checkbox format) |
-| Recent Decisions | `decisions/*.md` | `title`, `status`, `date` |
-| Session History | `sessions/*.md` | `date`, `outcome`, `topics` |
-| Open Research | `research/targets/*.md` | `topic`, `confidence`, `status="open"` |
-| Plan Progress | `plans/*.md` | `title`, `status`, `phases_done`, `phases_total` |
+| `researcher` | string | yes | Who performed the research |
+| `tags` | list | yes | Tags for categorization |

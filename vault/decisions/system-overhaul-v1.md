@@ -3,43 +3,37 @@ type: decision
 title: "System Overhaul v1 — Minimal Friction, Full Promise"
 status: locked
 date: 2026-02-11
-session: "[[sessions/session-31]]"
-supersedes: "[[decisions/research-pipeline-v2]], [[decisions/brain-vault-integration]]"
+session: "[[sessions/session-32]]"
+supersedes: "[[decisions/research-pipeline-v2]]"
 tags: [decision]
 ---
 
-# System Overhaul v1
+# System Overhaul v1 — Minimal Friction, Full Promise
 
-Bundle of 10 decisions tightening the kh system. Every concept earned over 30 sessions stays — implementations that add friction without value get simplified.
+Bundle of 10 decisions tightening the kh system. Guiding principle: preserve every concept earned over 30 sessions, fix implementations that add friction without value. Start at simplest viable form, let real friction drive complexity.
 
 ## Decisions
 
-**L1: Single source of truth per rule.** Each rule lives in ONE place. CLAUDE.md = constitution. Protocols = mode behavior. Commands = execution. No duplication.
+**L1 — Two modes only:** Remove Quick Fix as a named mode. No-arg `/begin` = direct execution, no protocol loaded.
 
-**L2: schemas.md moves to `.claude/skills/upgrade/references/`.** Infrastructure reference for migration, not project content.
+**L2 — Scratch.md as session changelog:** Replace the staging-area scratch format (Meta/Decisions/Memory/Tasks/Notes) with a running changelog (Meta + Events). Claude updates on notable events; /wrap reads the log to build handoff.
 
-**L3: Delete vault/templates/.** Obsidian Templater templates unused — vault files created by Claude via commands/hooks.
+**L3 — Simplified research pipeline:** Remove TARGET system entirely. Two tiers remain: quick lookup (use tools directly) and deep research (spawn agent, hook captures output). No pre-registration, no bidirectional linking.
 
-**L4: Two modes only (brainstorm/build).** No argument to /begin = direct execution. Delete protocols/base.md. Session mode value: `direct`.
+**L4 — Simplified decision format:** Drop `superseded_by`, `related`, forced body sections. Keep `title` in frontmatter (dashboard needs it). Body is free-form.
 
-**L5: Brain vault starts minimal.** `mcp__brain__*` tools, search before creating, `created_by` in frontmatter. No _sync/, no folder contracts, no Clawbot prompt.
+**L5 — Brain vault starts minimal:** Keep `created_by` only. Drop `last_modified_by`, `source_session`. Drop folder contracts reference. Add complexity when real friction demands it.
 
-**L6: /meta targets brain vault.** Individual files at `_meta/journal/{slug}.md` via `mcp__brain__write_note`. Plain-text session references (no cross-vault wikilinks).
+**L6 — Delete vault/templates/:** Obsidian Templater templates never used. Remove entirely.
 
-**L7: Simplified decision/plan frontmatter.** Decisions: `type`, `title`, `status`, `date`, `session`, `supersedes` (when applicable). Free-form body. Plans: keep `phases_total`, `phases_done`, `status`. Drop other ceremony.
+**L7 — Move schemas.md:** Move from `vault/schemas.md` to `.claude/skills/upgrade/references/schemas.md`. Schemas are infrastructure, not vault content.
 
-**L8: scratch.md redesigned as session changelog.** Running record with Meta (session, mode, objective) + Events log. Not a staging area. /begin initializes, Claude appends, /wrap reads.
+**L8 — /meta targets brain vault:** Rewrite /meta to write individual files to `_meta/journal/{slug}.md` via `mcp__brain__write_note`. Drop `/tmp/kh-session.json` dependency and interactive two-prompt flow.
 
-**L9: Research pipeline simplified.** Quality standards in agent spec (checklist). capture-research.py gutted to ~150-200 lines. No TARGETs, no source ranking tiers. create-target.py deleted.
+**L9 — Dashboard cleanup:** Remove "Open Research" section (queried `research/targets` which no longer exists).
 
-**L10: Voice section in CLAUDE.md.** Personality block after Functional Roles: brevity, opinions, directness, wit, swearing-when-it-lands. Architecture stays dry.
+**L10 — Voice section:** Add personality block to CLAUDE.md Section 1. Brevity, opinions, directness, wit, challenge, controlled swearing.
 
-## Parked
+## Also supersedes
 
-- P1: _sync/ folder and Clawbot coordination — revisit when brain vault has actual content
-- P2: TARGET bidirectional linking — revisit if research output management hurts
-- P3: Template sync as hard rule — sync when needed, not mandatory
-
-## Context
-
-The pattern across all friction: protocol designed for general case before specific case was encountered. 30 sessions of earned concepts wrapped in too much ceremony. This overhaul cuts the wrapper, keeps the core. Implementation plan: `vault/plans/system-overhaul.md` (5 phases).
+- [[decisions/brain-vault-integration]] — L5 simplifies the brain vault integration to minimal rules

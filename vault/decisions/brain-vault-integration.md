@@ -5,7 +5,7 @@ status: locked
 date: 2026-02-08
 session: "[[sessions/session-30]]"
 supersedes: null
-superseded_by: null
+superseded_by: "[[decisions/system-overhaul-v1]]"
 related:
   - "[[decisions/io-strategy-v2]]"
 tags:

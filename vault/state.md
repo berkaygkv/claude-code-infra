@@ -1,25 +1,25 @@
 ---
 type: state
 project: kh
-phase: brainstorm
-current_session: 31
+phase: build
+current_session: 32
 updated: 2026-02-11
-last_session: "[[sessions/session-31]]"
-active_plan: "[[plans/system-overhaul]]"
-focus: "Execute system overhaul — 5 phases, CLAUDE.md first, then commands/research/vault in parallel"
-plan_summary: "5-phase overhaul: CLAUDE.md constitution, commands & protocols, research pipeline, vault cleanup, validation"
+last_session: "[[sessions/session-32]]"
+active_plan: null
+focus: "Sync shared infrastructure to template branch, then verify hooks and upgrade skill on another machine"
+plan_summary: ""
 ---
 
 # State
 
 ## Tasks
-- [ ] Execute system overhaul plan (build mode) #pending
+- [x] Execute system overhaul plan (build mode) #done
+- [ ] Sync shared infrastructure to template branch (post-overhaul) #pending
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
 - [ ] Verify capture-research hook works after rewrite #pending
 - [ ] Verify export-transcript hook works with relative paths #pending
 - [ ] Test excalidraw skill on a different diagram type (flowchart or timeline) #pending
 - [ ] Add bootstrap instructions to template README #pending
-- [ ] Sync shared infrastructure to template branch (after overhaul) #pending
 - [x] Draft overhaul implementation plan #done
 - [x] Design brain vault integration architecture #done
 - [x] Configure and test brain MCP server in ~/.claude.json #done
