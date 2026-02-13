@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: brainstorm
-current_session: 37
+phase: build
+current_session: 38
 updated: 2026-02-13
-last_session: "[[sessions/session-37]]"
-active_plan: null
-focus: "Test validation loop manually on a real task — spike assumptions, record findings, assess if the loop works"
-plan_summary: ""
+last_session: "[[sessions/session-38]]"
+active_plan: "[[plans/graph-knowledge-base-phase1]]"
+focus: "Build Phase 1 of knowledge base plan — spike entity resolution with real data in a new repo"
+plan_summary: "Graph knowledge base pipeline — 5 assumptions, 4 phases, spike-first"
 ---
 
 # State
@@ -22,7 +22,9 @@ plan_summary: ""
 - [x] Build /upgrade skill for template-driven project migration #done
 - [x] Sync upgrade skill to template branch #done
 - [x] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #done
-- [ ] Test validation loop on a real task — run manually for 2-3 sessions before formalizing protocol #pending
+- [/] Test validation loop on a real task — run manually for 2-3 sessions before formalizing protocol #in-progress
+- [ ] Set up knowledge base project repo (separate codebase, managed by kh) #pending
+- [ ] Build Phase 1 — entity resolution spike (5 docs, extract, merge, measure) #pending
 - [ ] Update brainstorm.md and build.md protocols with validation loop (after manual testing) #pending
 - [ ] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #pending
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
