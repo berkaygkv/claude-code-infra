@@ -1,12 +1,12 @@
 ---
 type: state
 project: kh
-phase: build
-current_session: 33
-updated: 2026-02-11
-last_session: "[[sessions/session-33]]"
+phase: brainstorm
+current_session: 35
+updated: 2026-02-13
+last_session: "[[sessions/session-35]]"
 active_plan: null
-focus: "Test /upgrade skill on another machine, verify hooks (capture-research, export-transcript)"
+focus: "Mark superseded decisions, then implement research format v2 (last), resume pending verification tasks"
 plan_summary: ""
 ---
 
@@ -15,11 +15,6 @@ plan_summary: ""
 ## Tasks
 - [x] Execute system overhaul plan (build mode) #done
 - [x] Sync shared infrastructure to template branch (post-overhaul) #done
-- [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
-- [ ] Verify capture-research hook works after rewrite #pending
-- [ ] Verify export-transcript hook works with relative paths #pending
-- [ ] Test excalidraw skill on a different diagram type (flowchart or timeline) #pending
-- [ ] Add bootstrap instructions to template README #pending
 - [x] Draft overhaul implementation plan #done
 - [x] Design brain vault integration architecture #done
 - [x] Configure and test brain MCP server in ~/.claude.json #done
@@ -27,6 +22,13 @@ plan_summary: ""
 - [x] Build /upgrade skill for template-driven project migration #done
 - [x] Sync upgrade skill to template branch #done
 - [x] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #done
+- [ ] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #pending
+- [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
+- [ ] Verify capture-research hook works after rewrite #pending
+- [ ] Verify export-transcript hook works with relative paths #pending
+- [ ] Test excalidraw skill on a different diagram type (flowchart or timeline) #pending
+- [ ] Add bootstrap instructions to template README #pending
+- [ ] Implement research format v2 — modify capture-research hook + update CLAUDE.md #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
@@ -35,3 +37,4 @@ plan_summary: ""
 - [[decisions/io-strategy-v2]] — hard constraint: native for known paths, MCP for discovery
 - [[decisions/ignore-transcripts]] — transcripts gitignored, auto-exported only
 - [[decisions/system-overhaul-v1]] — 10 decisions: simplify research, brain vault, frontmatter, modes, scratch, voice
+- [[decisions/research-format-v2]] — flat files, clean slugs, frontmatter, inline sources
