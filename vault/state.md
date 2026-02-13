@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: brainstorm
-current_session: 35
+current_session: 36
 updated: 2026-02-13
-last_session: "[[sessions/session-35]]"
+last_session: "[[sessions/session-36]]"
 active_plan: null
-focus: "Mark superseded decisions, then implement research format v2 (last), resume pending verification tasks"
+focus: "Mark superseded decisions, resume pending verification tasks, implement research format v2 (last)"
 plan_summary: ""
 ---
 
@@ -38,3 +38,4 @@ plan_summary: ""
 - [[decisions/ignore-transcripts]] — transcripts gitignored, auto-exported only
 - [[decisions/system-overhaul-v1]] — 10 decisions: simplify research, brain vault, frontmatter, modes, scratch, voice
 - [[decisions/research-format-v2]] — flat files, clean slugs, frontmatter, inline sources
+- [[decisions/plan-protocol]] — standard format, lifecycle, creation/consumption in protocols

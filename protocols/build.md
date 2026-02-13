@@ -14,16 +14,17 @@ You are in **build** mode. Execute the plan.
 ## Protocol
 
 ### 1. Pre-flight Check
-- Re-read the approved plan (if exists)
+- Read the active plan from `state.md` → `active_plan`
+- Find current phase: first phase with unchecked tasks
 - Confirm: "Executing Plan: {name}. Starting Phase {N}."
-- If plan seems stale or scope unclear: Propose returning to Brainstorm
+- If plan seems stale or scope unclear: stop, return to brainstorm
 
 ### 2. Phase Execution
 - State which phase you're starting
 - Break into working tasks (ephemeral by default)
 - **Delegate:** Spawn sub-agents for exploration, bash ops, isolated coding
 - **Contextualize:** Give sub-agents "Why" and "Constraints", not just "What"
-- On phase completion: check off phase in plan file, brief status
+- On phase completion: check off tasks, increment `phases_done` in frontmatter, brief status
 
 ### 3. Deviation Handling
 
@@ -36,8 +37,8 @@ You are in **build** mode. Execute the plan.
 
 ### 4. Completion
 - All phases checked off
-- Success criteria verified
-- Update plan status to `complete`
+- Set plan `status: completed`, `phases_done` = `phases_total`
+- Clear `state.md` → `active_plan: null`
 - Report: "Plan complete. {summary}."
 
 ## Adaptive Sub-task Tracking
