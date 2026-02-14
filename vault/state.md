@@ -22,7 +22,7 @@ plan_summary: "Graph knowledge base pipeline — 5 assumptions, 4 phases, spike-
 - [x] Build /upgrade skill for template-driven project migration #done
 - [x] Sync upgrade skill to template branch #done
 - [x] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #done
-- [/] Test validation loop on a real task — run manually for 2-3 sessions before formalizing protocol #in-progress
+- [ ] Test validation loop on a real task — run manually for 2-3 sessions before formalizing protocol #in-progress
 - [ ] Set up knowledge base project repo (separate codebase, managed by kh) #pending
 - [ ] Build Phase 1 — entity resolution spike (5 docs, extract, merge, measure) #pending
 - [ ] Update brainstorm.md and build.md protocols with validation loop (after manual testing) #pending

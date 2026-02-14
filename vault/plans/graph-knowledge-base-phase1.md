@@ -1,7 +1,7 @@
 ---
 type: plan
 title: "Build graph knowledge base — Phase 1 pipeline"
-status: draft
+status: superseded
 date: 2026-02-13
 session: "[[sessions/session-38]]"
 phases_total: 4

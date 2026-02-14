@@ -51,16 +51,22 @@ phases_done: 0
 ---
 ```
 
-### Body (four sections, this order)
+### Body (five sections, this order)
 
 1. **Goal** — What and why. 3 sentences max.
 2. **Scope** — Includes / Excludes.
-3. **Phases** — Numbered, ordered. Each phase:
+3. **Assumptions** _(optional, for plans with unknowns)_ — For each assumption:
+   - ID + statement + risk level
+   - Spike design (what to build)
+   - **Inspectable output** — the concrete artifact the user will review to judge whether we're on track. Not a metric. The actual output: entities extracted, graph built, API response, UI rendered.
+   - Finding slot (narrative, populated after spike)
+   - Impact slot (task/phase/direction, populated after spike)
+4. **Phases** — Numbered, ordered. Each phase:
    - Name (imperative)
-   - What gets done
+   - What gets done (spike phases reference which assumptions they target)
    - Task checkboxes
    - Deliverables
-4. **Decisions** — Wikilinks to LOCKED decisions this plan depends on.
+5. **Decisions** — Wikilinks to LOCKED decisions this plan depends on.
 
 Size each phase to complete in one session. If it won't fit, break it down.
 

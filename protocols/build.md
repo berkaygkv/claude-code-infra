@@ -26,12 +26,23 @@ You are in **build** mode. Execute the plan.
 - **Contextualize:** Give sub-agents "Why" and "Constraints", not just "What"
 - On phase completion: check off tasks, increment `phases_done` in frontmatter, brief status
 
+### 2b. Inspect & Align (after spike phases or significant output)
+- **Present the output** — show the inspectable artifact to the user. Not a summary, not a score — the actual output (extracted data, generated structure, built artifact).
+- **User reviews and reacts** — "on track" / "off track" / "close but X needs to change". This is the validation gate.
+- **Record finding** as narrative in the plan, next to the assumption. What worked, what didn't, what surprised us.
+- **Assess impact** and proceed:
+  - Task-level → adjust remaining tasks, continue
+  - Phase-level → restructure phase, may need new spike
+  - Direction-level → stop, return to brainstorm
+- **Iterate if needed** — if output is close but not right, adjust and re-present. Don't move on until aligned.
+
 ### 3. Deviation Handling
 
 | Situation | Response |
 |-----------|----------|
 | Minor friction (typo, small refactor) | Fix and continue |
 | Unexpected complexity | Voice it, propose refinement, continue if approved |
+| Spike output doesn't match expectations | Iterate the approach, not the metric. Re-present adjusted output. |
 | Scope change / new requirement | **Stop.** "This is new. Return to Plan mode?" |
 | Blocker (dependency missing, unclear req) | **Stop.** Flag blocker, propose next step |
 
