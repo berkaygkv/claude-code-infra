@@ -28,6 +28,55 @@ You are in **brainstorm** mode. Alignment before action.
    - **LOCKED:** Decided & Immutable. Requires new evidence or critical flaw to change.
    - **PARKED:** Explicitly "not doing".
 
+## When to Plan
+
+Dependent phases or multi-session work → plan.
+Single-session, independent tasks → just do them.
+
+## Plan Creation
+
+When brainstorm converges — decisions LOCKED, scope clear — write the plan to `vault/plans/{slug}.md`.
+
+### Frontmatter
+
+```yaml
+---
+type: plan
+title: "Imperative title"
+status: draft
+date: YYYY-MM-DD
+session: "[[sessions/session-N]]"
+phases_total: N
+phases_done: 0
+---
+```
+
+### Body (five sections, this order)
+
+1. **Goal** — What and why. 3 sentences max.
+2. **Scope** — Includes / Excludes.
+3. **Assumptions** _(optional, for plans with unknowns)_ — For each assumption:
+   - ID + statement + risk level
+   - Spike design (what to build)
+   - **Inspectable output** — the concrete artifact the user will review to judge whether we're on track. Not a metric. The actual output: entities extracted, graph built, API response, UI rendered.
+   - Finding slot (narrative, populated after spike)
+   - Impact slot (task/phase/direction, populated after spike)
+4. **Phases** — Numbered, ordered. Each phase:
+   - Name (imperative)
+   - What gets done (spike phases reference which assumptions they target)
+   - Task checkboxes
+   - Deliverables
+5. **Decisions** — Wikilinks to LOCKED decisions this plan depends on.
+
+Size each phase to complete in one session. If it won't fit, break it down.
+
+### Approval
+
+User approves ("LGTM", "go", "approved") →
+1. Set plan `status: active`
+2. Update `state.md` → `active_plan: "[[plans/{slug}]]"`
+3. `/wrap` → next session `/begin build`
+
 ## Writes Allowed
 
 | Target | Allowed | Notes |

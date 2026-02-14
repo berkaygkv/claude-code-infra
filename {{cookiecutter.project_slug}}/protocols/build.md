@@ -14,16 +14,27 @@ You are in **build** mode. Execute the plan.
 ## Protocol
 
 ### 1. Pre-flight Check
-- Re-read the approved plan (if exists)
+- Read the active plan from `state.md` → `active_plan`
+- Find current phase: first phase with unchecked tasks
 - Confirm: "Executing Plan: {name}. Starting Phase {N}."
-- If plan seems stale or scope unclear: Propose returning to Brainstorm
+- If plan seems stale or scope unclear: stop, return to brainstorm
 
 ### 2. Phase Execution
 - State which phase you're starting
 - Break into working tasks (ephemeral by default)
 - **Delegate:** Spawn sub-agents for exploration, bash ops, isolated coding
 - **Contextualize:** Give sub-agents "Why" and "Constraints", not just "What"
-- On phase completion: check off phase in plan file, brief status
+- On phase completion: check off tasks, increment `phases_done` in frontmatter, brief status
+
+### 2b. Inspect & Align (after spike phases or significant output)
+- **Present the output** — show the inspectable artifact to the user. Not a summary, not a score — the actual output (extracted data, generated structure, built artifact).
+- **User reviews and reacts** — "on track" / "off track" / "close but X needs to change". This is the validation gate.
+- **Record finding** as narrative in the plan, next to the assumption. What worked, what didn't, what surprised us.
+- **Assess impact** and proceed:
+  - Task-level → adjust remaining tasks, continue
+  - Phase-level → restructure phase, may need new spike
+  - Direction-level → stop, return to brainstorm
+- **Iterate if needed** — if output is close but not right, adjust and re-present. Don't move on until aligned.
 
 ### 3. Deviation Handling
 
@@ -31,13 +42,14 @@ You are in **build** mode. Execute the plan.
 |-----------|----------|
 | Minor friction (typo, small refactor) | Fix and continue |
 | Unexpected complexity | Voice it, propose refinement, continue if approved |
+| Spike output doesn't match expectations | Iterate the approach, not the metric. Re-present adjusted output. |
 | Scope change / new requirement | **Stop.** "This is new. Return to Plan mode?" |
 | Blocker (dependency missing, unclear req) | **Stop.** Flag blocker, propose next step |
 
 ### 4. Completion
 - All phases checked off
-- Success criteria verified
-- Update plan status to `complete`
+- Set plan `status: completed`, `phases_done` = `phases_total`
+- Clear `state.md` → `active_plan: null`
 - Report: "Plan complete. {summary}."
 
 ## Adaptive Sub-task Tracking
