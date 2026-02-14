@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: build
-current_session: 38
-updated: 2026-02-13
-last_session: "[[sessions/session-38]]"
-active_plan: "[[plans/graph-knowledge-base-phase1]]"
-focus: "Build Phase 1 of knowledge base plan — spike entity resolution with real data in a new repo"
-plan_summary: "Graph knowledge base pipeline — 5 assumptions, 4 phases, spike-first"
+phase: idle
+current_session: 39
+updated: 2026-02-14
+last_session: "[[sessions/session-39]]"
+active_plan: null
+focus: "Knowledge base project ready at ~/Dev/knowledge-base — begin first session there"
+plan_summary: null
 ---
 
 # State
@@ -22,10 +22,10 @@ plan_summary: "Graph knowledge base pipeline — 5 assumptions, 4 phases, spike-
 - [x] Build /upgrade skill for template-driven project migration #done
 - [x] Sync upgrade skill to template branch #done
 - [x] Rename "skb-layout-engine" to "kh-layout-engine" in layout.py #done
-- [ ] Test validation loop on a real task — run manually for 2-3 sessions before formalizing protocol #in-progress
-- [ ] Set up knowledge base project repo (separate codebase, managed by kh) #pending
-- [ ] Build Phase 1 — entity resolution spike (5 docs, extract, merge, measure) #pending
-- [ ] Update brainstorm.md and build.md protocols with validation loop (after manual testing) #pending
+- [x] Test validation loop on a real task — shipped qualitative validation system (session 39) #done
+- [x] Set up knowledge base project repo at ~/Dev/knowledge-base #done
+- [ ] Build Phase 1 — entity resolution spike (in knowledge-base project, not here) #moved
+- [x] Update brainstorm.md and build.md protocols with validation loop #done
 - [ ] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #pending
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
 - [ ] Verify capture-research hook works after rewrite #pending
