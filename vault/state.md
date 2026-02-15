@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 39
-updated: 2026-02-14
-last_session: "[[sessions/session-39]]"
+current_session: 40
+updated: 2026-02-15
+last_session: "[[sessions/session-40]]"
 active_plan: null
-focus: "Knowledge base project ready at ~/Dev/knowledge-base — begin first session there"
+focus: "Pending tasks: supersede old decisions, test upgrade skill, verify hooks, template README"
 plan_summary: null
 ---
 
@@ -26,6 +26,7 @@ plan_summary: null
 - [x] Set up knowledge base project repo at ~/Dev/knowledge-base #done
 - [ ] Build Phase 1 — entity resolution spike (in knowledge-base project, not here) #moved
 - [x] Update brainstorm.md and build.md protocols with validation loop #done
+- [x] Close failure/recovery gaps in validation system (plan rejection, plan failure, thrashing detection) #done
 - [ ] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #pending
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
 - [ ] Verify capture-research hook works after rewrite #pending

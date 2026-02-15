@@ -35,7 +35,7 @@ Speed is the superpower. Don't out-think the holes — out-build them.
 **What changes:**
 
 - **Brainstorm** gets lighter. Its output is: direction, riskiest assumptions, and what the user will inspect at each spike. Not exhaustive plans with metrics criteria.
-- **Plans** become living documents. Each assumption carries: spike design → inspectable output → finding (narrative) → impact. Plans accumulate evidence, not just checkmarks.
+- **Plans** become living documents. Each assumption carries: spike design → inspectable output → finding (narrative) → impact. Plans accumulate evidence, not just checkmarks. Findings accumulate as a log — each iteration attempt appends a dated entry, preserving the reasoning chain across retries.
 - **Build mode** gains the validation loop with an inspect & align checkpoint. You build, present, align, then proceed.
 - **Session context** is rebuilt from findings. `/begin` loads a plan full of ground truth, not speculation.
 - **Git:** Spikes happen on `spike/{slug}` branches. Code is disposable. Findings are permanent.

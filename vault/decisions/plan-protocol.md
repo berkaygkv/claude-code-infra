@@ -22,7 +22,7 @@ Plans are the bridge between brainstorm and build. Every plan follows a standard
    - **ID + statement + risk level** (e.g., "A1: Entity resolution works — CRITICAL")
    - **Spike** — what to build to test it
    - **Inspectable output** — the concrete artifact the user will see and react to (not a metric, but the actual output: extracted entities, generated graph, API response, etc.)
-   - **Finding** — narrative, populated after spike ("extraction captures X well, misses Y, merge handles Z but not W")
+   - **Findings** — narrative log, each entry tagged with session. Appended on each iteration attempt. ("extraction captures X well, misses Y, merge handles Z but not W")
    - **Impact** — task / phase / direction level, populated after spike
 4. Phases — numbered, ordered, each with name + description + task checkboxes + deliverables. Spike phases reference which assumptions they target.
 5. Decisions — wikilinks to LOCKED decisions the plan depends on
@@ -34,7 +34,8 @@ Plans are the bridge between brainstorm and build. Every plan follows a standard
 - `draft` — written during brainstorm, not yet approved
 - `active` — user approved, build mode executes
 - `completed` — all phases done
-- `abandoned` — killed, file stays as history
+- `failed` — approach didn't work, findings preserved as evidence
+- `abandoned` — killed before execution, file stays as history
 
 ## Threshold
 
