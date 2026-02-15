@@ -45,6 +45,16 @@ You are in **build** mode. Execute the plan.
 | Spike output doesn't match expectations | Iterate the approach, not the metric. Re-present adjusted output. |
 | Scope change / new requirement | **Stop.** "This is new. Return to Plan mode?" |
 | Blocker (dependency missing, unclear req) | **Stop.** Flag blocker, propose next step |
+| Same failure pattern after 3 iterations | Stop iterating. The approach has a structural problem. Record what you've learned, escalate to brainstorm. |
+
+### 3b. Plan Failure
+
+When a direction-level deviation kills the plan:
+
+1. Populate Finding slots with what was learned — what broke, why, what's salvageable
+2. Set plan `status: failed` in frontmatter
+3. Update `state.md` → `active_plan: null`, `next_mode: brainstorm`
+4. `/wrap` — session handoff carries failure narrative and "next session: brainstorm alternative"
 
 ### 4. Completion
 - All phases checked off

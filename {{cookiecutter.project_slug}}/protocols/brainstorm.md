@@ -59,7 +59,7 @@ phases_done: 0
    - ID + statement + risk level
    - Spike design (what to build)
    - **Inspectable output** — the concrete artifact the user will review to judge whether we're on track. Not a metric. The actual output: entities extracted, graph built, API response, UI rendered.
-   - Finding slot (narrative, populated after spike)
+   - Findings log (narrative, each entry tagged with session — appended per iteration)
    - Impact slot (task/phase/direction, populated after spike)
 4. **Phases** — Numbered, ordered. Each phase:
    - Name (imperative)
@@ -76,6 +76,8 @@ User approves ("LGTM", "go", "approved") →
 1. Set plan `status: active`
 2. Update `state.md` → `active_plan: "[[plans/{slug}]]"`
 3. `/wrap` → next session `/begin build`
+
+User rejects → stay in brainstorm, revise based on feedback. Never `/wrap` with a rejected plan.
 
 ## Writes Allowed
 
