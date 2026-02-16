@@ -9,20 +9,20 @@ End-of-session tasks: process scratch.md, update state.md, create session handof
 - MCP only for metadata operations if needed (frontmatter-only updates, search, tags)
 
 **Documents updated:**
-- `vault/state.md` — Current state, tasks, context
-- `vault/decisions/*.md` — New LOCKED decisions (created)
-- `vault/sessions/session-{N}.md` — Session handoff note (created)
+- `{{ cookiecutter.project_slug }}/state.md` — Current state, tasks, context
+- `{{ cookiecutter.project_slug }}/decisions/*.md` — New LOCKED decisions (created)
+- `{{ cookiecutter.project_slug }}/sessions/session-{N}.md` — Session handoff note (created)
 - `scratch.md` — Reset for next session
 
 ## Paths
 
 All paths relative to project root:
 
-- Vault: `vault/`
-- State: `vault/state.md`
-- Sessions: `vault/sessions/session-{N}.md`
-- Transcripts: `vault/sessions/transcripts/session-{N}.md`
-- Decisions: `vault/decisions/`
+- Vault: `{{ cookiecutter.project_slug }}/`
+- State: `{{ cookiecutter.project_slug }}/state.md`
+- Sessions: `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`
+- Transcripts: `{{ cookiecutter.project_slug }}/sessions/transcripts/session-{N}.md`
+- Decisions: `{{ cookiecutter.project_slug }}/decisions/`
 - Scratch: `scratch.md`
 
 ## Instructions
@@ -39,7 +39,7 @@ If scratch.md is empty, synthesize from conversation context.
 
 If session number is in scratch.md, use that.
 
-Otherwise, read vault/state.md to get current_session, use that.
+Otherwise, read {{ cookiecutter.project_slug }}/state.md to get current_session, use that.
 
 ### Step 3: Synthesize Session Work
 
@@ -66,8 +66,8 @@ For each LOCKED decision in scratch.md:
 ```
 
 1. Generate slug from decision title (lowercase, hyphens)
-2. Read `vault/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
-3. Write decision file at `vault/decisions/{slug}.md`
+2. Read `{{ cookiecutter.project_slug }}/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
+3. Write decision file at `{{ cookiecutter.project_slug }}/decisions/{slug}.md`
 
 ```yaml
 ---
@@ -89,7 +89,7 @@ Skip this step if no new LOCKED decisions.
 
 ### Step 5: Update State
 
-Read and update `vault/state.md`:
+Read and update `{{ cookiecutter.project_slug }}/state.md`:
 
 1. Update frontmatter:
    - `current_session`: N (current session number)
@@ -113,7 +113,7 @@ Read and update `vault/state.md`:
 
 ### Step 6: Create Session Note
 
-Create session handoff at `vault/sessions/session-{N}.md`:
+Create session handoff at `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`:
 
 ```yaml
 ---
@@ -209,9 +209,9 @@ Skip if no changes. Report hash in confirmation.
 
 | Document | Action |
 |----------|--------|
-| vault/state.md | Updated: phase={phase}, tasks updated |
-| vault/decisions/ | {Created N files / No new decisions} |
-| vault/sessions/session-{N}.md | Created with handoff |
+| {{ cookiecutter.project_slug }}/state.md | Updated: phase={phase}, tasks updated |
+| {{ cookiecutter.project_slug }}/decisions/ | {Created N files / No new decisions} |
+| {{ cookiecutter.project_slug }}/sessions/session-{N}.md | Created with handoff |
 | scratch.md | Reset for session {N+1} |
 | CLAUDE.md | {Updated / No changes} |
 

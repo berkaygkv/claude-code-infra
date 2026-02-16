@@ -49,7 +49,7 @@ No argument `/begin` = direct execution, no formal mode.
 ## 3. Memory Architecture
 
 ### The Vault
-**Path:** `vault/` (inside project root)
+**Path:** `{{ cookiecutter.project_slug }}/` (inside project root)
 
 | File/Folder | Purpose | Access Pattern |
 |-------------|---------|----------------|
@@ -78,29 +78,29 @@ Running record of the current session:
 
 | Operation | Tool | Examples |
 |-----------|------|----------|
-| **Direct file access** (known path) | Native Read/Write | Read `vault/state.md`, Write `vault/sessions/session-24.md` |
+| **Direct file access** (known path) | Native Read/Write | Read `{{ cookiecutter.project_slug }}/state.md`, Write `{{ cookiecutter.project_slug }}/sessions/session-24.md` |
 | **Search & exploration** (discovery) | MCP Obsidian | Find files, list directories, search content, query tags |
 
 ### DO
-- `Read vault/state.md` — you know the exact path
+- `Read {{ cookiecutter.project_slug }}/state.md` — you know the exact path
 - `mcp__obsidian__list_directory` — discovering what sessions exist
-- `mcp__obsidian__search_notes` — finding notes mentioning "TARGET"
+- `mcp__obsidian__search_notes` — finding notes by content
 
 ### DO NOT
-- `Glob("vault/sessions/*.md")` — use MCP list_directory instead
-- `Grep` on vault/ — use MCP search_notes instead
+- `Glob("{{ cookiecutter.project_slug }}/sessions/*.md")` — use MCP list_directory instead
+- `Grep` on {{ cookiecutter.project_slug }}/ — use MCP search_notes instead
 
 **Why:** MCP provides Obsidian-native search that understands vault structure, frontmatter, and links. Native Glob/Grep bypass this intelligence.
 
 ---
 
-## 5. Brain Vault
+## 5. Brain Vault (Optional)
 
-**Path:** `~/Documents/Notes/` (Obsidian Sync, cross-device)
+**Path:** User-defined (e.g., `~/Documents/Notes/`)
 **MCP Server:** `brain` — tools namespaced as `mcp__brain__*`
 **Access:** On-demand only. Never auto-loaded at `/begin`.
 
-Cross-project, cross-machine knowledge layer shared with Clawbot (KL). Always use `mcp__brain__*` tools — never native Read/Write/Glob/Grep on the brain vault path.
+Cross-project, cross-machine knowledge layer. Configure in `~/.claude.json` if you want a shared notes vault across projects. Always use `mcp__brain__*` tools — never native Read/Write/Glob/Grep on the brain vault path.
 
 **HARD RULE:** Search (`mcp__brain__search_notes`) before creating any file. Update existing content rather than creating duplicates.
 
@@ -121,58 +121,20 @@ Research operations follow a two-tier system:
 ### Deep Research
 - Multi-source investigation, 5+ searches
 - Comparison, best practices, unknowns
-- Deep research → spawn deep-research agent. Hook captures output to `vault/research/{slug}/`.
+- Deep research → spawn deep-research agent. Hook captures output to `{{ cookiecutter.project_slug }}/research/`.
 
-**Output location:**
+**Output format:** Flat files, not directories.
 ```
-vault/research/{slug}/
-  ├── findings.md
-  └── sources.md
+{{ cookiecutter.project_slug }}/research/{YYYYMMDD}-{slug}.md
 ```
+
+Each file has frontmatter (`type: research`, `date`, `topic`) and an inline `## Sources` section. No separate sources file.
 
 ---
 
-## 7. Codebase vs Template
+## 7. Upgrading
 
-This project has **two branches** served via git worktrees:
-
-| Branch | Path | Purpose |
-|--------|------|---------|
-| `main` | `/home/berkaygkv/Dev/headquarter/kh` | **Development workspace.** Live project with real vault data, sessions, decisions. This is where all work happens. |
-| `template` | `/home/berkaygkv/Dev/headquarter/kh-template` | **Cookiecutter template.** Distributable scaffold for new projects. Files live under `{{cookiecutter.project_slug}}/`. |
-
-### What lives where
-
-- **main** has everything: `.claude/`, `vault/`, `protocols/`, `scratch.md`, real session data
-- **template** has the same structure but with cookiecutter placeholders and no project-specific data (no vault sessions, no decisions, no scratch state)
-
-### Sync Protocol
-
-**Direction:** Always `main → template`. Never the reverse.
-
-**When to sync:** Sync when meaningful changes land, not as a mandatory session step.
-
-**How to sync:**
-1. Make and commit changes on `main` (normal development)
-2. Copy changed files to the template worktree:
-   ```bash
-   TMPL="/home/berkaygkv/Dev/headquarter/kh-template/{{cookiecutter.project_slug}}"
-   cp <source-file> "$TMPL/<same-relative-path>"
-   ```
-3. Commit on `template` branch with reference to the source session
-
-**What to sync (shared infrastructure):**
-- `.claude/skills/` — skill definitions, layout engine, reference docs
-- `.claude/commands/` — slash command definitions
-- `.claude/hooks/` — event hooks and hook scripts
-- `.claude/settings.json` — Claude Code settings
-- `protocols/` — mode protocol files
-- `CLAUDE.md` — operational protocol
-
-**What NOT to sync (project-specific):**
-- `vault/state.md`, `vault/sessions/`, `vault/decisions/` — real project data
-- `vault/research/`, `vault/plans/`, `vault/canvas/` — project artifacts
-- `scratch.md` — session-scoped
+Run `/upgrade` to pull the latest kh infrastructure from the template repository. This updates commands, hooks, skills, protocols, and CLAUDE.md while preserving your vault data.
 
 ---
 
@@ -187,7 +149,7 @@ This project has **two branches** served via git worktrees:
 ## 9. Session Lifecycle
 
 ### `/begin [mode]`
-1. Read vault/state.md (structure: phase, focus, tasks, constraints)
+1. Read {{ cookiecutter.project_slug }}/state.md (structure: phase, focus, tasks, constraints)
 2. Read last session handoff (narrative: context, decisions, memory, next steps)
 3. Initialize scratch.md changelog
 4. Display combined context for cold start
@@ -196,9 +158,9 @@ This project has **two branches** served via git worktrees:
 
 ### `/wrap`
 1. Read scratch.md changelog
-2. Create decision files in vault/decisions/ for LOCKED items
-3. Create session handoff in vault/sessions/
-4. Update vault/state.md (current_session, last_session, context)
+2. Create decision files in {{ cookiecutter.project_slug }}/decisions/ for LOCKED items
+3. Create session handoff in {{ cookiecutter.project_slug }}/sessions/
+4. Update {{ cookiecutter.project_slug }}/state.md (current_session, last_session, context)
 5. Reset scratch.md for next session
 6. Git commit (if changes)
 
@@ -209,12 +171,12 @@ This project has **two branches** served via git worktrees:
 All paths relative to project root:
 
 ```
-vault/state.md           # Claude cold start
-vault/sessions/          # Session handoffs
-vault/decisions/         # LOCKED decisions
-vault/research/          # Deep research outputs
-vault/plans/             # Implementation plans
-vault/canvas/            # Excalidraw diagrams
+{{ cookiecutter.project_slug }}/state.md           # Claude cold start
+{{ cookiecutter.project_slug }}/sessions/          # Session handoffs
+{{ cookiecutter.project_slug }}/decisions/         # LOCKED decisions
+{{ cookiecutter.project_slug }}/research/          # Deep research outputs
+{{ cookiecutter.project_slug }}/plans/             # Implementation plans
+{{ cookiecutter.project_slug }}/canvas/            # Excalidraw diagrams
 
 scratch.md               # Session changelog
 protocols/               # Mode protocols

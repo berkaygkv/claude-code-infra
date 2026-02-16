@@ -14,11 +14,11 @@ This command loads context from state.md + last session handoff and activates th
 
 All paths relative to project root:
 
-- Vault: `vault/`
-- State: `vault/state.md`
-- Sessions: `vault/sessions/session-{N}.md`
-- Decisions: `vault/decisions/`
-- Plans: `vault/plans/`
+- Vault: `{{ cookiecutter.project_slug }}/`
+- State: `{{ cookiecutter.project_slug }}/state.md`
+- Sessions: `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`
+- Decisions: `{{ cookiecutter.project_slug }}/decisions/`
+- Plans: `{{ cookiecutter.project_slug }}/plans/`
 - Scratch: `scratch.md`
 
 ## Mode Protocol
@@ -33,7 +33,7 @@ When the user invokes `/begin [mode]`, perform these steps:
 
 ### Step 1: Read State
 
-Read `vault/state.md` using native Read.
+Read `{{ cookiecutter.project_slug }}/state.md` using native Read.
 
 Extract from frontmatter:
 - `phase` — current mode (brainstorm/build/idle)
@@ -70,7 +70,7 @@ Where:
 
 ### Step 3: Read Last Session Handoff
 
-Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `vault/sessions/session-21.md`).
+Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `{{ cookiecutter.project_slug }}/sessions/session-21.md`).
 
 Read the last session file using native Read.
 
@@ -98,13 +98,13 @@ If state.md doesn't exist or is empty:
 
 Welcome to kh. No previous sessions found.
 
-**Vault:** vault/
+**Vault:** {{ cookiecutter.project_slug }}/
 
 This is a fresh installation. The following are ready:
-- vault/state.md — session state
-- vault/dashboard.md — Dataview queries
-- vault/decisions/ — committed decisions
-- vault/sessions/ — session handoffs
+- {{ cookiecutter.project_slug }}/state.md — session state
+- {{ cookiecutter.project_slug }}/dashboard.md — Dataview queries
+- {{ cookiecutter.project_slug }}/decisions/ — committed decisions
+- {{ cookiecutter.project_slug }}/sessions/ — session handoffs
 
 Ready to begin. What are we working on?
 ```

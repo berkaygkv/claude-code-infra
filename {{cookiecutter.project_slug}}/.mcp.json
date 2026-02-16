@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@mauricio.wolff/mcp-obsidian@latest",
+        "{{ cookiecutter.project_slug }}"
+      ]
+    }
+  }
+}

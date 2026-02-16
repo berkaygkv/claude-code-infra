@@ -5,10 +5,8 @@ Claude Code SubagentStop Hook: Capture deep-research agent findings.
 Runs when any subagent finishes but only captures deep-research (web-research)
 agents, exporting findings to the Obsidian vault.
 
-Output structure:
-  vault/research/{timestamp}-{slug}/
-    ├── findings.md
-    └── sources.md
+Output structure (research format v2):
+  {vault}/research/{YYYYMMDD}-{slug}.md    — flat file, frontmatter, inline sources
 """
 
 import json
@@ -29,18 +27,20 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent.parent
 
 
-def get_vault_paths() -> tuple[Path, Path]:
-    """Get vault paths relative to project root.
+def find_vault(project_root: Path) -> Path:
+    """Find the Obsidian vault directory (contains .obsidian/).
 
-    Returns (vault_root, research_dir).
+    Searches immediate children of project root. Falls back to 'vault/'.
     """
-    project_root = get_project_root()
-    vault_root = project_root / "vault"
-    research_dir = vault_root / "research"
-    return vault_root, research_dir
+    for child in project_root.iterdir():
+        if child.is_dir() and (child / ".obsidian").exists():
+            return child
+    return project_root / "vault"
 
 
-OBSIDIAN_VAULT, RESEARCH_DIR = get_vault_paths()
+PROJECT_ROOT = get_project_root()
+OBSIDIAN_VAULT = find_vault(PROJECT_ROOT)
+RESEARCH_DIR = OBSIDIAN_VAULT / "research"
 PROCESSED_AGENTS_FILE = Path("/tmp/claude-processed-agents.json")
 
 
@@ -157,7 +157,7 @@ def should_capture_agent(parsed: dict) -> bool:
 # ============================================================================
 
 def generate_slug(text: str, max_len: int = 40) -> str:
-    """Generate a URL-friendly slug from text."""
+    """Generate a clean 2-4 word slug from text."""
     text = re.sub(r'^(Research|Investigate|Look into|Find out about)\s+', '', text, flags=re.IGNORECASE)
     slug = re.sub(r'[^a-zA-Z0-9\s-]', '', text.lower())
     slug = re.sub(r'\s+', '-', slug.strip())
@@ -199,25 +199,23 @@ def extract_sources_from_text(text: str) -> list[dict]:
 
 
 # ============================================================================
-# Markdown formatting
+# Markdown formatting (v2 — flat file, inline sources)
 # ============================================================================
 
-def format_findings_markdown(parsed: dict[str, Any], sources: list[dict], output_folder: str) -> str:
-    """Create findings.md content."""
+def format_research_markdown(parsed: dict[str, Any], sources: list[dict]) -> str:
+    """Create single research file with frontmatter and inline sources."""
     now = datetime.now()
     query = parsed["initial_prompt"]
     topic = re.sub(r'^(Research|Investigate|.*?research\s+)', '', query, flags=re.IGNORECASE)[:80].strip() or "Research Findings"
 
     lines = [
         "---",
-        "type: research-output",
-        f"created: {now.strftime('%Y-%m-%d')}",
-        f"topic: {topic}",
-        "researcher: claude-deep-research",
-        "tags: [research]",
+        "type: research",
+        f"date: {now.strftime('%Y-%m-%d')}",
+        f"topic: \"{topic}\"",
         "---",
         "",
-        f"# Research Output: {topic}",
+        f"# {topic}",
         "",
         f"**Question:** {query[:200]}{'...' if len(query) > 200 else ''}",
         "",
@@ -229,48 +227,15 @@ def format_findings_markdown(parsed: dict[str, Any], sources: list[dict], output
         "",
         "---",
         "",
-        "## Key Sources",
-        "",
-    ]
-
-    if sources:
-        for s in sources[:5]:
-            lines.append(f"- [{s['title']}]({s['url']})")
-        lines.append("")
-    else:
-        lines.append("*No sources identified*")
-        lines.append("")
-
-    lines.append(f"**Full sources:** [[research/{output_folder}/sources]]")
-    lines.append("")
-
-    return "\n".join(lines)
-
-
-def format_sources_markdown(sources: list[dict], query: str, created: str, output_folder: str) -> str:
-    """Create sources.md content as a flat numbered list."""
-    lines = [
-        "---",
-        "type: research-sources",
-        f"created: {created}",
-        "---",
-        "",
-        f"# Sources: {query[:60]}{'...' if len(query) > 60 else ''}",
-        "",
-        f"**Findings:** [[research/{output_folder}/findings]]",
-        "",
-        "---",
+        "## Sources",
         "",
     ]
 
     if sources:
         for i, s in enumerate(sources, 1):
             lines.append(f"{i}. [{s['title']}]({s['url']})")
-        lines.append("")
-        lines.append("---")
-        lines.append(f"**Total sources:** {len(sources)}")
     else:
-        lines.append("*No sources extracted*")
+        lines.append("*No sources identified*")
 
     lines.append("")
     return "\n".join(lines)
@@ -280,40 +245,32 @@ def format_sources_markdown(sources: list[dict], query: str, created: str, outpu
 # Export
 # ============================================================================
 
-def export_agent_research(agent_file: Path) -> tuple[str | None, str | None]:
-    """Export agent research to vault as findings + sources.
+def export_agent_research(agent_file: Path) -> str | None:
+    """Export agent research to vault as a single flat file.
 
-    Returns (findings_path, sources_path) or (None, None) if skipped.
+    Returns the file path or None if skipped.
     """
     parsed = parse_agent_transcript(agent_file)
 
     if not should_capture_agent(parsed):
-        return None, None
+        return None
     if not parsed["final_summary"] and parsed["tool_count"] == 0:
-        return None, None
+        return None
 
-    # Extract sources from final summary
     sources = extract_sources_from_text(parsed["final_summary"])
 
-    # Generate folder name
     slug = generate_slug(parsed["initial_prompt"])
     now = datetime.now()
-    output_folder = f"{now.strftime('%Y%m%d-%H%M%S')}-{slug}"
+    filename = f"{now.strftime('%Y%m%d')}-{slug}.md"
 
-    # Create output folder and write files
-    folder_path = RESEARCH_DIR / output_folder
-    folder_path.mkdir(parents=True, exist_ok=True)
+    RESEARCH_DIR.mkdir(parents=True, exist_ok=True)
 
-    findings_md = format_findings_markdown(parsed, sources, output_folder)
-    sources_md = format_sources_markdown(sources, parsed["initial_prompt"], now.strftime("%Y-%m-%d"), output_folder)
+    content = format_research_markdown(parsed, sources)
 
-    findings_path = folder_path / "findings.md"
-    findings_path.write_text(findings_md, encoding="utf-8")
+    output_path = RESEARCH_DIR / filename
+    output_path.write_text(content, encoding="utf-8")
 
-    sources_path = folder_path / "sources.md"
-    sources_path.write_text(sources_md, encoding="utf-8")
-
-    return str(findings_path), str(sources_path)
+    return str(output_path)
 
 
 # ============================================================================
@@ -326,6 +283,7 @@ def main():
 
     with open(log_path, "a") as log:
         log.write(f"\n=== SubagentStop at {datetime.now().isoformat()} ===\n")
+        log.write(f"Vault: {OBSIDIAN_VAULT}\n")
 
         try:
             payload = json.load(sys.stdin)
@@ -358,11 +316,10 @@ def main():
 
             log.write(f"Processing: {new_agent.name}\n")
 
-            findings_path, sources_path = export_agent_research(new_agent)
+            output_path = export_agent_research(new_agent)
 
-            if findings_path:
-                log.write(f"Exported findings to: {findings_path}\n")
-                log.write(f"Exported sources to: {sources_path}\n")
+            if output_path:
+                log.write(f"Exported to: {output_path}\n")
             else:
                 parsed = parse_agent_transcript(new_agent)
                 log.write(f"Skipped: agent_type={parsed['agent_type']}\n")

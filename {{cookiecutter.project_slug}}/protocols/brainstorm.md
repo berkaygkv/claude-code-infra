@@ -35,7 +35,7 @@ Single-session, independent tasks → just do them.
 
 ## Plan Creation
 
-When brainstorm converges — decisions LOCKED, scope clear — write the plan to `vault/plans/{slug}.md`.
+When brainstorm converges — decisions LOCKED, scope clear — write the plan to `{{ cookiecutter.project_slug }}/plans/{slug}.md`.
 
 ### Frontmatter
 

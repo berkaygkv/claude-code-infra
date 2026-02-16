@@ -7,7 +7,7 @@ context: fork
 
 # Excalidraw Diagram Generator
 
-Create **visually impressive** diagrams for sense-making. Outputs to `vault/canvas/`.
+Create **visually impressive** diagrams for sense-making. Outputs to `{{ cookiecutter.project_slug }}/canvas/`.
 
 ## Visual Quality Goals
 
@@ -36,7 +36,7 @@ Read `references/visual-polish.md` for techniques.
 ### Preferred: Use Layout Engine (prevents overlaps)
 
 1. **Understand** — What to visualize, which type, key elements
-2. **Confirm** — "Creating {type} showing {summary}. Output: vault/canvas/{slug}.excalidraw.md"
+2. **Confirm** — "Creating {type} showing {summary}. Output: {{ cookiecutter.project_slug }}/canvas/{slug}.excalidraw.md"
 3. **Write Python script** using `layout.py` (see Layout Engine section below)
 4. **Run script** — Generates JSON with correct positioning
 5. **Validate** — Run `uv run scripts/validate.py <json-file>`
@@ -289,8 +289,8 @@ The `scripts/compress.py` handles this automatically.
 uv run .claude/skills/excalidraw/scripts/validate.py /tmp/diagram.json
 
 # Generate .excalidraw.md
-uv run .claude/skills/excalidraw/scripts/compress.py /tmp/diagram.json vault/canvas/my-diagram.excalidraw.md
+uv run .claude/skills/excalidraw/scripts/compress.py /tmp/diagram.json {{ cookiecutter.project_slug }}/canvas/my-diagram.excalidraw.md
 
 # Decompress existing file
-uv run .claude/skills/excalidraw/scripts/compress.py --decompress vault/canvas/existing.excalidraw.md /tmp/extracted.json
+uv run .claude/skills/excalidraw/scripts/compress.py --decompress {{ cookiecutter.project_slug }}/canvas/existing.excalidraw.md /tmp/extracted.json
 ```

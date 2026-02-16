@@ -34,13 +34,24 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent.parent
 
 
+def find_vault(project_root: Path) -> Path:
+    """Find the Obsidian vault directory (contains .obsidian/).
+
+    Searches immediate children of project root. Falls back to 'vault/'.
+    """
+    for child in project_root.iterdir():
+        if child.is_dir() and (child / ".obsidian").exists():
+            return child
+    return project_root / "vault"
+
+
 def get_session_paths() -> tuple[Path, Path, Path]:
     """Get session paths relative to project root.
 
     Returns (vault_root, sessions_dir, transcripts_dir).
     """
     project_root = get_project_root()
-    vault_root = project_root / "vault"
+    vault_root = find_vault(project_root)
     sessions_dir = vault_root / "sessions"
     transcripts_dir = sessions_dir / "transcripts"
     return vault_root, sessions_dir, transcripts_dir

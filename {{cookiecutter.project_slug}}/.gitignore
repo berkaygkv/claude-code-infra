@@ -3,7 +3,7 @@ __pycache__/
 *.pyo
 
 # Obsidian
-vault/.obsidian/
+{{ cookiecutter.project_slug }}/.obsidian/
 
 # Session transcripts (auto-exported, can be large)
-vault/sessions/transcripts/
+{{ cookiecutter.project_slug }}/sessions/transcripts/
