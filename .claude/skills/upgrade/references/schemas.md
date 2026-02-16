@@ -157,16 +157,32 @@ One file per plan.
 
 ---
 
-## Research Output (`vault/research/{timestamp}-{slug}/findings.md`)
+## Research (`vault/research/{YYYYMMDD}-{slug}.md`)
 
-Research results.
+Flat research files with inline sources.
 
 ### Frontmatter
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `type` | string | yes | Always `research-output` |
-| `created` | date | yes | Creation date |
+| `type` | string | yes | Always `research` |
+| `date` | date | yes | Creation date (YYYY-MM-DD) |
 | `topic` | string | yes | Research topic |
-| `researcher` | string | yes | Who performed the research |
-| `tags` | list | yes | Tags for categorization |
+
+### Content
+
+```markdown
+# {Topic}
+
+**Question:** {query}
+
+---
+
+## Findings
+{content}
+
+---
+
+## Sources
+1. [Title](url)
+```

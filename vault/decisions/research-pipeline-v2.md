@@ -1,7 +1,7 @@
 ---
 type: decision
 title: Research Pipeline v2 — TARGET Enforcement
-status: locked
+status: superseded
 date: 2026-02-04
 session: "[[sessions/session-24]]"
 supersedes: null

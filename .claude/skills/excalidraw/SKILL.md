@@ -3,6 +3,7 @@ name: excalidraw
 description: Generate Excalidraw diagrams for visual sense-making. Use when user asks to visualize, diagram, map out, sketch, draw, or create flowcharts/mind maps/timelines/system diagrams. Outputs Obsidian-compatible .excalidraw.md files.
 allowed-tools: Bash(uv run *)
 context: fork
+agent: general-purpose
 ---
 
 # Excalidraw Diagram Generator

@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 40
-updated: 2026-02-15
-last_session: "[[sessions/session-40]]"
+current_session: 41
+updated: 2026-02-16
+last_session: "[[sessions/session-41]]"
 active_plan: null
-focus: "Pending tasks: supersede old decisions, test upgrade skill, verify hooks, template README"
+focus: "Test /upgrade skill on another machine, test excalidraw on different diagram type"
 plan_summary: null
 ---
 
@@ -27,13 +27,14 @@ plan_summary: null
 - [ ] Build Phase 1 — entity resolution spike (in knowledge-base project, not here) #moved
 - [x] Update brainstorm.md and build.md protocols with validation loop #done
 - [x] Close failure/recovery gaps in validation system (plan rejection, plan failure, thrashing detection) #done
-- [ ] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #pending
+- [x] Mark superseded decisions with `status: superseded` (vault-io-strategy.md, research-pipeline-v2.md) #done
 - [ ] Test /upgrade skill on another machine (existing cookiecutter project) #pending
-- [ ] Verify capture-research hook works after rewrite #pending
-- [ ] Verify export-transcript hook works with relative paths #pending
+- [x] Verify capture-research hook works after rewrite #done
+- [x] Verify export-transcript hook works with relative paths #done
 - [ ] Test excalidraw skill on a different diagram type (flowchart or timeline) #pending
-- [ ] Add bootstrap instructions to template README #pending
-- [ ] Implement research format v2 — modify capture-research hook + update CLAUDE.md #pending
+- [x] Add bootstrap instructions to template README #done
+- [x] Implement research format v2 — modify capture-research hook + update CLAUDE.md #done
+- [x] Template overhaul — vault renamed to slug, .mcp.json, CLAUDE.md updated, all paths synced #done
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
@@ -46,3 +47,4 @@ plan_summary: null
 - [[decisions/plan-protocol]] — standard format, lifecycle, creation/consumption in protocols
 - [[decisions/validation-loop]] — spike assumptions, build from evidence, findings drive context
 - [[decisions/stance-rewrite]] — behavioral stance rules, reason-first pattern
+- [[decisions/template-vault-config]] — MCP preset in template, vault named after project slug

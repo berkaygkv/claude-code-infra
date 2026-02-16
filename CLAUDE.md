@@ -121,14 +121,14 @@ Research operations follow a two-tier system:
 ### Deep Research
 - Multi-source investigation, 5+ searches
 - Comparison, best practices, unknowns
-- Deep research → spawn deep-research agent. Hook captures output to `vault/research/{slug}/`.
+- Deep research → spawn deep-research agent. Hook captures output to `vault/research/`.
 
-**Output location:**
+**Output format:** Flat files, not directories.
 ```
-vault/research/{slug}/
-  ├── findings.md
-  └── sources.md
+vault/research/{YYYYMMDD}-{slug}.md
 ```
+
+Each file has frontmatter (`type: research`, `date`, `topic`) and an inline `## Sources` section. No separate sources file.
 
 ---
 

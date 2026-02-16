@@ -1,11 +1,11 @@
 ---
 type: decision
 title: Vault I/O Strategy
-status: locked
+status: superseded
 date: 2026-01-22
 session: "[[sessions/session-14]]"
 supersedes: null
-superseded_by: null
+superseded_by: "[[decisions/io-strategy-v2]]"
 related: []
 tags:
   - decision
