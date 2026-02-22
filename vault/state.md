@@ -2,12 +2,12 @@
 type: state
 project: kh
 phase: idle
-current_session: 42
+current_session: 43
 updated: 2026-02-22
-last_session: "[[sessions/session-42]]"
-active_plan: null
-focus: "Sync trimmed files to template branch, test /upgrade on another machine"
-plan_summary: null
+last_session: "[[sessions/session-43]]"
+active_plan: "[[plans/obsidian-cli-integration]]"
+focus: "Buy Catalyst license, execute CLI spike Phase 1 (setup + smoke test)"
+plan_summary: "Integrate Obsidian CLI as vault knowledge layer — 3 phases, blocked on Catalyst license"
 ---
 
 # State
@@ -37,6 +37,13 @@ plan_summary: null
 - [x] Template overhaul — vault renamed to slug, .mcp.json, CLAUDE.md updated, all paths synced #done
 - [x] Trim /begin command + protocols + CLAUDE.md — 119 lines cut, zero info loss #done
 - [ ] Sync trimmed files to template branch (CLAUDE.md, begin.md, brainstorm.md, build.md) #pending
+- [x] Research Obsidian CLI capabilities and integration potential #done
+- [x] Audit current MCP Obsidian usage across codebase #done
+- [x] Draft Obsidian CLI integration plan (vault/plans/obsidian-cli-integration.md) #done
+- [ ] Buy Catalyst license ($25) to unlock CLI #blocked/catalyst-purchase
+- [ ] Execute CLI spike Phase 1: setup + smoke test all commands #blocked/catalyst-purchase
+- [ ] Execute CLI spike Phase 2: validate property search, Bases, templates, link graph #blocked/phase-1
+- [ ] Execute CLI spike Phase 3: integration design + I/O strategy rewrite #blocked/phase-2
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
