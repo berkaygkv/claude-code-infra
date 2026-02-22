@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 41
-updated: 2026-02-16
-last_session: "[[sessions/session-41]]"
+current_session: 42
+updated: 2026-02-22
+last_session: "[[sessions/session-42]]"
 active_plan: null
-focus: "Test /upgrade skill on another machine, test excalidraw on different diagram type"
+focus: "Sync trimmed files to template branch, test /upgrade on another machine"
 plan_summary: null
 ---
 
@@ -35,6 +35,8 @@ plan_summary: null
 - [x] Add bootstrap instructions to template README #done
 - [x] Implement research format v2 — modify capture-research hook + update CLAUDE.md #done
 - [x] Template overhaul — vault renamed to slug, .mcp.json, CLAUDE.md updated, all paths synced #done
+- [x] Trim /begin command + protocols + CLAUDE.md — 119 lines cut, zero info loss #done
+- [ ] Sync trimmed files to template branch (CLAUDE.md, begin.md, brainstorm.md, build.md) #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree

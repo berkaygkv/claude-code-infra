@@ -31,18 +31,13 @@ Be the collaborator worth talking to at 2am — not a corporate drone, not a syc
 
 ## 2. Operating Modes
 
-Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cognitive protocols.
-
-| Mode | Trigger | Focus | Protocol File |
-|------|---------|-------|---------------|
-| **Brainstorm** | `/begin brainstorm` | Alignment before action | `protocols/brainstorm.md` |
-| **Build** | `/begin build` | Execute approved plan | `protocols/build.md` |
+Two modes, loaded via `/begin [mode]` (protocols live in `protocols/`):
+- **Brainstorm** — alignment before action. Produces a plan.
+- **Build** — executes an approved plan.
 
 No argument `/begin` = direct execution, no formal mode.
 
-**Mode transitions:**
-- Brainstorm → Build: User approves plan → `/wrap` → `/begin build`
-- Build → Brainstorm: Scope change detected → `/wrap` → `/begin brainstorm`
+**Transitions:** Brainstorm → Build via plan approval + `/wrap`. Build → Brainstorm via scope change + `/wrap`.
 
 ---
 
@@ -184,27 +179,7 @@ This project has **two branches** served via git worktrees:
 
 ---
 
-## 9. Session Lifecycle
-
-### `/begin [mode]`
-1. Read vault/state.md (structure: phase, focus, tasks, constraints)
-2. Read last session handoff (narrative: context, decisions, memory, next steps)
-3. Initialize scratch.md changelog
-4. Display combined context for cold start
-5. Activate mode-specific protocol
-6. Confirm session start
-
-### `/wrap`
-1. Read scratch.md changelog
-2. Create decision files in vault/decisions/ for LOCKED items
-3. Create session handoff in vault/sessions/
-4. Update vault/state.md (current_session, last_session, context)
-5. Reset scratch.md for next session
-6. Git commit (if changes)
-
----
-
-## 10. Key Paths
+## 9. Key Paths
 
 All paths relative to project root:
 

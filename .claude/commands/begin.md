@@ -10,17 +10,6 @@ This command loads context from state.md + last session handoff and activates th
 /begin build        → Build mode (ship artifacts)
 ```
 
-## Paths
-
-All paths relative to project root:
-
-- Vault: `vault/`
-- State: `vault/state.md`
-- Sessions: `vault/sessions/session-{N}.md`
-- Decisions: `vault/decisions/`
-- Plans: `vault/plans/`
-- Scratch: `scratch.md`
-
 ## Mode Protocol
 
 !`scripts/load-protocol.sh $ARGUMENTS`
@@ -88,26 +77,9 @@ This provides the rich narrative context for cold start.
 
 If state.md doesn't exist or is empty:
 - Create state.md with session: 1
-- Read scratch.md (may not exist — that's fine, the Read attempt is sufficient), then initialize with session: 1
-- Display first-run welcome
+- Initialize scratch.md with session: 1
+- Display: "Session 1 (First Run) — Welcome to kh. No previous sessions. Ready to begin."
 - Skip to Step 7
-
-**First-run welcome:**
-```
-## Session 1 (First Run)
-
-Welcome to kh. No previous sessions found.
-
-**Vault:** vault/
-
-This is a fresh installation. The following are ready:
-- vault/state.md — session state
-- vault/dashboard.md — Dataview queries
-- vault/decisions/ — committed decisions
-- vault/sessions/ — session handoffs
-
-Ready to begin. What are we working on?
-```
 
 ### Step 5: Acknowledge Mode
 
@@ -118,35 +90,14 @@ State which mode is active:
 
 ### Step 6: Display Current State
 
-```
-## Resuming Session {N+1}
+Show a summary with these sections:
+- **Header:** "Resuming Session {N+1}" with phase, focus, plan from state.md frontmatter
+- **Last Session ({N}):** topics, outcome, then the Context, Decisions, and Memory sections from the handoff
+- **Active Tasks:** checkbox list from state.md
+- **Constraints:** decision links from state.md
+- **Next Steps:** from last session handoff
 
-**Phase:** {phase}
-**Focus:** {focus from frontmatter}
-**Plan:** {plan_summary from frontmatter, or "none"}
-
-### Last Session ({N})
-**Topics:** {topics from last session}
-**Outcome:** {outcome}
-
-**Context:**
-{Context section from last session handoff}
-
-**Decisions:**
-{Decisions section from last session handoff}
-
-**Memory:**
-{Memory section from last session handoff}
-
-### Active Tasks
-{tasks as checkbox list from state.md content}
-
-### Constraints
-{constraints from state.md}
-
-### Next Steps (from last session)
-{Next Steps section from last session handoff}
-```
+If previous session outcome was `blocked`, highlight the blocker prominently.
 
 ### Step 7: Mode-Specific Prompt
 
@@ -183,13 +134,3 @@ After user responds:
 ```
 Session {N+1} started. [{mode} mode]
 ```
-
-## Notes
-
-- Two files read for cold start: state.md (structure) + last session (narrative)
-- state.md frontmatter provides: phase, focus, plan_summary
-- state.md content provides: tasks (checkbox format), constraints
-- Last session provides: context, decisions, memory, next steps
-- If previous session outcome was `blocked`, highlight the blocker prominently
-- Mode protocols are in `protocols/` — edit those files to change cognitive behavior
-- scratch.md is initialized at session start with the changelog format

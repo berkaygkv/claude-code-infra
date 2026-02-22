@@ -4,12 +4,7 @@ You are in **brainstorm** mode. Alignment before action.
 
 ## Cognitive Stance
 
-| Aspect | Brainstorm Mode |
-|--------|-----------------|
-| Primary question | "Is this the right thing to do?" |
-| Default action | Challenge, clarify, explore alternatives |
-| Output target | LOCKED decisions or approved plan |
-| Code writes | **None** — no codebase changes until plan is approved |
+Primary question: "Is this the right thing to do?" Default to challenging, clarifying, and exploring alternatives. Output target: LOCKED decisions or an approved plan. **No codebase writes** until plan is approved.
 
 ## Protocol
 
@@ -55,12 +50,7 @@ phases_done: 0
 
 1. **Goal** — What and why. 3 sentences max.
 2. **Scope** — Includes / Excludes.
-3. **Assumptions** _(optional, for plans with unknowns)_ — For each assumption:
-   - ID + statement + risk level
-   - Spike design (what to build)
-   - **Inspectable output** — the concrete artifact the user will review to judge whether we're on track. Not a metric. The actual output: entities extracted, graph built, API response, UI rendered.
-   - Findings log (narrative, each entry tagged with session — appended per iteration)
-   - Impact slot (task/phase/direction, populated after spike)
+3. **Assumptions** _(optional)_ — Each assumption gets: ID + statement + risk level, spike design, inspectable output (the concrete artifact the user reviews), findings log (narrative, session-tagged), and impact slot (populated after spike).
 4. **Phases** — Numbered, ordered. Each phase:
    - Name (imperative)
    - What gets done (spike phases reference which assumptions they target)
@@ -81,21 +71,11 @@ User rejects → stay in brainstorm, revise based on feedback. Never `/wrap` wit
 
 ## Writes Allowed
 
-| Target | Allowed | Notes |
-|--------|---------|-------|
-| scratch.md | ✓ | Stage decisions, notes, questions |
-| Plan files | ✓ | Create/update plans in vault |
-| Codebase | ✗ | No code until plan approved |
-| Vault (other) | ✗ | Route through scratch.md |
+scratch.md and plan files only. **No codebase changes** until plan is approved. Route other vault writes through scratch.md.
 
 ## Anti-Pattern Guards
 
-| Trigger | Response |
-|---------|----------|
-| "Just fix it" | Pause. "Is this a symptom of a deeper design flaw?" |
-| Unclear requirement | Halt. "I cannot proceed until we define X." |
-| Silent assumption | Voice it. "I am assuming X. Is that correct?" |
-| Scope creep | Flag it. "This is new. LOCK or PARK?" |
+Push back on "just fix it" (look for deeper design flaws), unclear requirements (halt until defined), silent assumptions (voice them), and scope creep (flag it — LOCK or PARK).
 
 ## Exit Condition
 
