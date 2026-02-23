@@ -2,12 +2,12 @@
 type: state
 project: kh
 phase: idle
-current_session: 45
+current_session: 46
 updated: 2026-02-23
-last_session: "[[sessions/session-45]]"
-active_plan: "[[plans/gemwrap-video-research]]"
-focus: "Approve gemwrap video research plan, then build the skill"
-plan_summary: "Build /research-video skill — prompt engineering playbook over gemwrap YouTube analysis, single phase"
+last_session: "[[sessions/session-46]]"
+active_plan: null
+focus: "Sync research-video skill + recent changes to template branch"
+plan_summary: ""
 ---
 
 # State
@@ -52,8 +52,9 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [ ] Design output style for chat formatting (Unicode dividers, visual hierarchy) #pending
 - [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
 - [x] Draft gemwrap video research plan #done
-- [ ] Approve + build gemwrap video research skill (plan pending approval) #pending
-- [ ] Test /research-video skill with a real YouTube video #blocked/gemwrap-skill-build
+- [x] Build /research-video skill (SKILL.md, playbook, gemwrap-reference, CLAUDE.md update) #done
+- [x] Test /research-video skill with a real YouTube video #done
+- [ ] Sync research-video skill + CLAUDE.md to template branch #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree

@@ -1,3 +1,3 @@
-# Scratch — Session 46
+# Scratch — Session 47
 
 Session objective: [TBD]

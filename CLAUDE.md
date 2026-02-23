@@ -127,6 +127,11 @@ vault/research/{YYYYMMDD}-{slug}.md
 
 Each file has frontmatter (`type: research`, `date`, `topic`) and an inline `## Sources` section. No separate sources file.
 
+### YouTube Video Research
+- Use `/research-video` skill for structured video analysis via gemwrap (Gemini multimodal)
+- gemwrap uses OAuth from gemini-cli, ~2,000 req/day across 2 accounts (round-robin rotation)
+- Output goes to `vault/research/` with `source: youtube` in frontmatter
+
 ---
 
 ## 7. Codebase vs Template
