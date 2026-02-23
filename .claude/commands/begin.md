@@ -33,29 +33,30 @@ Extract from frontmatter:
 - `plan_summary` — current plan summary (1 line)
 
 Extract from content:
+- Objective — project-level anchor (§ Objective section)
 - Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
 - Constraints — linked decisions to honor
 
 ### Step 2: Initialize scratch.md
 
-Read scratch.md first (it may already exist from a previous session), then overwrite with the session changelog format:
+Read scratch.md first (it may already exist from a previous session), then overwrite with the scratch pad format:
 
 ```markdown
-# Session Changelog
+# Scratch — Session {N+1}
 
-## Meta
-- session: {N+1}
-- mode: {brainstorm|build|direct}
-- objective: {focus from state.md or user's stated goal}
-
-## Events
-- Session started — {objective}
+Session objective: [TBD]
 ```
 
-Where:
-- `{N+1}` is current_session + 1 from state.md
-- `mode` is `brainstorm`, `build`, or `direct` (for no argument)
-- `objective` comes from state.md `focus` field or the user's first message
+Where `{N+1}` is current_session + 1 from state.md.
+
+**Objective lifecycle:** Objective starts as `[TBD]`. Once session direction is aligned through conversation, update to `[LOCKED] {objective}` and write the `## Problem` section. The Problem section anchors all reasoning bullets below it.
+
+**Maintaining scratch.md during the session:**
+- Write the Problem section (2-4 sentences, plain english) once the objective locks
+- Add reasoning bullets below it: rejected alternatives, key insights, anchoring context
+- Rewrite, don't append — remove resolved items, keep only what's live
+- On mid-session topic shift: rewrite the Problem section, carry forward relevant bullets
+- Filter: "Would losing this reasoning to scroll-away hurt the rest of the session?"
 
 ### Step 3: Read Last Session Handoff
 

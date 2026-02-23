@@ -2,15 +2,18 @@
 type: state
 project: kh
 phase: idle
-current_session: 43
-updated: 2026-02-22
-last_session: "[[sessions/session-43]]"
+current_session: 44
+updated: 2026-02-23
+last_session: "[[sessions/session-44]]"
 active_plan: "[[plans/obsidian-cli-integration]]"
-focus: "Buy Catalyst license, execute CLI spike Phase 1 (setup + smoke test)"
+focus: "Test scratch pad v2 in real sessions, design output style for chat formatting"
 plan_summary: "Integrate Obsidian CLI as vault knowledge layer — 3 phases, blocked on Catalyst license"
 ---
 
 # State
+
+## Objective
+Build and maintain a knowledge infrastructure system that enables productive cold-starting across Claude Code sessions, with disciplined context persistence and minimal ceremony.
 
 ## Tasks
 - [x] Execute system overhaul plan (build mode) #done
@@ -44,6 +47,10 @@ plan_summary: "Integrate Obsidian CLI as vault knowledge layer — 3 phases, blo
 - [ ] Execute CLI spike Phase 1: setup + smoke test all commands #blocked/catalyst-purchase
 - [ ] Execute CLI spike Phase 2: validate property search, Bases, templates, link graph #blocked/phase-1
 - [ ] Execute CLI spike Phase 3: integration design + I/O strategy rewrite #blocked/phase-2
+- [x] Redesign scratch.md — from changelog to reasoning surface with objective lifecycle #done
+- [ ] Test scratch pad v2 in real sessions (2-3 sessions), iterate based on what helps #pending
+- [ ] Design output style for chat formatting (Unicode dividers, visual hierarchy) #pending
+- [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
@@ -57,3 +64,4 @@ plan_summary: "Integrate Obsidian CLI as vault knowledge layer — 3 phases, blo
 - [[decisions/validation-loop]] — spike assumptions, build from evidence, findings drive context
 - [[decisions/stance-rewrite]] — behavioral stance rules, reason-first pattern
 - [[decisions/template-vault-config]] — MCP preset in template, vault named after project slug
+- [[decisions/scratch-pad-v2]] — reasoning surface, [TBD]/[LOCKED] lifecycle, Problem anchor, rewrite-not-append

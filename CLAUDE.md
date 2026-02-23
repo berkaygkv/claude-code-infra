@@ -56,14 +56,16 @@ No argument `/begin` = direct execution, no formal mode.
 | `plans/` | Implementation plans | Read/write during sessions |
 | `canvas/` | Excalidraw diagrams | Reference |
 
-### Session Changelog
+### Scratch Pad
 **Path:** `scratch.md`
 
-Running record of the current session:
-- Initialized by /begin with session objective
-- Updated by Claude on notable events (decisions, blockers, discoveries)
-- Read by /wrap to build session handoff
-- Survives context compression — the persistent session record
+Actively maintained working document capturing *reasoning and context* — the stuff that dies when chat scrolls away. state.md captures *what* (tasks, decisions); scratch.md captures *why* (reasoning, rejected alternatives, active thinking).
+
+- Initialized by /begin with session number. Objective starts as `[TBD]`.
+- Objective locks (`[LOCKED]`) once session direction is aligned — then Problem section is written.
+- Claude maintains actively: rewrite, don't append. Remove resolved items. Keep only what's live.
+- Filter: "Would losing this reasoning to scroll-away hurt the rest of the session?"
+- Read by /wrap to understand reasoning behind decisions, then reset.
 
 ---
 
@@ -191,7 +193,7 @@ vault/research/          # Deep research outputs
 vault/plans/             # Implementation plans
 vault/canvas/            # Excalidraw diagrams
 
-scratch.md               # Session changelog
+scratch.md               # Session scratch pad (reasoning & context)
 protocols/               # Mode protocols
 .claude/commands/        # Slash commands
 .claude/hooks/           # Event hooks

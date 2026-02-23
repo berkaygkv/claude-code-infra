@@ -1,6 +1,3 @@
-# Session Changelog
+# Scratch — Session 45
 
-## Meta
-- session: 44
-
-## Events
+Session objective: [TBD]

@@ -29,21 +29,21 @@ All paths relative to project root:
 
 When the user invokes `/wrap`, perform these steps:
 
-### Step 1: Read Session Changelog
+### Step 1: Read Scratch Pad
 
-Read `scratch.md` changelog. Synthesize decisions, memory, tasks from the Events log.
+Read `scratch.md`. Use the Problem section and reasoning bullets to understand the *why* behind session decisions — not just what was decided, but the reasoning, rejected alternatives, and context.
 
-If scratch.md is empty, synthesize from conversation context.
+If scratch.md is empty or objective is still `[TBD]`, synthesize from conversation context.
 
 ### Step 2: Determine Session Number
 
-If session number is in scratch.md, use that.
+Get session number from scratch.md header (`# Scratch — Session {N}`).
 
-Otherwise, read vault/state.md to get current_session, use that.
+If not found, read vault/state.md to get current_session, use that.
 
 ### Step 3: Synthesize Session Work
 
-Combine scratch.md content with conversation context:
+Combine scratch.md reasoning with conversation context:
 - What tasks were completed?
 - What decisions were made (LOCKED vs OPEN)?
 - What new tasks or blockers emerged?
@@ -53,17 +53,9 @@ Combine scratch.md content with conversation context:
 
 ### Step 4: Create Decision Files
 
-For each LOCKED decision in scratch.md:
+For each LOCKED decision identified from scratch.md and conversation:
 
 **Granularity rule:** One decision file per distinct decision. Related decisions made together may be bundled into one file with sub-sections (e.g., "MVP Scope" containing D1-D7), but each bundle gets ONE file.
-
-**Scratch format for decisions:**
-```markdown
-## Decisions
-<!-- One line per decision OR one line per bundle -->
-- LOCKED: [slug] Decision title — rationale
-- LOCKED: [slug] Bundle title (contains D1, D2, D3) — rationale
-```
 
 1. Generate slug from decision title (lowercase, hyphens)
 2. Read `vault/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
@@ -157,12 +149,9 @@ decisions: ["[[decisions/slug]]"]
 scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
 ```markdown
-# Session Changelog
+# Scratch — Session {N+1}
 
-## Meta
-- session: {N+1}
-
-## Events
+Session objective: [TBD]
 ```
 
 ### Step 8: Living CLAUDE.md Review

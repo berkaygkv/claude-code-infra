@@ -71,7 +71,7 @@ User rejects → stay in brainstorm, revise based on feedback. Never `/wrap` wit
 
 ## Writes Allowed
 
-scratch.md and plan files only. **No codebase changes** until plan is approved. Route other vault writes through scratch.md.
+scratch.md and plan files only. **No codebase changes** until plan is approved.
 
 ## Anti-Pattern Guards
 
