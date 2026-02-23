@@ -2,12 +2,12 @@
 type: state
 project: kh
 phase: idle
-current_session: 44
+current_session: 45
 updated: 2026-02-23
-last_session: "[[sessions/session-44]]"
-active_plan: "[[plans/obsidian-cli-integration]]"
-focus: "Test scratch pad v2 in real sessions, design output style for chat formatting"
-plan_summary: "Integrate Obsidian CLI as vault knowledge layer — 3 phases, blocked on Catalyst license"
+last_session: "[[sessions/session-45]]"
+active_plan: "[[plans/gemwrap-video-research]]"
+focus: "Approve gemwrap video research plan, then build the skill"
+plan_summary: "Build /research-video skill — prompt engineering playbook over gemwrap YouTube analysis, single phase"
 ---
 
 # State
@@ -51,6 +51,9 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [ ] Test scratch pad v2 in real sessions (2-3 sessions), iterate based on what helps #pending
 - [ ] Design output style for chat formatting (Unicode dividers, visual hierarchy) #pending
 - [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
+- [x] Draft gemwrap video research plan #done
+- [ ] Approve + build gemwrap video research skill (plan pending approval) #pending
+- [ ] Test /research-video skill with a real YouTube video #blocked/gemwrap-skill-build
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
