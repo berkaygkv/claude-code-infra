@@ -37,9 +37,9 @@ Extract from content:
 - Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
 - Constraints — linked decisions to honor
 
-### Step 2: Initialize scratch.md
+### Step 2: Initialize scratch surface
 
-Read scratch.md first (it may already exist from a previous session), then overwrite with the scratch pad format:
+Read `vault/scratch.md` first (it may already exist from a previous session), then overwrite with the scratch surface format:
 
 ```markdown
 # Scratch — Session {N+1}
@@ -49,14 +49,19 @@ Session objective: [TBD]
 
 Where `{N+1}` is current_session + 1 from state.md.
 
+Also read `vault/reference/scratch-convention.md` silently — this loads the callout convention for cold-start awareness. Do not display it.
+
 **Objective lifecycle:** Objective starts as `[TBD]`. Once session direction is aligned through conversation, update to `[LOCKED] {objective}` and write the `## Problem` section. The Problem section anchors all reasoning bullets below it.
 
-**Maintaining scratch.md during the session:**
+**Maintaining vault/scratch.md during the session:**
 - Write the Problem section (2-4 sentences, plain english) once the objective locks
 - Add reasoning bullets below it: rejected alternatives, key insights, anchoring context
 - Rewrite, don't append — remove resolved items, keep only what's live
 - On mid-session topic shift: rewrite the Problem section, carry forward relevant bullets
 - Filter: "Would losing this reasoning to scroll-away hurt the rest of the session?"
+- **Both parties write and annotate.** Use Obsidian callouts (question/warning/tip/info) for positional feedback. Silence = agree.
+- For structured proposals (3+ related points): write to surface, signal "ready for marks". User annotates in Obsidian, signals "read it". Respond only to marked items.
+- `## Decided` section added on-demand when items are resolved — not part of the init template.
 
 ### Step 3: Read Last Session Handoff
 

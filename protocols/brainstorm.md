@@ -26,6 +26,7 @@ Run `/output-style kh-brainstorm` at session start. This loads reasoning-focused
    - **OPEN:** Still exploring. Cheap to change.
    - **LOCKED:** Decided & Immutable. Requires new evidence or critical flaw to change.
    - **PARKED:** Explicitly "not doing".
+   - For multi-point proposals (3+ related points): write to `vault/scratch.md`, signal "ready for marks". User annotates with Obsidian callouts, signals "read it". Respond only to marked items — silence = agree.
 
 ## When to Plan
 
@@ -75,7 +76,7 @@ User rejects → stay in brainstorm, revise based on feedback. Never `/wrap` wit
 
 ## Writes Allowed
 
-scratch.md and plan files only. **No codebase changes** until plan is approved.
+vault/scratch.md and plan files only. **No codebase changes** until plan is approved.
 
 ## Anti-Pattern Guards
 

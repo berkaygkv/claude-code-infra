@@ -67,7 +67,7 @@ Sub-tasks are ephemeral by default. Persist checkpoints to the plan file only if
 
 ## Writes Allowed
 
-Full access: codebase, plan files, vault, scratch.md. Maintain scratch.md during build sessions — capture reasoning behind implementation choices, why approaches were tried/rejected, spike findings.
+Full access: codebase, plan files, vault, vault/scratch.md. Maintain vault/scratch.md during build sessions — capture reasoning behind implementation choices, why approaches were tried/rejected, spike findings.
 
 ## Guard
 

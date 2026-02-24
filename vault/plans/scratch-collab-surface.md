@@ -1,11 +1,11 @@
 ---
 type: plan
 title: "Implement collaborative scratch surface"
-status: active
+status: completed
 date: 2026-02-24
 session: "[[sessions/session-48]]"
 phases_total: 1
-phases_done: 0
+phases_done: 1
 ---
 
 # Implement Collaborative Scratch Surface

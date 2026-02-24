@@ -12,7 +12,7 @@ When the user invokes `/meta`, perform these steps:
 
 ### Step 1: Gather Context
 
-From scratch.md header or conversation, identify:
+From vault/scratch.md header or conversation, identify:
 - Session number and project name
 - What prompted the insight (the background)
 

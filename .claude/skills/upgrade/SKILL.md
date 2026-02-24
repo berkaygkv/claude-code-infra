@@ -77,12 +77,12 @@ These files have NO project-specific content. Overwrite completely using `cp -r`
 
 **MCP config:** Copy `$SOURCE/.mcp.json` to `.mcp.json`. After copying, check that the vault path in the MCP config matches `$VAULT` (the template uses `{{cookiecutter.project_slug}}` as a placeholder — replace it with the actual vault directory name).
 
-**Detect new additions:** List the full contents of `$SOURCE/` and `$SOURCE/.claude/`. If there are new directories or files not in the table above that are clearly infrastructure (not vault data, not scratch.md, not state.md), copy those too and note them in the summary.
+**Detect new additions:** List the full contents of `$SOURCE/` and `$SOURCE/.claude/`. If there are new directories or files not in the table above that are clearly infrastructure (not vault data, not vault/scratch.md, not state.md), copy those too and note them in the summary.
 
 **Do NOT copy:**
 - `$SOURCE/CLAUDE.md` — handled separately in Step 3
 - `$SOURCE/{{cookiecutter.project_slug}}/state.md` — project-specific
-- `$SOURCE/scratch.md` — session-scoped
+- `$SOURCE/{{cookiecutter.project_slug}}/scratch.md` — session-scoped working surface
 - Any `.gitkeep` files into directories that already have content
 
 **CRITICAL:** After copying, you MUST re-read this SKILL.md file since it was just overwritten by the copy. If the new version has different instructions, follow those instead. If it's the same, continue.

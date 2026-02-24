@@ -55,16 +55,21 @@ No argument `/begin` = direct execution, no formal mode.
 | `research/` | Deep research outputs | Auto-captured by hook |
 | `plans/` | Implementation plans | Read/write during sessions |
 | `canvas/` | Excalidraw diagrams | Reference |
+| `scratch.md` | Shared working surface | Read/write during sessions |
+| `reference/` | Convention cards, guides | Read on /begin |
 
-### Scratch Pad
-**Path:** `scratch.md`
+### Scratch Surface
+**Path:** `vault/scratch.md`
 
-Actively maintained working document capturing *reasoning and context* — the stuff that dies when chat scrolls away. state.md captures *what* (tasks, decisions); scratch.md captures *why* (reasoning, rejected alternatives, active thinking).
+Shared working surface for both Claude and user. Captures reasoning, proposals, and positional feedback — the stuff that dies when chat scrolls away or context compresses. state.md captures *what* (tasks, decisions); scratch.md captures *why* (reasoning, rejected alternatives, active thinking).
 
 - Initialized by /begin with session number. Objective starts as `[TBD]`.
 - Objective locks (`[LOCKED]`) once session direction is aligned — then Problem section is written.
-- Claude maintains actively: rewrite, don't append. Remove resolved items. Keep only what's live.
-- Filter: "Would losing this reasoning to scroll-away hurt the rest of the session?"
+- **Both parties write and annotate.** Uses Obsidian callouts for positional feedback (question/warning/tip/info). Silence = agree.
+- Rewrite, don't append. Remove resolved items. Keep only what's live.
+- For structured proposals (3+ points): write to surface, signal "ready for marks". User annotates in Obsidian, signals "read it". Claude responds only to marked items.
+- `## Decided` section added on-demand when items are resolved.
+- Convention reference: `vault/reference/scratch-convention.md` (read silently at /begin).
 - Read by /wrap to understand reasoning behind decisions, then reset.
 
 ---
@@ -145,7 +150,7 @@ This project has **two branches** served via git worktrees:
 
 ### What lives where
 
-- **main** has everything: `.claude/`, `vault/`, `protocols/`, `scratch.md`, real session data
+- **main** has everything: `.claude/`, `vault/`, `protocols/`, real session data
 - **template** has the same structure but with cookiecutter placeholders and no project-specific data (no vault sessions, no decisions, no scratch state)
 
 ### Sync Protocol
@@ -174,7 +179,7 @@ This project has **two branches** served via git worktrees:
 **What NOT to sync (project-specific):**
 - `vault/state.md`, `vault/sessions/`, `vault/decisions/` — real project data
 - `vault/research/`, `vault/plans/`, `vault/canvas/` — project artifacts
-- `scratch.md` — session-scoped
+- `vault/scratch.md` — session-scoped working surface
 
 ---
 
@@ -198,7 +203,8 @@ vault/research/          # Deep research outputs
 vault/plans/             # Implementation plans
 vault/canvas/            # Excalidraw diagrams
 
-scratch.md               # Session scratch pad (reasoning & context)
+vault/scratch.md         # Shared working surface (reasoning & collaboration)
+vault/reference/         # Convention cards, guides
 protocols/               # Mode protocols
 .claude/commands/        # Slash commands
 .claude/hooks/           # Event hooks

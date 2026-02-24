@@ -2,12 +2,12 @@
 type: state
 project: kh
 phase: build
-current_session: 48
+current_session: 49
 updated: 2026-02-24
-last_session: "[[sessions/session-48]]"
-active_plan: "[[plans/scratch-collab-surface]]"
-focus: "Execute scratch-collab-surface plan — implement collaborative scratch surface"
-plan_summary: "Move scratch.md to vault/, add Obsidian callout convention, update 7 files"
+last_session: "[[sessions/session-49]]"
+active_plan:
+focus: "Brainstorm shared language / operational glossary, or batch template sync"
+plan_summary:
 ---
 
 # State
@@ -42,7 +42,7 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [x] Build /research-video skill (SKILL.md, playbook, gemwrap-reference, CLAUDE.md update) #done
 - [x] Test /research-video skill with a real YouTube video #done
 - [x] Design collaborative scratch surface — shared working surface with Obsidian callouts #done
-- [ ] Implement collaborative scratch surface (active plan) #in-progress
+- [x] Implement collaborative scratch surface (plan completed, session 49) #done
 - [ ] Sync trimmed files to template branch (CLAUDE.md, begin.md, brainstorm.md, build.md) #pending
 - [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
 - [ ] Sync research-video skill + CLAUDE.md to template branch #pending
@@ -50,6 +50,7 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [ ] Sync scratch-collab-surface changes to template branch #pending
 - [ ] Design project management lifecycle (idea funnel, prioritization, strategic layer) #pending
 - [ ] Design shared language / operational glossary #pending
+- [ ] Fix hardcoded `vault/` paths in infrastructure files (begin.md, wrap.md) — breaks when vault name differs from `vault/` (e.g. cookiecutter dynamic naming) #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree

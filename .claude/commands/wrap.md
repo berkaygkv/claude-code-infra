@@ -1,6 +1,6 @@
 # Session Wrap-up Command
 
-End-of-session tasks: process scratch.md, update state.md, create session handoff, create decision files.
+End-of-session tasks: process vault/scratch.md, update state.md, create session handoff, create decision files.
 
 ## Design Rationale
 
@@ -12,7 +12,7 @@ End-of-session tasks: process scratch.md, update state.md, create session handof
 - `vault/state.md` — Current state, tasks, context
 - `vault/decisions/*.md` — New LOCKED decisions (created)
 - `vault/sessions/session-{N}.md` — Session handoff note (created)
-- `scratch.md` — Reset for next session
+- `vault/scratch.md` — Reset for next session
 
 ## Paths
 
@@ -23,7 +23,7 @@ All paths relative to project root:
 - Sessions: `vault/sessions/session-{N}.md`
 - Transcripts: `vault/sessions/transcripts/session-{N}.md`
 - Decisions: `vault/decisions/`
-- Scratch: `scratch.md`
+- Scratch: `vault/scratch.md`
 
 ## Instructions
 
@@ -31,7 +31,7 @@ When the user invokes `/wrap`, perform these steps:
 
 ### Step 1: Read Scratch Pad
 
-Read `scratch.md`. Use the Problem section and reasoning bullets to understand the *why* behind session decisions — not just what was decided, but the reasoning, rejected alternatives, and context.
+Read `vault/scratch.md`. Use the Problem section, reasoning bullets, and any `## Decided` section or callout annotations to understand the *why* behind session decisions — not just what was decided, but the reasoning, rejected alternatives, and context.
 
 If scratch.md is empty or objective is still `[TBD]`, synthesize from conversation context.
 
@@ -146,7 +146,7 @@ decisions: ["[[decisions/slug]]"]
 
 ### Step 7: Reset Scratch
 
-scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
+vault/scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
 ```markdown
 # Scratch — Session {N+1}
@@ -201,7 +201,7 @@ Skip if no changes. Report hash in confirmation.
 | vault/state.md | Updated: phase={phase}, tasks updated |
 | vault/decisions/ | {Created N files / No new decisions} |
 | vault/sessions/session-{N}.md | Created with handoff |
-| scratch.md | Reset for session {N+1} |
+| vault/scratch.md | Reset for session {N+1} |
 | CLAUDE.md | {Updated / No changes} |
 
 **Topics:** {topics}
