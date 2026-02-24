@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: idle
-current_session: 47
+phase: build
+current_session: 48
 updated: 2026-02-24
-last_session: "[[sessions/session-47]]"
-active_plan: null
-focus: "Consolidate pending template syncs (S42, S44, S47) into single bulk sync"
-plan_summary: ""
+last_session: "[[sessions/session-48]]"
+active_plan: "[[plans/scratch-collab-surface]]"
+focus: "Execute scratch-collab-surface plan — implement collaborative scratch surface"
+plan_summary: "Move scratch.md to vault/, add Obsidian callout convention, update 7 files"
 ---
 
 # State
@@ -36,15 +36,20 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [x] Implement research format v2 — modify capture-research hook + update CLAUDE.md #done
 - [x] Template overhaul — vault renamed to slug, .mcp.json, CLAUDE.md updated, all paths synced #done
 - [x] Trim /begin command + protocols + CLAUDE.md — 119 lines cut, zero info loss #done
-- [ ] Sync trimmed files to template branch (CLAUDE.md, begin.md, brainstorm.md, build.md) #pending
 - [x] Redesign scratch.md — from changelog to reasoning surface with objective lifecycle #done
 - [x] Design output style for chat formatting — kh-brainstorm style + mode integration #done
-- [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
 - [x] Draft gemwrap video research plan #done
 - [x] Build /research-video skill (SKILL.md, playbook, gemwrap-reference, CLAUDE.md update) #done
 - [x] Test /research-video skill with a real YouTube video #done
+- [x] Design collaborative scratch surface — shared working surface with Obsidian callouts #done
+- [ ] Implement collaborative scratch surface (active plan) #in-progress
+- [ ] Sync trimmed files to template branch (CLAUDE.md, begin.md, brainstorm.md, build.md) #pending
+- [ ] Sync session 44 changes to template branch (CLAUDE.md, begin.md, wrap.md, brainstorm.md, build.md) #pending
 - [ ] Sync research-video skill + CLAUDE.md to template branch #pending
 - [ ] Sync output style + protocol updates to template branch #pending
+- [ ] Sync scratch-collab-surface changes to template branch #pending
+- [ ] Design project management lifecycle (idea funnel, prioritization, strategic layer) #pending
+- [ ] Design shared language / operational glossary #pending
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
@@ -58,5 +63,5 @@ Build and maintain a knowledge infrastructure system that enables productive col
 - [[decisions/validation-loop]] — spike assumptions, build from evidence, findings drive context
 - [[decisions/stance-rewrite]] — behavioral stance rules, reason-first pattern
 - [[decisions/template-vault-config]] — MCP preset in template, vault named after project slug
-- [[decisions/scratch-pad-v2]] — reasoning surface, [TBD]/[LOCKED] lifecycle, Problem anchor, rewrite-not-append
+- [[decisions/scratch-collab-surface]] — shared working surface, Obsidian callouts, vault/scratch.md
 - [[decisions/output-style-system]] — kh-brainstorm for brainstorm, default for build, manual toggle

@@ -1,7 +1,7 @@
 ---
 type: decision
 title: "Scratch Pad v2 — Reasoning Surface"
-status: locked
+status: superseded
 date: 2026-02-23
 session: "[[sessions/session-44]]"
 supersedes_partial: "L2 from [[decisions/system-overhaul-v1]]"
