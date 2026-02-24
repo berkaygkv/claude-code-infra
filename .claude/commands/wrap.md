@@ -1,6 +1,6 @@
 # Session Wrap-up Command
 
-End-of-session tasks: process vault/scratch.md, update state.md, create session handoff, create decision files.
+End-of-session tasks: process vault/scratch.md, update state.md, capture inbox items, create session handoff, create decision files.
 
 ## Design Rationale
 
@@ -9,7 +9,8 @@ End-of-session tasks: process vault/scratch.md, update state.md, create session 
 - MCP only for metadata operations if needed (frontmatter-only updates, search, tags)
 
 **Documents updated:**
-- `vault/state.md` — Current state, tasks, context
+- `vault/state.md` — Current state, lifecycle sections
+- `vault/inbox.md` — Raw idea capture (appended)
 - `vault/decisions/*.md` — New LOCKED decisions (created)
 - `vault/sessions/session-{N}.md` — Session handoff note (created)
 - `vault/scratch.md` — Reset for next session
@@ -20,6 +21,7 @@ All paths relative to project root:
 
 - Vault: `vault/`
 - State: `vault/state.md`
+- Inbox: `vault/inbox.md`
 - Sessions: `vault/sessions/session-{N}.md`
 - Transcripts: `vault/sessions/transcripts/session-{N}.md`
 - Decisions: `vault/decisions/`
@@ -44,10 +46,11 @@ If not found, read vault/state.md to get current_session, use that.
 ### Step 3: Synthesize Session Work
 
 Combine scratch.md reasoning with conversation context:
-- What tasks were completed?
+- What items were completed? (These will be removed from state.md)
 - What decisions were made (LOCKED vs OPEN)?
-- What new tasks or blockers emerged?
-- What is the current phase and next action?
+- What items are still in progress, and at what sub-phase?
+- What new ideas or future work surfaced but weren't acted on? (These go to inbox)
+- What items got shaped during the session? (These go to Shaped)
 - What should the next session start with?
 - What are the key topics/themes?
 
@@ -79,7 +82,19 @@ tags: [decision]
 
 Skip this step if no new LOCKED decisions.
 
-### Step 5: Update State
+### Step 5: Inbox Capture
+
+Review the session for ideas, issues, or future work that surfaced but weren't acted on. Append each as a bullet to `vault/inbox.md`:
+
+```markdown
+- {idea description} — {brief context, session reference}
+```
+
+These are raw captures — no appetite tags, no formatting beyond a plain bullet. Read the file first, then append new items after the existing content.
+
+Skip if nothing new to capture.
+
+### Step 6: Update State
 
 Read and update `vault/state.md`:
 
@@ -91,19 +106,30 @@ Read and update `vault/state.md`:
    - `focus`: Next session's focus (1 line, from Next Steps)
    - `plan_summary`: Current plan summary (1 line) or empty
 
-2. Update content:
-   - **Tasks**: Use Obsidian checkbox format (NOT markdown tables):
+2. Update lifecycle sections:
+
+   - **Completed items:** Remove the bullet line from state.md entirely. The session handoff file is the historical record — no need to keep done items in state.md.
+
+   - **Items still in progress:** Keep in `## Active`. If the item is partially done, append a sub-phase note in parentheses:
      ```markdown
-     - [ ] Task description #pending
-     - [ ] Task description #blocked/other-task
-     - [/] Task description #in-progress
-     - [x] Task description #done
+     - Implement PM lifecycle [large] → [[plans/pm-lifecycle]] (Phase 1 done, starting Phase 2)
      ```
-   - **Constraints**: Add links to new decisions
+
+   - **New items shaped during session:** Add to `## Shaped` with appetite tag and one-line approach:
+     ```markdown
+     - {description} [{appetite}] — {approach}
+     ```
+
+   - **Items explicitly parked:** Move to `## Parked` with a reason:
+     ```markdown
+     - {description} — parked: {reason}
+     ```
+
+   - **Constraints**: Add links to new decisions.
 
 **Note:** state.md stays lean. Rich context lives in the session handoff, which `/begin` also reads.
 
-### Step 6: Create Session Note
+### Step 7: Create Session Note
 
 Create session handoff at `vault/sessions/session-{N}.md`:
 
@@ -136,7 +162,9 @@ decisions: ["[[decisions/slug]]"]
 - {fact to persist}
 
 ## Next Steps
-1. {action item}
+- **Active continuing:** {items still in Active, note sub-phase if applicable}
+- **Shaped for next session:** {items in Shaped recommended to pull into Active}
+- **Inbox captured:** {count of items added to inbox, or "none"}
 ```
 
 **Outcome guidelines:**
@@ -144,7 +172,7 @@ decisions: ["[[decisions/slug]]"]
 - `blocked` = stuck, needs resolution
 - `abandoned` = scope changed, work discarded
 
-### Step 7: Reset Scratch
+### Step 8: Reset Scratch
 
 vault/scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
@@ -154,7 +182,7 @@ vault/scratch.md was already read in Step 1, so the read-before-write guard is s
 Session objective: [TBD]
 ```
 
-### Step 8: Living CLAUDE.md Review
+### Step 9: Living CLAUDE.md Review
 
 Review session for patterns that should persist in CLAUDE.md:
 
@@ -177,7 +205,7 @@ Add to CLAUDE.md?
 
 Skip if no patterns or user declines.
 
-### Step 9: Git Commit
+### Step 10: Git Commit
 
 Invoking `/wrap` signals approval to commit:
 
@@ -191,14 +219,15 @@ Skip if no changes. Report hash in confirmation.
 
 **Note:** All vault files are now git-tracked since they're inside the project.
 
-### Step 10: Confirm Completion
+### Step 11: Confirm Completion
 
 ```
 ## Session {N} Wrap-up Complete
 
 | Document | Action |
 |----------|--------|
-| vault/state.md | Updated: phase={phase}, tasks updated |
+| vault/state.md | Updated: completed items removed, active items updated |
+| vault/inbox.md | {Appended N items / No new captures} |
 | vault/decisions/ | {Created N files / No new decisions} |
 | vault/sessions/session-{N}.md | Created with handoff |
 | vault/scratch.md | Reset for session {N+1} |
@@ -208,8 +237,9 @@ Skip if no changes. Report hash in confirmation.
 **Outcome:** {outcome}
 
 **Next Steps:**
-1. {first next step}
-2. {second next step}
+- **Active continuing:** {items and sub-phase}
+- **Shaped for next:** {recommended items}
+- **Inbox:** {count of new captures}
 
 **Git:** {committed (hash) / no changes}
 

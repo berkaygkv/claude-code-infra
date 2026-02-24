@@ -34,12 +34,23 @@ Extract from frontmatter:
 
 Extract from content:
 - Objective — project-level anchor (§ Objective section)
-- Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
+- Active — items currently being worked on (§ Active section)
+- Shaped — items ready to execute with appetite + approach (§ Shaped section)
+- Parked — explicitly deprioritized items (§ Parked section, only if non-empty)
 - Constraints — linked decisions to honor
 
-### Step 2: Initialize scratch surface
+### Step 1b: Check Inbox
 
-Read `vault/scratch.md` first (it may already exist from a previous session), then overwrite with the scratch surface format:
+Read `vault/inbox.md`. Count the number of items (lines starting with `- `).
+If count > 5, flag: "Inbox has {N} items — triage recommended."
+
+### Step 2: Load scratch surface
+
+Read `vault/scratch.md` and `vault/reference/scratch-convention.md` silently (cold-start awareness — do not display convention card).
+
+**Scratch is reset by `/wrap`, not `/begin`.** If scratch has content from a previous session (e.g., `/wrap` wasn't run, or a session was abandoned), preserve it — that reasoning is valuable cold-start context. Mention surviving content in the state summary (Step 6).
+
+**Initialize only if scratch is empty or missing.** In that case, write:
 
 ```markdown
 # Scratch — Session {N+1}
@@ -48,8 +59,6 @@ Session objective: [TBD]
 ```
 
 Where `{N+1}` is current_session + 1 from state.md.
-
-Also read `vault/reference/scratch-convention.md` silently — this loads the callout convention for cold-start awareness. Do not display it.
 
 **Objective lifecycle:** Objective starts as `[TBD]`. Once session direction is aligned through conversation, update to `[LOCKED] {objective}` and write the `## Problem` section. The Problem section anchors all reasoning bullets below it.
 
@@ -99,7 +108,10 @@ State which mode is active:
 Show a summary with these sections:
 - **Header:** "Resuming Session {N+1}" with phase, focus, plan from state.md frontmatter
 - **Last Session ({N}):** topics, outcome, then the Context, Decisions, and Memory sections from the handoff
-- **Active Tasks:** checkbox list from state.md
+- **Active:** items from § Active section, each shown with appetite tag. If an item was Active in the previous session, prefix with "↳ Continuing:"
+- **Shaped:** items from § Shaped section (show appetite tags)
+- **Parked:** items from § Parked section (only show if non-empty)
+- **Inbox:** show count. If > 5, add "(triage recommended)"
 - **Constraints:** decision links from state.md
 - **Next Steps:** from last session handoff
 

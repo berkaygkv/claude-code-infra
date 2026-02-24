@@ -49,6 +49,7 @@ No argument `/begin` = direct execution, no formal mode.
 | File/Folder | Purpose | Access Pattern |
 |-------------|---------|----------------|
 | `state.md` | Cold start context for Claude | Read on /begin |
+| `inbox.md` | Append-only idea capture | Append anytime, triage at /begin |
 | `dashboard.md` | User control panel (Dataview) | User-facing |
 | `sessions/` | Session handoffs | Write on /wrap |
 | `decisions/` | LOCKED decisions (one per file) | Write on /wrap |
@@ -57,6 +58,22 @@ No argument `/begin` = direct execution, no formal mode.
 | `canvas/` | Excalidraw diagrams | Reference |
 | `scratch.md` | Shared working surface | Read/write during sessions |
 | `reference/` | Convention cards, guides | Read on /begin |
+
+### Task Lifecycle
+
+Items flow through: **Inbox → Shaped → Active → Done/Parked**
+
+| Stage | Location | Gate | Notes |
+|-------|----------|------|-------|
+| Inbox | `vault/inbox.md` | None — append freely | Raw ideas, triage when > 5 items |
+| Shaped | `state.md` § Shaped | Appetite + approach + done-def | Ready to pick up |
+| Active | `state.md` § Active | WIP capacity (1 large OR 2 small/chore) | Currently being worked on |
+| Done | Removed from state.md | /wrap removes | Session handoffs are the record |
+| Parked | `state.md` § Parked | Explicit decision | No SLA, review when relevant |
+
+**Appetite tags:** `[chore]` sub-session, `[small]` single session, `[large]` multi-session (requires plan file).
+
+**Mid-session capture:** Append raw ideas to `vault/inbox.md` anytime during a session. No need to wait for /wrap.
 
 ### Scratch Surface
 **Path:** `vault/scratch.md`
@@ -177,7 +194,7 @@ This project has **two branches** served via git worktrees:
 - `CLAUDE.md` — operational protocol
 
 **What NOT to sync (project-specific):**
-- `vault/state.md`, `vault/sessions/`, `vault/decisions/` — real project data
+- `vault/state.md`, `vault/inbox.md`, `vault/sessions/`, `vault/decisions/` — real project data
 - `vault/research/`, `vault/plans/`, `vault/canvas/` — project artifacts
 - `vault/scratch.md` — session-scoped working surface
 
@@ -197,6 +214,7 @@ All paths relative to project root:
 
 ```
 vault/state.md           # Claude cold start
+vault/inbox.md           # Idea capture (append-only)
 vault/sessions/          # Session handoffs
 vault/decisions/         # LOCKED decisions
 vault/research/          # Deep research outputs
