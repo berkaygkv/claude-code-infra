@@ -44,6 +44,12 @@ Extract from content:
 Read `vault/inbox.md`. Count the number of items (lines starting with `- `).
 If count > 5, flag: "Inbox has {N} items — triage recommended."
 
+### Step 1c: Load triage criteria
+
+Read `vault/reference/triage-criteria.md` silently (cold-start awareness — do not display card content).
+
+This provides appetite sizing definitions, shaping checklist, kill ritual triggers, and the chore exception rule. Used implicitly when triaging inbox items or assessing whether shaped items are ready for Active.
+
 ### Step 2: Load scratch surface
 
 Read `vault/scratch.md` and `vault/reference/scratch-convention.md` silently (cold-start awareness — do not display convention card).

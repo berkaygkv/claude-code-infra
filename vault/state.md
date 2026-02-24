@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: build
-current_session: 50
-updated: 2026-02-24
-last_session: "[[sessions/session-50]]"
-active_plan: "[[plans/pm-lifecycle]]"
-focus: "PM lifecycle Phase 2 (dashboard + triage card) or batch template sync"
-plan_summary: "Lifecycle: Inbox → Shaped → Active → Done. Phase 1 complete, Phase 2 remaining."
+phase: idle
+current_session: 51
+updated: 2026-02-25
+last_session: "[[sessions/session-51]]"
+active_plan: null
+focus: "Batch template sync or fix hardcoded vault paths"
+plan_summary: ""
 ---
 
 # State
@@ -17,11 +17,11 @@ Build and maintain a knowledge infrastructure system that enables productive col
 
 ## Active
 
-- Implement PM lifecycle [large] → [[plans/pm-lifecycle]] (Phase 1 complete, Phase 2 remaining)
+<!-- No active items -->
 
 ## Shaped
 
-- Batch template sync S42–S49 [chore] — copy shared infrastructure changes to template worktree
+- Batch template sync S42–S51 [chore] — copy shared infrastructure changes to template worktree
 - Fix hardcoded `vault/` paths in infrastructure files [small] — replace with dynamic path for cookiecutter compatibility
 
 ## Parked

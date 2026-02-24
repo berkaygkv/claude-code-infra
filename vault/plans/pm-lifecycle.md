@@ -1,11 +1,11 @@
 ---
 type: plan
 title: "Implement project management lifecycle"
-status: active
-date: 2026-02-24
-session: "[[sessions/session-50]]"
+status: completed
+date: 2026-02-25
+session: "[[sessions/session-51]]"
 phases_total: 2
-phases_done: 1
+phases_done: 2
 ---
 
 # Implement Project Management Lifecycle
@@ -73,17 +73,17 @@ Update user-facing Obsidian views for the new structure.
 
 ### Tasks
 
-- [ ] Update `vault/dashboard.md`:
-  - [ ] Active items query (from state.md `## Active` section)
-  - [ ] Shaped items query (from state.md `## Shaped` section)
-  - [ ] Inbox count / recent items
-  - [ ] Parked items (collapsed or separate section)
-- [ ] Create `vault/reference/triage-criteria.md` — read silently at /begin:
-  - [ ] Appetite sizing definitions (chore / small / large)
-  - [ ] Shaping checklist (appetite + approach + done-def)
-  - [ ] Kill ritual triggers
-  - [ ] Chore exception rule (sub-session = no WIP slot)
-- [ ] Verify Dataview queries render correctly in Obsidian
+- [x] Update `vault/dashboard.md`:
+  - [x] Active items query (from state.md `## Active` section)
+  - [x] Shaped items query (from state.md `## Shaped` section)
+  - [x] Inbox count / recent items
+  - [x] Parked items (collapsed or separate section)
+- [x] Create `vault/reference/triage-criteria.md` — read silently at /begin:
+  - [x] Appetite sizing definitions (chore / small / large)
+  - [x] Shaping checklist (appetite + approach + done-def)
+  - [x] Kill ritual triggers
+  - [x] Chore exception rule (sub-session = no WIP slot)
+- [x] Verify Dataview queries render correctly in Obsidian
 
 ### Deliverables
 
