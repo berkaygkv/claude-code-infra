@@ -110,6 +110,8 @@ Ready. What needs doing?
 **Brainstorm mode:**
 ```
 Ready to brainstorm. What are we thinking through?
+
+Run `/output-style kh-brainstorm` for optimized formatting.
 ```
 
 **Build mode:**
@@ -127,6 +129,11 @@ If no active plan:
 ```
 Build mode requested but no active plan found.
 Switch to brainstorm mode to create a plan, or specify what to build.
+```
+
+For both build prompts, append:
+```
+Run `/output-style default` if not already active.
 ```
 
 ### Step 8: Confirm Session Start

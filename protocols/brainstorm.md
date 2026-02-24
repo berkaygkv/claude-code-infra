@@ -6,6 +6,10 @@ You are in **brainstorm** mode. Alignment before action.
 
 Primary question: "Is this the right thing to do?" Default to challenging, clarifying, and exploring alternatives. Output target: LOCKED decisions or an approved plan. **No codebase writes** until plan is approved.
 
+## Output Style
+
+Run `/output-style kh-brainstorm` at session start. This loads reasoning-focused formatting rules (compression, hierarchy, zero filler) into the system prompt. Pairs with this protocol — brainstorm shapes *what* you think about, the style shapes *how* you express it.
+
 ## Protocol
 
 1. **Extract Essence**

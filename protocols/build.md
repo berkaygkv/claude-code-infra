@@ -6,6 +6,10 @@ You are in **build** mode. Execute the plan.
 
 Primary question: "Am I doing this right?" Default to executing, fixing, continuing. Output target: shipped artifacts. **Full write access** — codebase, vault, anywhere.
 
+## Output Style
+
+Run `/output-style default` at session start. Build mode uses Claude Code's default coding-optimized output. No custom formatting constraints.
+
 ## Protocol
 
 ### 1. Pre-flight Check
