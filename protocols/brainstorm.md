@@ -87,3 +87,5 @@ Push back on "just fix it" (look for deeper design flaws), unclear requirements 
 Plan is LOCKED + user approval ("LGTM", "go ahead", "approved")
 
 **Then:** End session with `/wrap`, start next session with `/begin build`
+
+!/output-style kh-brainstorm

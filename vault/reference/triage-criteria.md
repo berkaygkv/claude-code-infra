@@ -42,3 +42,20 @@ Missing any one → stays in inbox.
 - No WIP slot consumed — can run alongside a large or small item
 - ==Still needs shaping== (appetite + approach + done-def) but the bar is lower
 - Sub-session scope — if it grows, re-tag it
+
+## Conventional Commits Reference
+
+Our `[chore]` appetite tag borrows from the **Conventional Commits** taxonomy — same spirit (mechanical, low-risk housekeeping), different context (task sizing vs. commit categorization).
+
+| Prefix | Meaning |
+|--------|---------|
+| `feat` | New feature (user-facing) |
+| `fix` | Bug fix |
+| `chore` | Maintenance, no user-visible change |
+| `refactor` | Code restructure, same behavior |
+| `docs` | Documentation only |
+| `style` | Formatting, whitespace, semicolons |
+| `test` | Adding/fixing tests |
+| `ci` | CI/CD pipeline changes |
+| `perf` | Performance improvement |
+| `build` | Build system or dependency changes |

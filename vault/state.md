@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 51
+current_session: 52
 updated: 2026-02-25
-last_session: "[[sessions/session-51]]"
+last_session: "[[sessions/session-52]]"
 active_plan: null
-focus: "Batch template sync or fix hardcoded vault paths"
+focus: "Shared vocabulary card or vault housekeeping chores"
 plan_summary: ""
 ---
 
@@ -23,10 +23,17 @@ Build and maintain a knowledge infrastructure system that enables productive col
 
 - Batch template sync S42–S51 [chore] — copy shared infrastructure changes to template worktree
 - Fix hardcoded `vault/` paths in infrastructure files [small] — replace with dynamic path for cookiecutter compatibility
+- Vault & scratch housekeeping [chore] — fix broken wikilinks, rename orphan file, update scratch convention card (build-mode trigger + decided timing), align build protocol
+- Shared vocabulary card [small] — seed vault/reference/shared-vocabulary.md with ~15 terms covering both directions (my jargon + user's unnamed concepts), /begin reads silently
+- Update upgrade skill for PM lifecycle [chore] — update schemas.md and SKILL.md to match new lifecycle format
+- /inbox command [chore] — create slash command that appends a line to inbox.md mid-session
 
 ## Parked
 
-<!-- No parked items -->
+- Scratch annotation lifecycle — what happens to callouts when resolved (needs usage evidence)
+- Scratch "ready for marks" signaling format — how to signal in practice (needs usage evidence)
+- Scratch two-tier layout validation — stress-test Deep Context + Decision Surface (needs real brainstorm session)
+- Auto-regressive recalibration checkpoints — forced direction-checks countering LLM drift from early-generation errors (concept clear, no concrete implementation target yet)
 
 ## Constraints
 - [[decisions/template-distribution]] — dev in main, template in worktree
