@@ -9,7 +9,7 @@ topics:
   - feature-testing
 outcome: successful
 continues_from: session-3
-transcript: '[[Sessions/transcripts/session-4]]'
+transcript: '[[sessions/transcripts/session-4]]'
 tags:
   - session
 ---

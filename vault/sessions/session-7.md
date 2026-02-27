@@ -9,7 +9,7 @@ topics:
   - architecture-simplification
 outcome: successful
 continues_from: session-6
-transcript: "[[Sessions/transcripts/session-7]]"
+transcript: "[[sessions/transcripts/session-7]]"
 tags:
   - session
 ---

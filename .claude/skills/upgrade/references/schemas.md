@@ -32,27 +32,39 @@ Single file. Tracks current session state.
 ```markdown
 # State
 
-## Tasks
-- [ ] Task description #pending
-- [ ] Task description #blocked/task-id
-- [x] Completed task #done
+## Objective
+{Project-level anchor — 1-2 sentences describing what we're building and why}
+
+## Active
+- {Item} [{appetite}] — {description} ([[plans/{slug}]] if large)
+
+## Shaped
+- {Item} [{appetite}] — {description with approach and done-definition}
+
+## Parked
+- {Item} — {reason for parking}
 
 ## Constraints
 - [[decisions/decision-slug]] — description
-
-## Open Design Work
-| Item | Notes |
-|------|-------|
-| ... | ... |
 ```
 
-### Task Format
+### Task Lifecycle
 
-Tasks use Obsidian checkbox format for Dataview compatibility:
-- `- [ ] Task #pending` — not started
-- `- [ ] Task #blocked/other-task` — blocked by another task
-- `- [/] Task #in-progress` — in progress
-- `- [x] Task #done` — completed
+Items flow through: **Inbox → Shaped → Active → Done/Parked**
+
+- **Inbox** (`vault/inbox.md`) — raw ideas, append-only
+- **Shaped** — has all three gates: appetite + approach + done-definition
+- **Active** — WIP-limited: 1 large OR 2 small/chore simultaneously
+- **Done** — removed from state.md at `/wrap`; session handoff is the record
+- **Parked** — explicitly deprioritized, no SLA
+
+### Appetite Tags
+
+| Tag | Scope | WIP Slot |
+|-----|-------|----------|
+| `[chore]` | Sub-session | None consumed |
+| `[small]` | Single session | 1 slot |
+| `[large]` | Multi-session | 1 slot (requires plan file) |
 
 ---
 
@@ -79,20 +91,23 @@ One file per session. Handoff context for cold start.
 # Session {N}: {Title}
 
 ## Context
-{What we worked on}
+{Narrative of what was worked on — key outcomes, breakthroughs, blockers}
 
 ## Decisions
 ### Locked
 - {decision} — {rationale}
+(or prose: "None — {reason}")
 
 ### Open
-- {question}
+- {question / unresolved item}
 
 ## Memory
-- {fact to persist}
+- {fact to persist across sessions}
 
 ## Next Steps
-1. {action item}
+- **Active continuing:** {item} [{appetite}] — {what carries forward}
+- **Shaped for next session:** {items available to pick up}
+- **Inbox captured:** {items added during session} or "None"
 ```
 
 ---
@@ -129,8 +144,9 @@ One file per plan.
 |-------|------|----------|-------------|
 | `type` | string | yes | Always `plan` |
 | `title` | string | yes | Plan title |
-| `status` | string | yes | `draft`, `approved`, `in_progress`, `completed`, `abandoned` |
+| `status` | string | yes | `draft`, `active`, `completed`, `failed` |
 | `date` | date | yes | Date (YYYY-MM-DD) |
+| `session` | wikilink | no | Link to originating session |
 | `phases_total` | number | yes | Total number of phases |
 | `phases_done` | number | yes | Completed phases count |
 

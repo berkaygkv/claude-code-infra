@@ -10,7 +10,7 @@ topics:
   - io-consistency
 outcome: successful
 continues_from: session-13
-transcript: '[[Sessions/transcripts/session-14]]'
+transcript: '[[sessions/transcripts/session-14]]'
 tags:
   - session
 ---

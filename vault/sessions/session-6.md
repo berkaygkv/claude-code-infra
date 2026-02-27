@@ -9,7 +9,7 @@ topics:
   - pipeline-testing
 outcome: successful
 continues_from: session-5
-transcript: '[[Sessions/transcripts/session-6]]'
+transcript: '[[sessions/transcripts/session-6]]'
 tags:
   - session
 ---

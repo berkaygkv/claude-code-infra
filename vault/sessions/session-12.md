@@ -9,7 +9,7 @@ topics:
   - community-workflows-research
 outcome: successful
 continues_from: session-11
-transcript: "[[Sessions/transcripts/session-12]]"
+transcript: "[[sessions/transcripts/session-12]]"
 tags:
   - session
 ---

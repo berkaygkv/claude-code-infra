@@ -1,11 +1,11 @@
 ---
 type: plan
 title: "Create shared vocabulary reference card"
-status: active
+status: completed
 date: 2026-02-27
 session: "[[sessions/session-53]]"
 phases_total: 1
-phases_done: 0
+phases_done: 1
 ---
 
 # Create Shared Vocabulary Reference Card
@@ -34,11 +34,11 @@ Create `vault/reference/shared-vocabulary.md` — a protocol compression layer o
 
 **What gets done:** Write the vocabulary card from finalized scratch content. Update CLAUDE.md and state.md references.
 
-- [ ] Write `vault/reference/shared-vocabulary.md` with all 18 entries, organized by domain (SWE / PM / System-Specific)
-- [ ] Add frontmatter: `type: reference`, `title`, `date`, `decision: "[[decisions/scratch-collab-surface]]"` (no standalone decision — card is a reference artifact, not a locked design choice)
-- [ ] Add scratch surface anti-pattern to entry 12
-- [ ] Verify all session references match real sessions (S1, S10, S19, S35, S37, S40, S45, S48, S50, S52)
-- [ ] Append `/vocab` command idea to `vault/inbox.md`
+- [x] Write `vault/reference/shared-vocabulary.md` with all 18 entries, organized by domain (SWE / PM / System-Specific)
+- [x] Add frontmatter: `type: reference`, `title`, `date`, `decision: "[[decisions/scratch-collab-surface]]"` (no standalone decision — card is a reference artifact, not a locked design choice)
+- [x] Add scratch surface anti-pattern to entry 12
+- [x] Verify all session references match real sessions (S1, S10, S19, S35, S37, S40, S45, S48, S50, S52)
+- [x] Append `/vocab` command idea to `vault/inbox.md` (already captured in S53)
 
 **Deliverables:**
 - `vault/reference/shared-vocabulary.md` — the card

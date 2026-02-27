@@ -9,7 +9,7 @@ topics:
   - runbook-cleanup
 outcome: successful
 continues_from: session-12
-transcript: "[[Sessions/transcripts/session-13]]"
+transcript: "[[sessions/transcripts/session-13]]"
 tags:
   - session
 ---

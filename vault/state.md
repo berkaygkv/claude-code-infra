@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: build
-current_session: 53
+phase: idle
+current_session: 54
 updated: 2026-02-27
-last_session: "[[sessions/session-53]]"
-active_plan: "[[plans/shared-vocabulary]]"
-focus: "Shared vocabulary reference card"
-plan_summary: "Write 18-entry vocabulary card, update references"
+last_session: "[[sessions/session-54]]"
+active_plan: null
+focus: "Shaped backlog cleared — inbox has 2 items, parked has 4"
+plan_summary: ""
 ---
 
 # State
@@ -17,15 +17,11 @@ Build and maintain a knowledge infrastructure system that enables productive col
 
 ## Active
 
-- Shared vocabulary card [small] — write 18-entry reference card from finalized scratch content ([[plans/shared-vocabulary]])
+<!-- No active items -->
 
 ## Shaped
 
-- Batch template sync S42–S51 [chore] — copy shared infrastructure changes to template worktree
-- Fix hardcoded `vault/` paths in infrastructure files [small] — replace with dynamic path for cookiecutter compatibility
-- Vault & scratch housekeeping [chore] — fix broken wikilinks, rename orphan file, update scratch convention card (build-mode trigger + decided timing), align build protocol
-- Update upgrade skill for PM lifecycle [chore] — update schemas.md and SKILL.md to match new lifecycle format
-- /inbox command [chore] — create slash command that appends a line to inbox.md mid-session
+<!-- No shaped items -->
 
 ## Parked
 

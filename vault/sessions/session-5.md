@@ -9,7 +9,7 @@ topics:
   - validation-complete
 outcome: successful
 continues_from: session-4
-transcript: '[[Sessions/transcripts/session-5]]'
+transcript: '[[sessions/transcripts/session-5]]'
 tags:
   - session
 ---

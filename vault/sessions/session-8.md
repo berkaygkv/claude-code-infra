@@ -8,7 +8,7 @@ topics:
   - procedural-vs-tooling
 outcome: successful
 continues_from: session-7
-transcript: "[[Sessions/transcripts/session-8]]"
+transcript: "[[sessions/transcripts/session-8]]"
 tags:
   - session
 ---

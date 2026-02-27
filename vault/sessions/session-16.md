@@ -5,7 +5,7 @@ project: kh
 topics: [build-mode, execution-tracking, adaptive-subtasks]
 outcome: successful
 continues_from: session-15
-transcript: "[[Sessions/transcripts/session-16]]"
+transcript: "[[sessions/transcripts/session-16]]"
 tags:
   - session
 ---

@@ -5,7 +5,7 @@ project: kh
 topics: [modal-begin, dynamic-protocol-loading, claude-code-preprocessing]
 outcome: successful
 continues_from: session-16
-transcript: "[[Sessions/transcripts/session-17]]"
+transcript: "[[sessions/transcripts/session-17]]"
 tags:
   - session
 ---

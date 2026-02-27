@@ -5,7 +5,7 @@ project: kh
 topics: [bootstrap-system, config-driven-paths, first-run-handling, vault-templates]
 outcome: successful
 continues_from: session-17
-transcript: "[[Sessions/transcripts/session-18]]"
+transcript: "[[sessions/transcripts/session-18]]"
 tags:
   - session
 ---

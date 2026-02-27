@@ -5,7 +5,7 @@ project: kh
 topics: [prompt-dictionary, user-tooling, precision-communication]
 outcome: successful
 continues_from: session-14
-transcript: "[[Sessions/transcripts/session-15]]"
+transcript: "[[sessions/transcripts/session-15]]"
 tags:
   - session
 ---

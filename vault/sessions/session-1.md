@@ -9,7 +9,7 @@ topics:
   - implementation-plan
 outcome: successful
 continues_from: null
-transcript: '[[Sessions/transcripts/session-1]]'
+transcript: '[[sessions/transcripts/session-1]]'
 tags:
   - session
 ---

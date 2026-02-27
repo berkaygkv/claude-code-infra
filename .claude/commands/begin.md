@@ -20,6 +20,10 @@ This command loads context from state.md + last session handoff and activates th
 
 When the user invokes `/begin [mode]`, perform these steps:
 
+### Step 0: Resolve Vault Path
+
+The vault is the directory containing `.obsidian/` inside the project root. All `vault/` references below use this as the default — substitute with the actual vault directory name if different.
+
 ### Step 1: Read State
 
 Read `vault/state.md` using native Read.
@@ -44,11 +48,12 @@ Extract from content:
 Read `vault/inbox.md`. Count the number of items (lines starting with `- `).
 If count > 5, flag: "Inbox has {N} items — triage recommended."
 
-### Step 1c: Load triage criteria
+### Step 1c: Load reference cards
 
-Read `vault/reference/triage-criteria.md` silently (cold-start awareness — do not display card content).
+Read these silently (cold-start awareness — do not display card content):
 
-This provides appetite sizing definitions, shaping checklist, kill ritual triggers, and the chore exception rule. Used implicitly when triaging inbox items or assessing whether shaped items are ready for Active.
+- `vault/reference/triage-criteria.md` — appetite sizing, shaping checklist, kill ritual triggers, chore exception rule. Used implicitly when triaging inbox items or assessing whether shaped items are ready for Active.
+- `vault/reference/shared-vocabulary.md` — 18 named concepts governing recurring decision patterns. Internalize at cold start, never display to user.
 
 ### Step 2: Load scratch surface
 

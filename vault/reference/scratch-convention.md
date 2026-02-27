@@ -39,15 +39,24 @@ Quick reference for `vault/scratch.md` — the shared working surface.
 
 ## When to Use
 
+### Brainstorm mode
 - **3+ related points** → write to scratch surface, signal "ready for marks"
 - **Quick exchange** (1-2 points) → chat is fine
+- Full two-tier layout for design proposals (Deep Context + Decision Surface)
+
+### Build mode
+- **Optional, not mandatory** — use when approach decisions are non-obvious or iterations happen
+- **Tactical format** — spike findings, rejected approaches, reasoning for implementation choices. Not full design proposals.
+- No expectation of user annotation (unlike brainstorm). Private reasoning layer that survives context compression.
 
 ## Lifecycle
 
 - Initialized at `/begin` with session number
 - Either party writes content anytime
-- `## Decided` section added on-demand when items are resolved
-- Reset at `/wrap` — key reasoning migrates to handoff first
+- `## Decided` section added on-demand when marked items converge (annotation + response = agreement)
+- Decided entries record: the item, its resolution (agree/disagree), and outcome if it differs from original proposal
+- Reset at `/wrap` — key reasoning migrates to handoff, then scratch clears for next session
+- Build-mode sessions rarely need Decided section — it's a brainstorm artifact
 
 ## Document Structure — Two-Tier Layout
 
@@ -107,8 +116,11 @@ Use ==highlights== for hard constraints. Keep prose minimal.}
 - **ASCII diagrams** for flows (renders in any viewer)
 - **One heading per reasoning topic** — no multi-topic sections
 
-## What Survives from scratch-pad-v2
+## Decided Section Example
 
-- Objective lifecycle: `[TBD]` → `[LOCKED]`
-- Problem section as reasoning anchor
-- Rewrite-not-append maintenance
+```markdown
+## Decided
+
+- ✅ **Scratch as primary communication surface** — two-tier template approved, Obsidian-native
+- ❌ **Phased rollout** — ship full design instead, iterate naturally based on real usage
+```

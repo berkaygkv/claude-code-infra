@@ -8,7 +8,7 @@ topics:
   - meta-reflection
 outcome: successful
 continues_from: session-18
-transcript: "[[Sessions/transcripts/session-19]]"
+transcript: "[[sessions/transcripts/session-19]]"
 tags:
   - session
 ---

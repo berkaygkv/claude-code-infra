@@ -9,7 +9,7 @@ topics:
   - git-versioning
 outcome: successful
 continues_from: session-1
-transcript: '[[Sessions/transcripts/session-2]]'
+transcript: '[[sessions/transcripts/session-2]]'
 tags:
   - session
 ---

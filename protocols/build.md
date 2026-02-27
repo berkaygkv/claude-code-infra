@@ -67,7 +67,13 @@ Sub-tasks are ephemeral by default. Persist checkpoints to the plan file only if
 
 ## Writes Allowed
 
-Full access: codebase, plan files, vault, vault/scratch.md. Maintain vault/scratch.md during build sessions — capture reasoning behind implementation choices, why approaches were tried/rejected, spike findings.
+Full access: codebase, plan files, vault, vault/scratch.md.
+
+**Scratch surface during build:**
+- Optional — use when approach decisions are non-obvious or iterations happen
+- Format: Tactical notes, not structured proposals. Spike findings, rejected approaches, reasoning for implementation choices.
+- No expectation of user annotation (unlike brainstorm mode)
+- Reset at `/wrap` — key findings migrate to session handoff first
 
 ## Guard
 

@@ -31,6 +31,10 @@ All paths relative to project root:
 
 When the user invokes `/wrap`, perform these steps:
 
+### Step 0: Resolve Vault Path
+
+The vault is the directory containing `.obsidian/` inside the project root. All `vault/` references below use this as the default — substitute with the actual vault directory name if different.
+
 ### Step 1: Read Scratch Pad
 
 Read `vault/scratch.md`. Use the Problem section, reasoning bullets, and any `## Decided` section or callout annotations to understand the *why* behind session decisions — not just what was decided, but the reasoning, rejected alternatives, and context.

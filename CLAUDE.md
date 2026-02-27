@@ -210,7 +210,7 @@ This project has **two branches** served via git worktrees:
 
 ## 9. Key Paths
 
-All paths relative to project root:
+All paths relative to project root. `vault/` is the default vault directory name — in cookiecutter projects, it resolves to the project slug. Commands discover the vault via `.obsidian/` at runtime.
 
 ```
 vault/state.md           # Claude cold start

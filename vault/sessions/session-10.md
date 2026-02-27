@@ -8,7 +8,7 @@ topics:
   - task-specificity
 outcome: successful
 continues_from: session-9
-transcript: '[[Sessions/transcripts/session-10]]'
+transcript: '[[sessions/transcripts/session-10]]'
 tags:
   - session
 ---

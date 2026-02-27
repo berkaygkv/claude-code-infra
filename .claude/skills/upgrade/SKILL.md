@@ -207,7 +207,9 @@ Run each checklist item and report **pass**, **warn**, or **fail**:
 1. **Current session number**: `current_session` value matches the highest N found across `$VAULT/sessions/session-*.md` filenames
 2. **Last session link**: `last_session` wikilink resolves to an existing session file
 3. **Active plan**: If `active_plan` is non-null, the referenced plan file exists and its `status` is not `completed` or `abandoned`
-4. **Task tags**: All task entries use valid tags: `#pending`, `#done`, `#blocked/{id}`, `#in-progress`. Any other tag format is a warn
+4. **Lifecycle sections**: State has all four content sections: Objective, Active, Shaped, Parked. Missing sections are a fail.
+5. **Appetite tags**: All items in Active/Shaped use valid appetite tags: `[chore]`, `[small]`, `[large]`. Missing or invalid tags are a warn.
+6. **WIP limit**: Active section has at most 1 large OR 2 small/chore items. Exceeding is a warn.
 
 ### 6d: Session Continuity
 

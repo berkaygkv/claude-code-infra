@@ -8,7 +8,7 @@ topics:
   - vault-write-discipline
 outcome: successful
 continues_from: session-8
-transcript: '[[Sessions/transcripts/session-9]]'
+transcript: '[[sessions/transcripts/session-9]]'
 tags:
   - session
 ---

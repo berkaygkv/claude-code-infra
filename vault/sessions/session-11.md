@@ -8,7 +8,7 @@ topics:
   - phase-transitions
 outcome: successful
 continues_from: session-10
-transcript: "[[Sessions/transcripts/session-11]]"
+transcript: "[[sessions/transcripts/session-11]]"
 tags:
   - session
 ---

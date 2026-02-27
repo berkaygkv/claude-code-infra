@@ -9,7 +9,7 @@ topics:
   - research-workflow
 outcome: successful
 continues_from: session-2
-transcript: "[[Sessions/transcripts/session-3]]"
+transcript: "[[sessions/transcripts/session-3]]"
 tags:
   - session
 ---
