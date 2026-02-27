@@ -1,13 +1,13 @@
 ---
 type: state
 project: kh
-phase: idle
-current_session: 52
-updated: 2026-02-25
-last_session: "[[sessions/session-52]]"
-active_plan: null
-focus: "Shared vocabulary card or vault housekeeping chores"
-plan_summary: ""
+phase: build
+current_session: 53
+updated: 2026-02-27
+last_session: "[[sessions/session-53]]"
+active_plan: "[[plans/shared-vocabulary]]"
+focus: "Shared vocabulary reference card"
+plan_summary: "Write 18-entry vocabulary card, update references"
 ---
 
 # State
@@ -17,14 +17,13 @@ Build and maintain a knowledge infrastructure system that enables productive col
 
 ## Active
 
-<!-- No active items -->
+- Shared vocabulary card [small] — write 18-entry reference card from finalized scratch content ([[plans/shared-vocabulary]])
 
 ## Shaped
 
 - Batch template sync S42–S51 [chore] — copy shared infrastructure changes to template worktree
 - Fix hardcoded `vault/` paths in infrastructure files [small] — replace with dynamic path for cookiecutter compatibility
 - Vault & scratch housekeeping [chore] — fix broken wikilinks, rename orphan file, update scratch convention card (build-mode trigger + decided timing), align build protocol
-- Shared vocabulary card [small] — seed vault/reference/shared-vocabulary.md with ~15 terms covering both directions (my jargon + user's unnamed concepts), /begin reads silently
 - Update upgrade skill for PM lifecycle [chore] — update schemas.md and SKILL.md to match new lifecycle format
 - /inbox command [chore] — create slash command that appends a line to inbox.md mid-session
 
