@@ -1,6 +1,6 @@
 # Session Wrap-up Command
 
-End-of-session tasks: process scratch.md, update state.md, create session handoff, create decision files.
+End-of-session tasks: process {{cookiecutter.project_slug}}/scratch.md, update state.md, capture inbox items, create session handoff, create decision files.
 
 ## Design Rationale
 
@@ -9,65 +9,64 @@ End-of-session tasks: process scratch.md, update state.md, create session handof
 - MCP only for metadata operations if needed (frontmatter-only updates, search, tags)
 
 **Documents updated:**
-- `{{ cookiecutter.project_slug }}/state.md` — Current state, tasks, context
-- `{{ cookiecutter.project_slug }}/decisions/*.md` — New LOCKED decisions (created)
-- `{{ cookiecutter.project_slug }}/sessions/session-{N}.md` — Session handoff note (created)
-- `scratch.md` — Reset for next session
+- `{{cookiecutter.project_slug}}/state.md` — Current state, lifecycle sections
+- `{{cookiecutter.project_slug}}/inbox.md` — Raw idea capture (appended)
+- `{{cookiecutter.project_slug}}/decisions/*.md` — New LOCKED decisions (created)
+- `{{cookiecutter.project_slug}}/sessions/session-{N}.md` — Session handoff note (created)
+- `{{cookiecutter.project_slug}}/scratch.md` — Reset for next session
 
 ## Paths
 
 All paths relative to project root:
 
-- Vault: `{{ cookiecutter.project_slug }}/`
-- State: `{{ cookiecutter.project_slug }}/state.md`
-- Sessions: `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`
-- Transcripts: `{{ cookiecutter.project_slug }}/sessions/transcripts/session-{N}.md`
-- Decisions: `{{ cookiecutter.project_slug }}/decisions/`
-- Scratch: `scratch.md`
+- Vault: `{{cookiecutter.project_slug}}/`
+- State: `{{cookiecutter.project_slug}}/state.md`
+- Inbox: `{{cookiecutter.project_slug}}/inbox.md`
+- Sessions: `{{cookiecutter.project_slug}}/sessions/session-{N}.md`
+- Transcripts: `{{cookiecutter.project_slug}}/sessions/transcripts/session-{N}.md`
+- Decisions: `{{cookiecutter.project_slug}}/decisions/`
+- Scratch: `{{cookiecutter.project_slug}}/scratch.md`
 
 ## Instructions
 
 When the user invokes `/wrap`, perform these steps:
 
-### Step 1: Read Session Changelog
+### Step 0: Resolve Vault Path
 
-Read `scratch.md` changelog. Synthesize decisions, memory, tasks from the Events log.
+The vault is the directory containing `.obsidian/` inside the project root. All `{{cookiecutter.project_slug}}/` references below use this as the default — substitute with the actual vault directory name if different.
 
-If scratch.md is empty, synthesize from conversation context.
+### Step 1: Read Scratch Pad
+
+Read `{{cookiecutter.project_slug}}/scratch.md`. Use the Problem section, reasoning bullets, and any `## Decided` section or callout annotations to understand the *why* behind session decisions — not just what was decided, but the reasoning, rejected alternatives, and context.
+
+If scratch.md is empty or objective is still `[TBD]`, synthesize from conversation context.
 
 ### Step 2: Determine Session Number
 
-If session number is in scratch.md, use that.
+Get session number from scratch.md header (`# Scratch — Session {N}`).
 
-Otherwise, read {{ cookiecutter.project_slug }}/state.md to get current_session, use that.
+If not found, read {{cookiecutter.project_slug}}/state.md to get current_session, use that.
 
 ### Step 3: Synthesize Session Work
 
-Combine scratch.md content with conversation context:
-- What tasks were completed?
+Combine scratch.md reasoning with conversation context:
+- What items were completed? (These will be removed from state.md)
 - What decisions were made (LOCKED vs OPEN)?
-- What new tasks or blockers emerged?
-- What is the current phase and next action?
+- What items are still in progress, and at what sub-phase?
+- What new ideas or future work surfaced but weren't acted on? (These go to inbox)
+- What items got shaped during the session? (These go to Shaped)
 - What should the next session start with?
 - What are the key topics/themes?
 
 ### Step 4: Create Decision Files
 
-For each LOCKED decision in scratch.md:
+For each LOCKED decision identified from scratch.md and conversation:
 
 **Granularity rule:** One decision file per distinct decision. Related decisions made together may be bundled into one file with sub-sections (e.g., "MVP Scope" containing D1-D7), but each bundle gets ONE file.
 
-**Scratch format for decisions:**
-```markdown
-## Decisions
-<!-- One line per decision OR one line per bundle -->
-- LOCKED: [slug] Decision title — rationale
-- LOCKED: [slug] Bundle title (contains D1, D2, D3) — rationale
-```
-
 1. Generate slug from decision title (lowercase, hyphens)
-2. Read `{{ cookiecutter.project_slug }}/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
-3. Write decision file at `{{ cookiecutter.project_slug }}/decisions/{slug}.md`
+2. Read `{{cookiecutter.project_slug}}/decisions/{slug}.md` first (it may already exist from a prior session — if so, update rather than overwrite). If it doesn't exist, the Read attempt satisfies the read-before-write guard.
+3. Write decision file at `{{cookiecutter.project_slug}}/decisions/{slug}.md`
 
 ```yaml
 ---
@@ -87,9 +86,21 @@ tags: [decision]
 
 Skip this step if no new LOCKED decisions.
 
-### Step 5: Update State
+### Step 5: Inbox Capture
 
-Read and update `{{ cookiecutter.project_slug }}/state.md`:
+Review the session for ideas, issues, or future work that surfaced but weren't acted on. Append each as a bullet to `{{cookiecutter.project_slug}}/inbox.md`:
+
+```markdown
+- {idea description} — {brief context, session reference}
+```
+
+These are raw captures — no appetite tags, no formatting beyond a plain bullet. Read the file first, then append new items after the existing content.
+
+Skip if nothing new to capture.
+
+### Step 6: Update State
+
+Read and update `{{cookiecutter.project_slug}}/state.md`:
 
 1. Update frontmatter:
    - `current_session`: N (current session number)
@@ -99,21 +110,32 @@ Read and update `{{ cookiecutter.project_slug }}/state.md`:
    - `focus`: Next session's focus (1 line, from Next Steps)
    - `plan_summary`: Current plan summary (1 line) or empty
 
-2. Update content:
-   - **Tasks**: Use Obsidian checkbox format (NOT markdown tables):
+2. Update lifecycle sections:
+
+   - **Completed items:** Remove the bullet line from state.md entirely. The session handoff file is the historical record — no need to keep done items in state.md.
+
+   - **Items still in progress:** Keep in `## Active`. If the item is partially done, append a sub-phase note in parentheses:
      ```markdown
-     - [ ] Task description #pending
-     - [ ] Task description #blocked/other-task
-     - [/] Task description #in-progress
-     - [x] Task description #done
+     - Implement PM lifecycle [large] → [[plans/pm-lifecycle]] (Phase 1 done, starting Phase 2)
      ```
-   - **Constraints**: Add links to new decisions
+
+   - **New items shaped during session:** Add to `## Shaped` with appetite tag and one-line approach:
+     ```markdown
+     - {description} [{appetite}] — {approach}
+     ```
+
+   - **Items explicitly parked:** Move to `## Parked` with a reason:
+     ```markdown
+     - {description} — parked: {reason}
+     ```
+
+   - **Constraints**: Add links to new decisions.
 
 **Note:** state.md stays lean. Rich context lives in the session handoff, which `/begin` also reads.
 
-### Step 6: Create Session Note
+### Step 7: Create Session Note
 
-Create session handoff at `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`:
+Create session handoff at `{{cookiecutter.project_slug}}/sessions/session-{N}.md`:
 
 ```yaml
 ---
@@ -144,7 +166,9 @@ decisions: ["[[decisions/slug]]"]
 - {fact to persist}
 
 ## Next Steps
-1. {action item}
+- **Active continuing:** {items still in Active, note sub-phase if applicable}
+- **Shaped for next session:** {items in Shaped recommended to pull into Active}
+- **Inbox captured:** {count of items added to inbox, or "none"}
 ```
 
 **Outcome guidelines:**
@@ -152,20 +176,17 @@ decisions: ["[[decisions/slug]]"]
 - `blocked` = stuck, needs resolution
 - `abandoned` = scope changed, work discarded
 
-### Step 7: Reset Scratch
+### Step 8: Reset Scratch
 
-scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
+{{cookiecutter.project_slug}}/scratch.md was already read in Step 1, so the read-before-write guard is satisfied. Reset it for next session:
 
 ```markdown
-# Session Changelog
+# Scratch — Session {N+1}
 
-## Meta
-- session: {N+1}
-
-## Events
+Session objective: [TBD]
 ```
 
-### Step 8: Living CLAUDE.md Review
+### Step 9: Living CLAUDE.md Review
 
 Review session for patterns that should persist in CLAUDE.md:
 
@@ -188,7 +209,7 @@ Add to CLAUDE.md?
 
 Skip if no patterns or user declines.
 
-### Step 9: Git Commit
+### Step 10: Git Commit
 
 Invoking `/wrap` signals approval to commit:
 
@@ -202,25 +223,27 @@ Skip if no changes. Report hash in confirmation.
 
 **Note:** All vault files are now git-tracked since they're inside the project.
 
-### Step 10: Confirm Completion
+### Step 11: Confirm Completion
 
 ```
 ## Session {N} Wrap-up Complete
 
 | Document | Action |
 |----------|--------|
-| {{ cookiecutter.project_slug }}/state.md | Updated: phase={phase}, tasks updated |
-| {{ cookiecutter.project_slug }}/decisions/ | {Created N files / No new decisions} |
-| {{ cookiecutter.project_slug }}/sessions/session-{N}.md | Created with handoff |
-| scratch.md | Reset for session {N+1} |
+| {{cookiecutter.project_slug}}/state.md | Updated: completed items removed, active items updated |
+| {{cookiecutter.project_slug}}/inbox.md | {Appended N items / No new captures} |
+| {{cookiecutter.project_slug}}/decisions/ | {Created N files / No new decisions} |
+| {{cookiecutter.project_slug}}/sessions/session-{N}.md | Created with handoff |
+| {{cookiecutter.project_slug}}/scratch.md | Reset for session {N+1} |
 | CLAUDE.md | {Updated / No changes} |
 
 **Topics:** {topics}
 **Outcome:** {outcome}
 
 **Next Steps:**
-1. {first next step}
-2. {second next step}
+- **Active continuing:** {items and sub-phase}
+- **Shaped for next:** {recommended items}
+- **Inbox:** {count of new captures}
 
 **Git:** {committed (hash) / no changes}
 

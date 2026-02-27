@@ -4,12 +4,11 @@ You are in **brainstorm** mode. Alignment before action.
 
 ## Cognitive Stance
 
-| Aspect | Brainstorm Mode |
-|--------|-----------------|
-| Primary question | "Is this the right thing to do?" |
-| Default action | Challenge, clarify, explore alternatives |
-| Output target | LOCKED decisions or approved plan |
-| Code writes | **None** — no codebase changes until plan is approved |
+Primary question: "Is this the right thing to do?" Default to challenging, clarifying, and exploring alternatives. Output target: LOCKED decisions or an approved plan. **No codebase writes** until plan is approved.
+
+## Output Style
+
+Run `/output-style kh-brainstorm` at session start. This loads reasoning-focused formatting rules (compression, hierarchy, zero filler) into the system prompt. Pairs with this protocol — brainstorm shapes *what* you think about, the style shapes *how* you express it.
 
 ## Protocol
 
@@ -27,6 +26,7 @@ You are in **brainstorm** mode. Alignment before action.
    - **OPEN:** Still exploring. Cheap to change.
    - **LOCKED:** Decided & Immutable. Requires new evidence or critical flaw to change.
    - **PARKED:** Explicitly "not doing".
+   - For multi-point proposals (3+ related points): write to `{{cookiecutter.project_slug}}/scratch.md`, signal "ready for marks". User annotates with Obsidian callouts, signals "read it". Respond only to marked items — silence = agree.
 
 ## When to Plan
 
@@ -35,7 +35,7 @@ Single-session, independent tasks → just do them.
 
 ## Plan Creation
 
-When brainstorm converges — decisions LOCKED, scope clear — write the plan to `{{ cookiecutter.project_slug }}/plans/{slug}.md`.
+When brainstorm converges — decisions LOCKED, scope clear — write the plan to `{{cookiecutter.project_slug}}/plans/{slug}.md`.
 
 ### Frontmatter
 
@@ -55,12 +55,7 @@ phases_done: 0
 
 1. **Goal** — What and why. 3 sentences max.
 2. **Scope** — Includes / Excludes.
-3. **Assumptions** _(optional, for plans with unknowns)_ — For each assumption:
-   - ID + statement + risk level
-   - Spike design (what to build)
-   - **Inspectable output** — the concrete artifact the user will review to judge whether we're on track. Not a metric. The actual output: entities extracted, graph built, API response, UI rendered.
-   - Findings log (narrative, each entry tagged with session — appended per iteration)
-   - Impact slot (task/phase/direction, populated after spike)
+3. **Assumptions** _(optional)_ — Each assumption gets: ID + statement + risk level, spike design, inspectable output (the concrete artifact the user reviews), findings log (narrative, session-tagged), and impact slot (populated after spike).
 4. **Phases** — Numbered, ordered. Each phase:
    - Name (imperative)
    - What gets done (spike phases reference which assumptions they target)
@@ -81,24 +76,16 @@ User rejects → stay in brainstorm, revise based on feedback. Never `/wrap` wit
 
 ## Writes Allowed
 
-| Target | Allowed | Notes |
-|--------|---------|-------|
-| scratch.md | ✓ | Stage decisions, notes, questions |
-| Plan files | ✓ | Create/update plans in vault |
-| Codebase | ✗ | No code until plan approved |
-| Vault (other) | ✗ | Route through scratch.md |
+{{cookiecutter.project_slug}}/scratch.md and plan files only. **No codebase changes** until plan is approved.
 
 ## Anti-Pattern Guards
 
-| Trigger | Response |
-|---------|----------|
-| "Just fix it" | Pause. "Is this a symptom of a deeper design flaw?" |
-| Unclear requirement | Halt. "I cannot proceed until we define X." |
-| Silent assumption | Voice it. "I am assuming X. Is that correct?" |
-| Scope creep | Flag it. "This is new. LOCK or PARK?" |
+Push back on "just fix it" (look for deeper design flaws), unclear requirements (halt until defined), silent assumptions (voice them), and scope creep (flag it — LOCK or PARK).
 
 ## Exit Condition
 
 Plan is LOCKED + user approval ("LGTM", "go ahead", "approved")
 
 **Then:** End session with `/wrap`, start next session with `/begin build`
+
+!/output-style kh-brainstorm

@@ -25,7 +25,7 @@ Find the Obsidian vault directory by looking for `.obsidian/` inside the project
 VAULT=$(find . -maxdepth 2 -name ".obsidian" -type d | head -1 | xargs dirname)
 ```
 
-If not found, fall back to `vault/`. Use `$VAULT` for all vault path references below.
+If not found, fall back to `{{cookiecutter.project_slug}}/`. Use `$VAULT` for all vault path references below.
 
 ---
 
@@ -77,12 +77,12 @@ These files have NO project-specific content. Overwrite completely using `cp -r`
 
 **MCP config:** Copy `$SOURCE/.mcp.json` to `.mcp.json`. After copying, check that the vault path in the MCP config matches `$VAULT` (the template uses `{{cookiecutter.project_slug}}` as a placeholder — replace it with the actual vault directory name).
 
-**Detect new additions:** List the full contents of `$SOURCE/` and `$SOURCE/.claude/`. If there are new directories or files not in the table above that are clearly infrastructure (not vault data, not scratch.md, not state.md), copy those too and note them in the summary.
+**Detect new additions:** List the full contents of `$SOURCE/` and `$SOURCE/.claude/`. If there are new directories or files not in the table above that are clearly infrastructure (not vault data, not {{cookiecutter.project_slug}}/scratch.md, not state.md), copy those too and note them in the summary.
 
 **Do NOT copy:**
 - `$SOURCE/CLAUDE.md` — handled separately in Step 3
 - `$SOURCE/{{cookiecutter.project_slug}}/state.md` — project-specific
-- `$SOURCE/scratch.md` — session-scoped
+- `$SOURCE/{{cookiecutter.project_slug}}/scratch.md` — session-scoped working surface
 - Any `.gitkeep` files into directories that already have content
 
 **CRITICAL:** After copying, you MUST re-read this SKILL.md file since it was just overwritten by the copy. If the new version has different instructions, follow those instead. If it's the same, continue.
@@ -193,7 +193,7 @@ Run each checklist item and report **pass**, **warn**, or **fail**:
 ### 6a: CLAUDE.md Integrity
 
 1. **Section coverage**: All numbered sections from the template protocol are present in the merged CLAUDE.md and correctly numbered (sequential, no gaps, no duplicates)
-2. **Vault path consistency**: All vault path references in CLAUDE.md use the same directory name (matching `$VAULT`). No leftover `vault/` references if the vault has been renamed.
+2. **Vault path consistency**: All vault path references in CLAUDE.md use the same directory name (matching `$VAULT`). No leftover `{{cookiecutter.project_slug}}/` references if the vault has been renamed.
 3. **Key Paths section**: Every directory listed in the Key Paths section should exist on disk. Flag any listed paths that don't exist and any vault subdirectories that exist but aren't listed
 
 ### 6b: Decision Coherence
@@ -207,7 +207,9 @@ Run each checklist item and report **pass**, **warn**, or **fail**:
 1. **Current session number**: `current_session` value matches the highest N found across `$VAULT/sessions/session-*.md` filenames
 2. **Last session link**: `last_session` wikilink resolves to an existing session file
 3. **Active plan**: If `active_plan` is non-null, the referenced plan file exists and its `status` is not `completed` or `abandoned`
-4. **Task tags**: All task entries use valid tags: `#pending`, `#done`, `#blocked/{id}`, `#in-progress`. Any other tag format is a warn
+4. **Lifecycle sections**: State has all four content sections: Objective, Active, Shaped, Parked. Missing sections are a fail.
+5. **Appetite tags**: All items in Active/Shaped use valid appetite tags: `[chore]`, `[small]`, `[large]`. Missing or invalid tags are a warn.
+6. **WIP limit**: Active section has at most 1 large OR 2 small/chore items. Exceeding is a warn.
 
 ### 6d: Session Continuity
 

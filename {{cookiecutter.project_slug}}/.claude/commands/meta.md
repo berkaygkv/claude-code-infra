@@ -10,9 +10,13 @@ Record how we work together — flaws, patterns, hypotheses. These entries compo
 
 When the user invokes `/meta`, perform these steps:
 
+### Step 0: Resolve Vault Path
+
+The vault is the directory containing `.obsidian/` inside the project root. All `{{cookiecutter.project_slug}}/` references below use this as the default — substitute with the actual vault directory name if different.
+
 ### Step 1: Gather Context
 
-From scratch.md Meta section or conversation, identify:
+From {{cookiecutter.project_slug}}/scratch.md header or conversation, identify:
 - Session number and project name
 - What prompted the insight (the background)
 

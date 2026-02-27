@@ -10,17 +10,6 @@ This command loads context from state.md + last session handoff and activates th
 /begin build        → Build mode (ship artifacts)
 ```
 
-## Paths
-
-All paths relative to project root:
-
-- Vault: `{{ cookiecutter.project_slug }}/`
-- State: `{{ cookiecutter.project_slug }}/state.md`
-- Sessions: `{{ cookiecutter.project_slug }}/sessions/session-{N}.md`
-- Decisions: `{{ cookiecutter.project_slug }}/decisions/`
-- Plans: `{{ cookiecutter.project_slug }}/plans/`
-- Scratch: `scratch.md`
-
 ## Mode Protocol
 
 !`scripts/load-protocol.sh $ARGUMENTS`
@@ -31,9 +20,13 @@ All paths relative to project root:
 
 When the user invokes `/begin [mode]`, perform these steps:
 
+### Step 0: Resolve Vault Path
+
+The vault is the directory containing `.obsidian/` inside the project root. All `{{cookiecutter.project_slug}}/` references below use this as the default — substitute with the actual vault directory name if different.
+
 ### Step 1: Read State
 
-Read `{{ cookiecutter.project_slug }}/state.md` using native Read.
+Read `{{cookiecutter.project_slug}}/state.md` using native Read.
 
 Extract from frontmatter:
 - `phase` — current mode (brainstorm/build/idle)
@@ -44,33 +37,55 @@ Extract from frontmatter:
 - `plan_summary` — current plan summary (1 line)
 
 Extract from content:
-- Tasks — checkbox list (Obsidian format: `- [ ] task #status`)
+- Objective — project-level anchor (§ Objective section)
+- Active — items currently being worked on (§ Active section)
+- Shaped — items ready to execute with appetite + approach (§ Shaped section)
+- Parked — explicitly deprioritized items (§ Parked section, only if non-empty)
 - Constraints — linked decisions to honor
 
-### Step 2: Initialize scratch.md
+### Step 1b: Check Inbox
 
-Read scratch.md first (it may already exist from a previous session), then overwrite with the session changelog format:
+Read `{{cookiecutter.project_slug}}/inbox.md`. Count the number of items (lines starting with `- `).
+If count > 5, flag: "Inbox has {N} items — triage recommended."
+
+### Step 1c: Load reference cards
+
+Read these silently (cold-start awareness — do not display card content):
+
+- `{{cookiecutter.project_slug}}/reference/triage-criteria.md` — appetite sizing, shaping checklist, kill ritual triggers, chore exception rule. Used implicitly when triaging inbox items or assessing whether shaped items are ready for Active.
+- `{{cookiecutter.project_slug}}/reference/shared-vocabulary.md` — 18 named concepts governing recurring decision patterns. Internalize at cold start, never display to user.
+
+### Step 2: Load scratch surface
+
+Read `{{cookiecutter.project_slug}}/scratch.md` and `{{cookiecutter.project_slug}}/reference/scratch-convention.md` silently (cold-start awareness — do not display convention card).
+
+**Scratch is reset by `/wrap`, not `/begin`.** If scratch has content from a previous session (e.g., `/wrap` wasn't run, or a session was abandoned), preserve it — that reasoning is valuable cold-start context. Mention surviving content in the state summary (Step 6).
+
+**Initialize only if scratch is empty or missing.** In that case, write:
 
 ```markdown
-# Session Changelog
+# Scratch — Session {N+1}
 
-## Meta
-- session: {N+1}
-- mode: {brainstorm|build|direct}
-- objective: {focus from state.md or user's stated goal}
-
-## Events
-- Session started — {objective}
+Session objective: [TBD]
 ```
 
-Where:
-- `{N+1}` is current_session + 1 from state.md
-- `mode` is `brainstorm`, `build`, or `direct` (for no argument)
-- `objective` comes from state.md `focus` field or the user's first message
+Where `{N+1}` is current_session + 1 from state.md.
+
+**Objective lifecycle:** Objective starts as `[TBD]`. Once session direction is aligned through conversation, update to `[LOCKED] {objective}` and write the `## Problem` section. The Problem section anchors all reasoning bullets below it.
+
+**Maintaining {{cookiecutter.project_slug}}/scratch.md during the session:**
+- Write the Problem section (2-4 sentences, plain english) once the objective locks
+- Add reasoning bullets below it: rejected alternatives, key insights, anchoring context
+- Rewrite, don't append — remove resolved items, keep only what's live
+- On mid-session topic shift: rewrite the Problem section, carry forward relevant bullets
+- Filter: "Would losing this reasoning to scroll-away hurt the rest of the session?"
+- **Both parties write and annotate.** Use Obsidian callouts (question/warning/tip/info) for positional feedback. Silence = agree.
+- For structured proposals (3+ related points): write to surface, signal "ready for marks". User annotates in Obsidian, signals "read it". Respond only to marked items.
+- `## Decided` section added on-demand when items are resolved — not part of the init template.
 
 ### Step 3: Read Last Session Handoff
 
-Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `{{ cookiecutter.project_slug }}/sessions/session-21.md`).
+Parse the `last_session` wikilink to get the file path (e.g., `[[sessions/session-21]]` → `{{cookiecutter.project_slug}}/sessions/session-21.md`).
 
 Read the last session file using native Read.
 
@@ -88,26 +103,9 @@ This provides the rich narrative context for cold start.
 
 If state.md doesn't exist or is empty:
 - Create state.md with session: 1
-- Read scratch.md (may not exist — that's fine, the Read attempt is sufficient), then initialize with session: 1
-- Display first-run welcome
+- Initialize scratch.md with session: 1
+- Display: "Session 1 (First Run) — Welcome to kh. No previous sessions. Ready to begin."
 - Skip to Step 7
-
-**First-run welcome:**
-```
-## Session 1 (First Run)
-
-Welcome to kh. No previous sessions found.
-
-**Vault:** {{ cookiecutter.project_slug }}/
-
-This is a fresh installation. The following are ready:
-- {{ cookiecutter.project_slug }}/state.md — session state
-- {{ cookiecutter.project_slug }}/dashboard.md — Dataview queries
-- {{ cookiecutter.project_slug }}/decisions/ — committed decisions
-- {{ cookiecutter.project_slug }}/sessions/ — session handoffs
-
-Ready to begin. What are we working on?
-```
 
 ### Step 5: Acknowledge Mode
 
@@ -118,35 +116,17 @@ State which mode is active:
 
 ### Step 6: Display Current State
 
-```
-## Resuming Session {N+1}
+Show a summary with these sections:
+- **Header:** "Resuming Session {N+1}" with phase, focus, plan from state.md frontmatter
+- **Last Session ({N}):** topics, outcome, then the Context, Decisions, and Memory sections from the handoff
+- **Active:** items from § Active section, each shown with appetite tag. If an item was Active in the previous session, prefix with "↳ Continuing:"
+- **Shaped:** items from § Shaped section (show appetite tags)
+- **Parked:** items from § Parked section (only show if non-empty)
+- **Inbox:** show count. If > 5, add "(triage recommended)"
+- **Constraints:** decision links from state.md
+- **Next Steps:** from last session handoff
 
-**Phase:** {phase}
-**Focus:** {focus from frontmatter}
-**Plan:** {plan_summary from frontmatter, or "none"}
-
-### Last Session ({N})
-**Topics:** {topics from last session}
-**Outcome:** {outcome}
-
-**Context:**
-{Context section from last session handoff}
-
-**Decisions:**
-{Decisions section from last session handoff}
-
-**Memory:**
-{Memory section from last session handoff}
-
-### Active Tasks
-{tasks as checkbox list from state.md content}
-
-### Constraints
-{constraints from state.md}
-
-### Next Steps (from last session)
-{Next Steps section from last session handoff}
-```
+If previous session outcome was `blocked`, highlight the blocker prominently.
 
 ### Step 7: Mode-Specific Prompt
 
@@ -158,6 +138,8 @@ Ready. What needs doing?
 **Brainstorm mode:**
 ```
 Ready to brainstorm. What are we thinking through?
+
+Run `/output-style kh-brainstorm` for optimized formatting.
 ```
 
 **Build mode:**
@@ -177,19 +159,14 @@ Build mode requested but no active plan found.
 Switch to brainstorm mode to create a plan, or specify what to build.
 ```
 
+For both build prompts, append:
+```
+Run `/output-style default` if not already active.
+```
+
 ### Step 8: Confirm Session Start
 
 After user responds:
 ```
 Session {N+1} started. [{mode} mode]
 ```
-
-## Notes
-
-- Two files read for cold start: state.md (structure) + last session (narrative)
-- state.md frontmatter provides: phase, focus, plan_summary
-- state.md content provides: tasks (checkbox format), constraints
-- Last session provides: context, decisions, memory, next steps
-- If previous session outcome was `blocked`, highlight the blocker prominently
-- Mode protocols are in `protocols/` — edit those files to change cognitive behavior
-- scratch.md is initialized at session start with the changelog format

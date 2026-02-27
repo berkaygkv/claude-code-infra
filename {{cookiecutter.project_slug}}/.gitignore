@@ -2,8 +2,11 @@ __pycache__/
 *.pyc
 *.pyo
 
+# User-specific config (contains local paths)
+.kh-config.json
+
 # Obsidian
-{{ cookiecutter.project_slug }}/.obsidian/
+vault/.obsidian/
 
 # Session transcripts (auto-exported, can be large)
-{{ cookiecutter.project_slug }}/sessions/transcripts/
+vault/sessions/transcripts/

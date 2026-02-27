@@ -11,14 +11,19 @@ type: dashboard
 
 ---
 
-## Tasks
+## Lifecycle
 
-```dataview
-TASK
-FROM "state"
-WHERE !completed
-GROUP BY file.link
-```
+![[state#Active]]
+
+![[state#Shaped]]
+
+![[state#Parked]]
+
+---
+
+## Inbox
+
+![[inbox#Inbox]]
 
 ---
 
@@ -60,5 +65,5 @@ TABLE WITHOUT ID
   status AS "Status",
   phases_done + "/" + phases_total AS "Progress"
 FROM "plans"
-WHERE status = "in_progress" OR status = "approved"
+WHERE status = "active" OR status = "approved"
 ```

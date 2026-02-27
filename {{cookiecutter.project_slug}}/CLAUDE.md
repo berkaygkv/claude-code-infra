@@ -31,44 +31,63 @@ Be the collaborator worth talking to at 2am — not a corporate drone, not a syc
 
 ## 2. Operating Modes
 
-Modes are loaded dynamically via `/begin [mode]`. Each mode has distinct cognitive protocols.
-
-| Mode | Trigger | Focus | Protocol File |
-|------|---------|-------|---------------|
-| **Brainstorm** | `/begin brainstorm` | Alignment before action | `protocols/brainstorm.md` |
-| **Build** | `/begin build` | Execute approved plan | `protocols/build.md` |
+Two modes, loaded via `/begin [mode]` (protocols live in `protocols/`):
+- **Brainstorm** — alignment before action. Produces a plan.
+- **Build** — executes an approved plan.
 
 No argument `/begin` = direct execution, no formal mode.
 
-**Mode transitions:**
-- Brainstorm → Build: User approves plan → `/wrap` → `/begin build`
-- Build → Brainstorm: Scope change detected → `/wrap` → `/begin brainstorm`
+**Transitions:** Brainstorm → Build via plan approval + `/wrap`. Build → Brainstorm via scope change + `/wrap`.
 
 ---
 
 ## 3. Memory Architecture
 
 ### The Vault
-**Path:** `{{ cookiecutter.project_slug }}/` (inside project root)
+**Path:** `{{cookiecutter.project_slug}}/` (inside project root)
 
 | File/Folder | Purpose | Access Pattern |
 |-------------|---------|----------------|
 | `state.md` | Cold start context for Claude | Read on /begin |
+| `inbox.md` | Append-only idea capture | Append anytime, triage at /begin |
 | `dashboard.md` | User control panel (Dataview) | User-facing |
 | `sessions/` | Session handoffs | Write on /wrap |
 | `decisions/` | LOCKED decisions (one per file) | Write on /wrap |
 | `research/` | Deep research outputs | Auto-captured by hook |
 | `plans/` | Implementation plans | Read/write during sessions |
 | `canvas/` | Excalidraw diagrams | Reference |
+| `scratch.md` | Shared working surface | Read/write during sessions |
+| `reference/` | Convention cards, guides | Read on /begin |
 
-### Session Changelog
-**Path:** `scratch.md`
+### Task Lifecycle
 
-Running record of the current session:
-- Initialized by /begin with session objective
-- Updated by Claude on notable events (decisions, blockers, discoveries)
-- Read by /wrap to build session handoff
-- Survives context compression — the persistent session record
+Items flow through: **Inbox → Shaped → Active → Done/Parked**
+
+| Stage | Location | Gate | Notes |
+|-------|----------|------|-------|
+| Inbox | `{{cookiecutter.project_slug}}/inbox.md` | None — append freely | Raw ideas, triage when > 5 items |
+| Shaped | `state.md` § Shaped | Appetite + approach + done-def | Ready to pick up |
+| Active | `state.md` § Active | WIP capacity (1 large OR 2 small/chore) | Currently being worked on |
+| Done | Removed from state.md | /wrap removes | Session handoffs are the record |
+| Parked | `state.md` § Parked | Explicit decision | No SLA, review when relevant |
+
+**Appetite tags:** `[chore]` sub-session, `[small]` single session, `[large]` multi-session (requires plan file).
+
+**Mid-session capture:** Append raw ideas to `{{cookiecutter.project_slug}}/inbox.md` anytime during a session. No need to wait for /wrap.
+
+### Scratch Surface
+**Path:** `{{cookiecutter.project_slug}}/scratch.md`
+
+Shared working surface for both Claude and user. Captures reasoning, proposals, and positional feedback — the stuff that dies when chat scrolls away or context compresses. state.md captures *what* (tasks, decisions); scratch.md captures *why* (reasoning, rejected alternatives, active thinking).
+
+- Initialized by /begin with session number. Objective starts as `[TBD]`.
+- Objective locks (`[LOCKED]`) once session direction is aligned — then Problem section is written.
+- **Both parties write and annotate.** Uses Obsidian callouts for positional feedback (question/warning/tip/info). Silence = agree.
+- Rewrite, don't append. Remove resolved items. Keep only what's live.
+- For structured proposals (3+ points): write to surface, signal "ready for marks". User annotates in Obsidian, signals "read it". Claude responds only to marked items.
+- `## Decided` section added on-demand when items are resolved.
+- Convention reference: `{{cookiecutter.project_slug}}/reference/scratch-convention.md` (read silently at /begin).
+- Read by /wrap to understand reasoning behind decisions, then reset.
 
 ---
 
@@ -78,29 +97,29 @@ Running record of the current session:
 
 | Operation | Tool | Examples |
 |-----------|------|----------|
-| **Direct file access** (known path) | Native Read/Write | Read `{{ cookiecutter.project_slug }}/state.md`, Write `{{ cookiecutter.project_slug }}/sessions/session-24.md` |
+| **Direct file access** (known path) | Native Read/Write | Read `{{cookiecutter.project_slug}}/state.md`, Write `{{cookiecutter.project_slug}}/sessions/session-24.md` |
 | **Search & exploration** (discovery) | MCP Obsidian | Find files, list directories, search content, query tags |
 
 ### DO
-- `Read {{ cookiecutter.project_slug }}/state.md` — you know the exact path
+- `Read {{cookiecutter.project_slug}}/state.md` — you know the exact path
 - `mcp__obsidian__list_directory` — discovering what sessions exist
-- `mcp__obsidian__search_notes` — finding notes by content
+- `mcp__obsidian__search_notes` — finding notes mentioning "TARGET"
 
 ### DO NOT
-- `Glob("{{ cookiecutter.project_slug }}/sessions/*.md")` — use MCP list_directory instead
-- `Grep` on {{ cookiecutter.project_slug }}/ — use MCP search_notes instead
+- `Glob("{{cookiecutter.project_slug}}/sessions/*.md")` — use MCP list_directory instead
+- `Grep` on {{cookiecutter.project_slug}}/ — use MCP search_notes instead
 
 **Why:** MCP provides Obsidian-native search that understands vault structure, frontmatter, and links. Native Glob/Grep bypass this intelligence.
 
 ---
 
-## 5. Brain Vault (Optional)
+## 5. Brain Vault
 
-**Path:** User-defined (e.g., `~/Documents/Notes/`)
+**Path:** `~/Documents/Notes/` (Obsidian Sync, cross-device)
 **MCP Server:** `brain` — tools namespaced as `mcp__brain__*`
 **Access:** On-demand only. Never auto-loaded at `/begin`.
 
-Cross-project, cross-machine knowledge layer. Configure in `~/.claude.json` if you want a shared notes vault across projects. Always use `mcp__brain__*` tools — never native Read/Write/Glob/Grep on the brain vault path.
+Cross-project, cross-machine knowledge layer shared with Clawbot (KL). Always use `mcp__brain__*` tools — never native Read/Write/Glob/Grep on the brain vault path.
 
 **HARD RULE:** Search (`mcp__brain__search_notes`) before creating any file. Update existing content rather than creating duplicates.
 
@@ -121,20 +140,27 @@ Research operations follow a two-tier system:
 ### Deep Research
 - Multi-source investigation, 5+ searches
 - Comparison, best practices, unknowns
-- Deep research → spawn deep-research agent. Hook captures output to `{{ cookiecutter.project_slug }}/research/`.
+- Deep research → spawn deep-research agent. Hook captures output to `{{cookiecutter.project_slug}}/research/`.
 
 **Output format:** Flat files, not directories.
 ```
-{{ cookiecutter.project_slug }}/research/{YYYYMMDD}-{slug}.md
+{{cookiecutter.project_slug}}/research/{YYYYMMDD}-{slug}.md
 ```
 
 Each file has frontmatter (`type: research`, `date`, `topic`) and an inline `## Sources` section. No separate sources file.
 
+### YouTube Video Research
+- Use `/research-video` skill for structured video analysis via gemwrap (Gemini multimodal)
+- gemwrap uses OAuth from gemini-cli, ~2,000 req/day across 2 accounts (round-robin rotation)
+- Output goes to `{{cookiecutter.project_slug}}/research/` with `source: youtube` in frontmatter
+
 ---
 
-## 7. Upgrading
+## 7. Upgrading from Template
 
-Run `/upgrade` to pull the latest kh infrastructure from the template repository. This updates commands, hooks, skills, protocols, and CLAUDE.md while preserving your vault data.
+This project was scaffolded from the [claude-code-infra](https://github.com/berkaygkv/claude-code-infra) template.
+
+To pull the latest infrastructure updates, run the `/upgrade` skill. It clones the latest template, copies infrastructure files, merges CLAUDE.md, and migrates vault schemas.
 
 ---
 
@@ -146,39 +172,21 @@ Run `/upgrade` to pull the latest kh infrastructure from the template repository
 
 ---
 
-## 9. Session Lifecycle
+## 9. Key Paths
 
-### `/begin [mode]`
-1. Read {{ cookiecutter.project_slug }}/state.md (structure: phase, focus, tasks, constraints)
-2. Read last session handoff (narrative: context, decisions, memory, next steps)
-3. Initialize scratch.md changelog
-4. Display combined context for cold start
-5. Activate mode-specific protocol
-6. Confirm session start
-
-### `/wrap`
-1. Read scratch.md changelog
-2. Create decision files in {{ cookiecutter.project_slug }}/decisions/ for LOCKED items
-3. Create session handoff in {{ cookiecutter.project_slug }}/sessions/
-4. Update {{ cookiecutter.project_slug }}/state.md (current_session, last_session, context)
-5. Reset scratch.md for next session
-6. Git commit (if changes)
-
----
-
-## 10. Key Paths
-
-All paths relative to project root:
+All paths relative to project root. `{{cookiecutter.project_slug}}/` is the default vault directory name — in cookiecutter projects, it resolves to the project slug. Commands discover the vault via `.obsidian/` at runtime.
 
 ```
-{{ cookiecutter.project_slug }}/state.md           # Claude cold start
-{{ cookiecutter.project_slug }}/sessions/          # Session handoffs
-{{ cookiecutter.project_slug }}/decisions/         # LOCKED decisions
-{{ cookiecutter.project_slug }}/research/          # Deep research outputs
-{{ cookiecutter.project_slug }}/plans/             # Implementation plans
-{{ cookiecutter.project_slug }}/canvas/            # Excalidraw diagrams
+{{cookiecutter.project_slug}}/state.md           # Claude cold start
+{{cookiecutter.project_slug}}/inbox.md           # Idea capture (append-only)
+{{cookiecutter.project_slug}}/sessions/          # Session handoffs
+{{cookiecutter.project_slug}}/decisions/         # LOCKED decisions
+{{cookiecutter.project_slug}}/research/          # Deep research outputs
+{{cookiecutter.project_slug}}/plans/             # Implementation plans
+{{cookiecutter.project_slug}}/canvas/            # Excalidraw diagrams
 
-scratch.md               # Session changelog
+{{cookiecutter.project_slug}}/scratch.md         # Shared working surface (reasoning & collaboration)
+{{cookiecutter.project_slug}}/reference/         # Convention cards, guides
 protocols/               # Mode protocols
 .claude/commands/        # Slash commands
 .claude/hooks/           # Event hooks

@@ -1,17 +1,3 @@
-# Session Scratch
+# Scratch — Session 1
 
-## Meta
-- session: 1
-
-## Decisions
-<!-- LOCKED: decision — rationale -->
-<!-- OPEN: question still unresolved -->
-
-## Memory
-<!-- Facts, preferences, constraints to persist -->
-
-## Tasks
-<!-- New tasks, completed tasks, blockers -->
-
-## Notes
-<!-- Anything else to capture -->
+Session objective: [TBD]

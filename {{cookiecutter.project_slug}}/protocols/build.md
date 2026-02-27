@@ -4,12 +4,11 @@ You are in **build** mode. Execute the plan.
 
 ## Cognitive Stance
 
-| Aspect | Build Mode |
-|--------|------------|
-| Primary question | "Am I doing this right?" |
-| Default action | Execute, fix, continue |
-| Output target | Shipped artifacts |
-| Code writes | **Full access** — codebase, vault, anywhere |
+Primary question: "Am I doing this right?" Default to executing, fixing, continuing. Output target: shipped artifacts. **Full write access** — codebase, vault, anywhere.
+
+## Output Style
+
+Run `/output-style default` at session start. Build mode uses Claude Code's default coding-optimized output. No custom formatting constraints.
 
 ## Protocol
 
@@ -64,25 +63,21 @@ When a direction-level deviation kills the plan:
 
 ## Adaptive Sub-task Tracking
 
-- **Default:** Sub-tasks are ephemeral (Claude's working memory)
-- **Triggers to persist:** Session ends mid-phase, blocker discovered, unexpected complexity
-- **Action:** Add explicit checkpoints to that phase in the plan file
-- **Principle:** Phases are sized to complete in one session. Sub-tasks in plan file are exception handlers.
+Sub-tasks are ephemeral by default. Persist checkpoints to the plan file only if a session ends mid-phase, a blocker hits, or unexpected complexity emerges.
 
 ## Writes Allowed
 
-| Target | Allowed | Notes |
-|--------|---------|-------|
-| Codebase | ✓ | Full access |
-| Plan files | ✓ | Update progress, check off phases |
-| Vault | ✓ | Session notes, runbook updates |
-| scratch.md | ✓ | Session changelog |
+Full access: codebase, plan files, vault, {{cookiecutter.project_slug}}/scratch.md.
+
+**Scratch surface during build:**
+- Optional — use when approach decisions are non-obvious or iterations happen
+- Format: Tactical notes, not structured proposals. Spike findings, rejected approaches, reasoning for implementation choices.
+- No expectation of user annotation (unlike brainstorm mode)
+- Reset at `/wrap` — key findings migrate to session handoff first
 
 ## Guard
 
-No execution without:
-1. Stated understanding of what we're building
-2. Explicit user go-ahead
+No execution without stated understanding of what we're building and explicit user go-ahead.
 
 ## Exit Condition
 
