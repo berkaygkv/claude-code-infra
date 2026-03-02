@@ -12,3 +12,4 @@ Append-only capture point. Raw ideas, no formatting required. Triage when count 
 
 - /vocab command — slash command to append terms to shared-vocabulary.md mid-session (S53)
 - Vocabulary loading strategy — selective/on-demand loading vs full load at /begin, context rot concern (S53)
+- Project onboarding skill — guided intake for new projects: asks structured questions, distills answers into a compliant problem statement (objective, initial inbox items, constraints). Replaces "stare at blank state.md" with a conversation that shapes the seed. (S55)

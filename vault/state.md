@@ -2,11 +2,11 @@
 type: state
 project: kh
 phase: idle
-current_session: 54
-updated: 2026-02-27
-last_session: "[[sessions/session-54]]"
+current_session: 55
+updated: 2026-03-02
+last_session: "[[sessions/session-55]]"
 active_plan: null
-focus: "Shaped backlog cleared — inbox has 2 items, parked has 4"
+focus: "Land-intel brief ready — spin up fresh cookiecutter project to stress-test kh"
 plan_summary: ""
 ---
 
