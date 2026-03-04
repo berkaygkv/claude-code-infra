@@ -7,7 +7,7 @@ decision: "[[decisions/scratch-collab-surface]]"
 
 # Scratch Surface Convention
 
-Quick reference for `{{cookiecutter.project_slug}}/scratch.md` — the shared working surface.
+Quick reference for `vault/scratch.md` — the shared working surface.
 
 ## Callouts
 

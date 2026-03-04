@@ -15,7 +15,7 @@ Quick reference for PM lifecycle gating — appetite sizing, shaping gates, kill
 |-----|-------|----------|-------|
 | `[chore]` | Sub-session | None consumed | Mechanical, low-risk. Runs alongside other work. |
 | `[small]` | Single session | 1 slot | — |
-| `[large]` | Multi-session | 1 slot | ==Requires plan file in `{{cookiecutter.project_slug}}/plans/`.== |
+| `[large]` | Multi-session | 1 slot | ==Requires plan file in `vault/plans/`.== |
 
 **WIP limit:** 1 large OR 2 small/chore simultaneously.
 
