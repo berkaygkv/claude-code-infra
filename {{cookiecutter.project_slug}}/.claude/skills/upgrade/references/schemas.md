@@ -9,7 +9,7 @@ Canonical schema definitions for all vault file types. Dashboard queries and `/w
 
 ---
 
-## State (`{{cookiecutter.project_slug}}/state.md`)
+## State (`vault/state.md`)
 
 Single file. Tracks current session state.
 
@@ -52,7 +52,7 @@ Single file. Tracks current session state.
 
 Items flow through: **Inbox → Shaped → Active → Done/Parked**
 
-- **Inbox** (`{{cookiecutter.project_slug}}/inbox.md`) — raw ideas, append-only
+- **Inbox** (`vault/inbox.md`) — raw ideas, append-only
 - **Shaped** — has all three gates: appetite + approach + done-definition
 - **Active** — WIP-limited: 1 large OR 2 small/chore simultaneously
 - **Done** — removed from state.md at `/wrap`; session handoff is the record
@@ -68,7 +68,7 @@ Items flow through: **Inbox → Shaped → Active → Done/Parked**
 
 ---
 
-## Session (`{{cookiecutter.project_slug}}/sessions/session-{N}.md`)
+## Session (`vault/sessions/session-{N}.md`)
 
 One file per session. Handoff context for cold start.
 
@@ -112,7 +112,7 @@ One file per session. Handoff context for cold start.
 
 ---
 
-## Decision (`{{cookiecutter.project_slug}}/decisions/{slug}.md`)
+## Decision (`vault/decisions/{slug}.md`)
 
 One file per decision (or cohesive bundle).
 
@@ -134,7 +134,7 @@ Free-form. No forced body sections — structure the content as the decision dem
 
 ---
 
-## Plan (`{{cookiecutter.project_slug}}/plans/{slug}.md`)
+## Plan (`vault/plans/{slug}.md`)
 
 One file per plan.
 
@@ -173,7 +173,7 @@ One file per plan.
 
 ---
 
-## Research (`{{cookiecutter.project_slug}}/research/{YYYYMMDD}-{slug}.md`)
+## Research (`vault/research/{YYYYMMDD}-{slug}.md`)
 
 Flat research files with inline sources.
 

@@ -11,7 +11,7 @@ Behavior:
 - /wrap NOT run → skip export (session discarded)
 
 Naming: session-N.md (sequential numbering, matches session note)
-Location: vault/sessions/transcripts/session-N.md
+Location: {{cookiecutter.project_slug}}/sessions/transcripts/session-N.md
 
 Usage: Configured in .claude/settings.json under hooks.SessionEnd
 """

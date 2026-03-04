@@ -107,7 +107,7 @@ Shared working surface for both Claude and user. Captures reasoning, proposals, 
 
 ### DO NOT
 - `Glob("{{cookiecutter.project_slug}}/sessions/*.md")` — use MCP list_directory instead
-- `Grep` on {{cookiecutter.project_slug}}/ — use MCP search_notes instead
+- `Grep` on vault/ — use MCP search_notes instead
 
 **Why:** MCP provides Obsidian-native search that understands vault structure, frontmatter, and links. Native Glob/Grep bypass this intelligence.
 
@@ -160,7 +160,7 @@ Each file has frontmatter (`type: research`, `date`, `topic`) and an inline `## 
 
 This project was scaffolded from the [claude-code-infra](https://github.com/berkaygkv/claude-code-infra) template.
 
-To pull the latest infrastructure updates, run the `/upgrade` skill. It clones the latest template, copies infrastructure files, merges CLAUDE.md, and migrates vault schemas.
+To pull in upstream improvements, compare your `.claude/`, `protocols/`, and `CLAUDE.md` against the latest template release and merge selectively.
 
 ---
 
@@ -174,7 +174,7 @@ To pull the latest infrastructure updates, run the `/upgrade` skill. It clones t
 
 ## 9. Key Paths
 
-All paths relative to project root. `{{cookiecutter.project_slug}}/` is the default vault directory name — in cookiecutter projects, it resolves to the project slug. Commands discover the vault via `.obsidian/` at runtime.
+All paths relative to project root. `{{cookiecutter.project_slug}}/` is the vault directory. Commands discover it via `.obsidian/` at runtime.
 
 ```
 {{cookiecutter.project_slug}}/state.md           # Claude cold start

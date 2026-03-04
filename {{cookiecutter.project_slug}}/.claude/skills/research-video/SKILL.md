@@ -71,7 +71,7 @@ If issues found:
 
 Format into a vault research artifact:
 
-**File path:** `{{cookiecutter.project_slug}}/research/{YYYYMMDD}-{slug}.md`
+**File path:** `vault/research/{YYYYMMDD}-{slug}.md`
 
 **Frontmatter:**
 ```yaml
